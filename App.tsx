@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { initializeApp } from "firebase/app";
-import { collection, getDocs, getFirestore } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 import Form from "./components/Form";
 import React, { useEffect, useState } from "react";
 
@@ -27,40 +27,34 @@ type User = {
   born: number;
 };
 
-const getUsers = async (): Promise<User[]> => {
-  const usersCollection = collection(firestore, "users");
-  const usersSnapshot = await getDocs(usersCollection);
-  const users = usersSnapshot.docs.map((doc) => {
-    const { first, last, born } = doc.data();
-    const id = doc.id;
-    return { id, first, last, born };
-  });
-  return users;
+type Account = {
+  id: string;
+};
+
+const getAccounts = async (): Promise<Account[]> => {
+  return Promise.resolve([{ id: "MoLT1vUAru7aJ2KRBPHs" }]);
 };
 
 export default function App() {
-  const [users, setUsers] = useState<User[] | null>(null);
+  const [accounts, setAccounts] = useState<Account[] | null>(null);
   useEffect(() => {
     (async () => {
-      const fetched = await getUsers();
-      setUsers(fetched);
+      const loadedAccounts = await getAccounts();
+      setAccounts(loadedAccounts);
     })();
-  });
+  }, []);
   return (
     <View style={styles.container}>
       <FlatList
-        data={users}
+        data={accounts}
+        keyExtractor={(user) => user.id}
         renderItem={({ item }) => (
           <View>
             <Text>{item.id}</Text>
-            <Text>{item.first + " " + item.last}</Text>
-            <Text>{item.born}</Text>
           </View>
         )}
-        keyExtractor={(user) => user.id}
       ></FlatList>
       <Form firestore={firestore}></Form>
-      <Text>Open up App.tsx to start working on your app!</Text>
       <StatusBar style="auto" />
     </View>
   );
