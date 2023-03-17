@@ -8,6 +8,10 @@ import {
 } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { Button, FlatList, StyleSheet, Text, View } from "react-native";
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -42,7 +46,8 @@ type Account = {
   id: string;
 };
 
-export default function Index() {
+function Inner(): JSX.Element {
+  const insets = useSafeAreaInsets();
   const [accounts, setAccounts] = useState<Account[] | null>(null);
   useEffect(() => {
     (async () => {
@@ -51,27 +56,56 @@ export default function Index() {
     })();
   }, []);
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={accounts}
-        keyExtractor={(user) => user.id}
-        renderItem={({ item }) => (
-          <View>
-            <Text>{item.id}</Text>
-          </View>
-        )}
-      />
-      <Button onPress={() => createAccount(firestore)} title="Add Account" />
+    <View
+      style={[
+        styles.container,
+        {
+          paddingTop: insets.top,
+        },
+      ]}
+    >
+      <View style={styles.list}>
+        <FlatList
+          data={accounts}
+          keyExtractor={(user) => user.id}
+          renderItem={({ item }) => (
+            <View>
+              <Text>{item.id}</Text>
+            </View>
+          )}
+        />
+      </View>
+      <View style={styles.button}>
+        <Button onPress={() => createAccount(firestore)} title="Add Account" />
+      </View>
       <StatusBar style="auto" />
     </View>
   );
 }
 
+export default function Index() {
+  return (
+    <SafeAreaProvider>
+      <Inner />
+    </SafeAreaProvider>
+  );
+}
+
 const styles = StyleSheet.create({
-  container: {
+  button: {
+    backgroundColor: "#0f0",
     flex: 1,
-    backgroundColor: "#fff",
+    justifyContent: "flex-start",
+  },
+  container: {
     alignItems: "center",
+    backgroundColor: "#eee",
+    flex: 1,
     justifyContent: "center",
+  },
+  list: {
+    backgroundColor: "#f00",
+    flex: 2,
+    justifyContent: "flex-end",
   },
 });
