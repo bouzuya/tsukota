@@ -1,9 +1,13 @@
 import { StatusBar } from "expo-status-bar";
-import { FlatList, StyleSheet, Text, View } from "react-native";
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import Form from "./components/Form";
+import {
+  Firestore,
+  addDoc,
+  collection,
+  getFirestore,
+} from "firebase/firestore";
 import React, { useEffect, useState } from "react";
+import { Button, FlatList, StyleSheet, Text, View } from "react-native";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -17,25 +21,28 @@ const firebaseConfig = {
   appId: "1:134387427673:web:6ae1538cb77fe3a8728448",
 };
 
-const app = initializeApp(firebaseConfig);
-const firestore = getFirestore(app);
-
-type User = {
-  id: string;
-  first: string;
-  last: string;
-  born: number;
-};
-
-type Account = {
-  id: string;
+const createAccount = async (db: Firestore): Promise<void> => {
+  try {
+    const accountsCollection = collection(db, "accounts");
+    const docRef = await addDoc(accountsCollection, {});
+    console.log("Document written with ID: ", docRef.id);
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
 };
 
 const getAccounts = async (): Promise<Account[]> => {
   return Promise.resolve([{ id: "MoLT1vUAru7aJ2KRBPHs" }]);
 };
 
-export default function App() {
+const app = initializeApp(firebaseConfig);
+const firestore = getFirestore(app);
+
+type Account = {
+  id: string;
+};
+
+export default function Index() {
   const [accounts, setAccounts] = useState<Account[] | null>(null);
   useEffect(() => {
     (async () => {
@@ -53,8 +60,8 @@ export default function App() {
             <Text>{item.id}</Text>
           </View>
         )}
-      ></FlatList>
-      <Form firestore={firestore}></Form>
+      />
+      <Button onPress={() => createAccount(firestore)} title="Add Account" />
       <StatusBar style="auto" />
     </View>
   );
