@@ -12,6 +12,7 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { Link } from "expo-router";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -36,6 +37,7 @@ const createAccount = async (db: Firestore): Promise<void> => {
 };
 
 const getAccounts = async (): Promise<Account[]> => {
+  // TODO: read from local storage
   return Promise.resolve([{ id: "MoLT1vUAru7aJ2KRBPHs" }]);
 };
 
@@ -70,7 +72,14 @@ function Inner(): JSX.Element {
           keyExtractor={(user) => user.id}
           renderItem={({ item }) => (
             <View>
-              <Text>{item.id}</Text>
+              <Link
+                href={{
+                  pathname: "/accounts/[id]",
+                  params: { id: item.id },
+                }}
+              >
+                {item.id}
+              </Link>
             </View>
           )}
         />
