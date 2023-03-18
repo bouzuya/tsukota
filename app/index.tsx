@@ -1,30 +1,13 @@
 import { StatusBar } from "expo-status-bar";
-import { initializeApp } from "firebase/app";
-import {
-  Firestore,
-  addDoc,
-  collection,
-  getFirestore,
-} from "firebase/firestore";
+import { Firestore, addDoc, collection } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { Button, FlatList, StyleSheet, Text, View } from "react-native";
+import { Button, FlatList, StyleSheet, View } from "react-native";
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { Link } from "expo-router";
-
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCOTgcpOQMwgLCEectXltDswYgHq2Av_P4",
-  authDomain: "bouzuya-lab-tsukota.firebaseapp.com",
-  projectId: "bouzuya-lab-tsukota",
-  storageBucket: "bouzuya-lab-tsukota.appspot.com",
-  messagingSenderId: "134387427673",
-  appId: "1:134387427673:web:6ae1538cb77fe3a8728448",
-};
+import { Link, Stack } from "expo-router";
+import { db } from "../firebase";
 
 const createAccount = async (db: Firestore): Promise<void> => {
   try {
@@ -40,9 +23,6 @@ const getAccounts = async (): Promise<Account[]> => {
   // TODO: read from local storage
   return Promise.resolve([{ id: "MoLT1vUAru7aJ2KRBPHs" }]);
 };
-
-const app = initializeApp(firebaseConfig);
-const firestore = getFirestore(app);
 
 type Account = {
   id: string;
@@ -66,6 +46,7 @@ function Inner(): JSX.Element {
         },
       ]}
     >
+      <Stack.Screen options={{ title: "Home" }} />
       <View style={styles.list}>
         <FlatList
           data={accounts}
@@ -85,7 +66,7 @@ function Inner(): JSX.Element {
         />
       </View>
       <View style={styles.button}>
-        <Button onPress={() => createAccount(firestore)} title="Add Account" />
+        <Button onPress={() => createAccount(db)} title="Add Account" />
       </View>
       <StatusBar style="auto" />
     </View>
