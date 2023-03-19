@@ -22,7 +22,8 @@ type Transaction = {
 
 const createTransaction = async (
   db: Firestore,
-  accountId: string
+  accountId: string,
+  amount: string
 ): Promise<void> => {
   try {
     const transactionsCollection = collection(
@@ -31,7 +32,7 @@ const createTransaction = async (
       accountId,
       "transactions"
     );
-    const docRef = await addDoc(transactionsCollection, {});
+    const docRef = await addDoc(transactionsCollection, { amount });
     console.log("Document written with ID: ", docRef.id);
   } catch (e) {
     console.error("Error adding document: ", e);
@@ -60,9 +61,7 @@ const getTransactions = async (
 export default function Account(): JSX.Element {
   const router = useRouter();
   const params = useSearchParams();
-  const message = `${Object.entries(params)
-    .map(([k, v]) => `${k}=${v}`)
-    .join(",")}`;
+  const [amount, setAmount] = useState<string>("");
   const [transactions, setTransactions] = useState<Transaction[] | null>(null);
   const accountId = `${params.id}`;
   useEffect(() => {
@@ -81,12 +80,18 @@ export default function Account(): JSX.Element {
         renderItem={({ item }) => (
           <View>
             <Text>{item.id}</Text>
+            <Text>{item.amount}</Text>
           </View>
         )}
       />
       <View>
+        <TextInput
+          onChangeText={setAmount}
+          value={amount}
+          keyboardType="numeric"
+        />
         <Button
-          onPress={() => createTransaction(db, accountId)}
+          onPress={() => createTransaction(db, accountId, amount)}
           title="Add Transaction"
         />
       </View>

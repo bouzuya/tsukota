@@ -21,7 +21,10 @@ const createAccount = async (db: Firestore): Promise<void> => {
 
 const getAccounts = async (): Promise<Account[]> => {
   // TODO: read from local storage
-  return Promise.resolve([{ id: "MoLT1vUAru7aJ2KRBPHs" }]);
+  return Promise.resolve([
+    { id: "MoLT1vUAru7aJ2KRBPHs" },
+    { id: "klzmBVOGMaF5xZqTORwy" },
+  ]);
 };
 
 type Account = {
