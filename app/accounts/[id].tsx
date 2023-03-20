@@ -22,7 +22,6 @@ import { db } from "../../firebase";
 
 type EventCommon = {
   eventId: string;
-  createdAt: string;
 };
 
 type TransactionProps = {
@@ -35,18 +34,21 @@ type TransactionAdded = {
   type: "transactionAdded";
   transactionId: string;
   accountId: string;
+  at: string;
 } & TransactionProps;
 
 type TransactionUpdated = {
   type: "transactionUpdated";
   transactionId: string;
   accountId: string;
+  at: string;
 } & TransactionProps;
 
 type TransactionDeleted = {
   type: "transactionDeleted";
   transactionId: string;
   accountId: string;
+  at: string;
 };
 
 type AccountEvent = TransactionAdded | TransactionUpdated | TransactionDeleted;
@@ -57,6 +59,7 @@ type Transaction = {
   date: string;
   amount: string;
   comment: string;
+  createdAt: string;
 };
 
 const createTransaction = async (
@@ -74,6 +77,7 @@ const createTransaction = async (
       },
     }),
     accountId,
+    at: new Date().toISOString(),
     ...props,
   };
   try {
@@ -105,8 +109,15 @@ const getTransactions = async (
     const event = doc.data();
     switch (event.type) {
       case "transactionAdded": {
-        const { accountId, amount, comment, date, transactionId: id } = event;
-        return { id, accountId, date, amount, comment };
+        const {
+          accountId,
+          amount,
+          at: createdAt,
+          comment,
+          date,
+          transactionId: id,
+        } = event;
+        return { id, accountId, date, amount, comment, createdAt };
       }
       case "transactionUpdated": {
         // TODO
@@ -118,11 +129,21 @@ const getTransactions = async (
       }
     }
   });
+  transactions.sort((a, b) => {
+    return a.date < b.date
+      ? -1
+      : a.date > b.date
+      ? 1
+      : a.createdAt < b.createdAt
+      ? -1
+      : a.createdAt > b.createdAt
+      ? 1
+      : 0;
+  });
   return transactions;
 };
 
 export default function Account(): JSX.Element {
-  const router = useRouter();
   const params = useSearchParams();
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [amount, setAmount] = useState<string>("0");
@@ -137,8 +158,7 @@ export default function Account(): JSX.Element {
       const loadedTransactions = await getTransactions(db, accountId);
       setTransactions(loadedTransactions);
     })();
-  });
-
+  }, []);
   return (
     <Provider>
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
