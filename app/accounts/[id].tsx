@@ -1,3 +1,4 @@
+import * as crypto from "expo-crypto";
 import { Stack, useSearchParams, useRouter } from "expo-router";
 import {
   Firestore,
@@ -7,15 +8,15 @@ import {
   CollectionReference,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import {
   Button,
-  FlatList,
-  StyleSheet,
-  Text,
+  Dialog,
+  FAB,
+  Portal,
+  Provider,
   TextInput,
-  View,
-} from "react-native";
-import * as crypto from "expo-crypto";
+} from "react-native-paper";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "../../firebase";
 
@@ -123,6 +124,7 @@ const getTransactions = async (
 export default function Account(): JSX.Element {
   const router = useRouter();
   const params = useSearchParams();
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [amount, setAmount] = useState<string>("0");
   const [comment, setComment] = useState<string>("");
   const [date, setDate] = useState<string>(
@@ -138,60 +140,89 @@ export default function Account(): JSX.Element {
   });
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Stack.Screen options={{ title: `${params.id}` }} />
-      <FlatList
-        data={transactions}
-        keyExtractor={(user) => user.id}
-        renderItem={({ item }) => (
-          <View style={styles.transaction}>
-            <View style={styles.transactionHeadline}>
-              <Text style={styles.transactionHeadlineText1}>{item.date}</Text>
-              <Text style={styles.transactionHeadlineText2}>{item.amount}</Text>
+    <Provider>
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <Stack.Screen options={{ title: `${params.id}` }} />
+        <FlatList
+          data={transactions}
+          keyExtractor={(user) => user.id}
+          renderItem={({ item }) => (
+            <View style={styles.transaction}>
+              <View style={styles.transactionHeadline}>
+                <Text style={styles.transactionHeadlineText1}>{item.date}</Text>
+                <Text style={styles.transactionHeadlineText2}>
+                  {item.amount}
+                </Text>
+              </View>
+              <Text style={styles.transactionSupportingText}>
+                {item.comment}
+              </Text>
             </View>
-            <Text style={styles.transactionSupportingText}>{item.comment}</Text>
-          </View>
-        )}
-        style={{ width: "100%", padding: 0, margin: 0 }}
-      />
-      <View>
-        <Text>Date:</Text>
-        <TextInput onChangeText={setDate} style={styles.input} value={date} />
-        <Text>Amount:</Text>
-        <TextInput
-          keyboardType="numeric"
-          onChangeText={setAmount}
-          style={styles.input}
-          value={amount}
+          )}
+          style={{ width: "100%", padding: 0, margin: 0 }}
         />
-        <Text>Comment:</Text>
-        <TextInput
-          onChangeText={setComment}
-          style={styles.input}
-          value={comment}
-        />
-        <Button
-          onPress={() => {
-            createTransaction(db, accountId, { amount, comment, date });
-            // do not reset "date" field
-            setAmount("0");
-            setComment("");
-          }}
-          title="Add Transaction"
+        <Portal>
+          <Dialog visible={modalVisible}>
+            <Dialog.Title>Add Transaction</Dialog.Title>
+            <Dialog.Content>
+              <TextInput
+                label="Date"
+                mode="outlined"
+                onChangeText={setDate}
+                value={date}
+              />
+              <TextInput
+                keyboardType="numeric"
+                label="Amount"
+                mode="outlined"
+                onChangeText={setAmount}
+                value={amount}
+              />
+              <TextInput
+                label="Comment"
+                mode="outlined"
+                onChangeText={setComment}
+                value={comment}
+              />
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button
+                onPress={() => {
+                  setModalVisible(false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onPress={() => {
+                  createTransaction(db, accountId, { amount, comment, date });
+                  // do not reset "date" field
+                  setAmount("0");
+                  setComment("");
+                  setModalVisible(false);
+                }}
+              >
+                OK
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+        <FAB
+          icon="plus"
+          style={styles.fab}
+          onPress={() => setModalVisible(true)}
         />
       </View>
-    </View>
+    </Provider>
   );
 }
 
 const styles = StyleSheet.create({
-  input: {
-    borderBottomWidth: 1,
-    fontSize: 16,
-    height: 56,
-    margin: 0,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+  fab: {
+    bottom: 0,
+    margin: 16,
+    position: "absolute",
+    right: 0,
   },
   transaction: {
     alignItems: "flex-start",
