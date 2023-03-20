@@ -1,5 +1,11 @@
 import { Stack, useSearchParams, useRouter } from "expo-router";
-import { Firestore, addDoc, collection, getDocs } from "firebase/firestore";
+import {
+  Firestore,
+  addDoc,
+  collection,
+  getDocs,
+  CollectionReference,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import {
   Button,
@@ -9,43 +15,74 @@ import {
   TextInput,
   View,
 } from "react-native";
+import * as crypto from "expo-crypto";
+import { v4 as uuidv4 } from "uuid";
 import { db } from "../../firebase";
+
+type EventCommon = {
+  eventId: string;
+  createdAt: string;
+};
 
 type TransactionProps = {
   date: string;
   amount: string;
   comment: string;
 };
+
+type TransactionAdded = {
+  type: "transactionAdded";
+  transactionId: string;
+  accountId: string;
+} & TransactionProps;
+
+type TransactionUpdated = {
+  type: "transactionUpdated";
+  transactionId: string;
+  accountId: string;
+} & TransactionProps;
+
+type TransactionDeleted = {
+  type: "transactionDeleted";
+  transactionId: string;
+  accountId: string;
+};
+
+type AccountEvent = TransactionAdded | TransactionUpdated | TransactionDeleted;
+
 type Transaction = {
   id: string;
   accountId: string;
-} & TransactionProps;
+  date: string;
+  amount: string;
+  comment: string;
+};
 
 const createTransaction = async (
   db: Firestore,
   accountId: string,
-  {
-    amount,
-    comment,
-    date,
-  }: {
-    amount: string;
-    comment: string;
-    date: string;
-  }
+  props: TransactionProps
 ): Promise<void> => {
+  const addTransaction: TransactionAdded = {
+    type: "transactionAdded",
+    transactionId: uuidv4({
+      rng: () => {
+        const array = new Uint32Array(16);
+        crypto.getRandomValues(array);
+        return array;
+      },
+    }),
+    accountId,
+    ...props,
+  };
   try {
-    const transactionsCollection = collection(
+    const eventsCollection = collection(
       db,
       "accounts",
       accountId,
-      "transactions"
-    );
-    const docRef = await addDoc(transactionsCollection, {
-      amount,
-      comment,
-      date,
-    });
+      "events"
+    ) as CollectionReference<AccountEvent>;
+    const docRef = await addDoc(eventsCollection, addTransaction);
     console.log("Document written with ID: ", docRef.id);
   } catch (e) {
     console.error("Error adding document: ", e);
@@ -56,17 +93,29 @@ const getTransactions = async (
   db: Firestore,
   accountId: string
 ): Promise<Transaction[]> => {
-  const transactionsCollection = collection(
+  const eventsCollection = collection(
     db,
     "accounts",
     accountId,
-    "transactions"
-  );
-  const transactionsSnapshot = await getDocs(transactionsCollection);
-  const transactions = transactionsSnapshot.docs.map((doc) => {
-    const { date, amount, comment } = doc.data();
-    const id = doc.id;
-    return { id, accountId, date, amount, comment };
+    "events"
+  ) as CollectionReference<AccountEvent>;
+  const eventsSnapshot = await getDocs(eventsCollection);
+  const transactions = eventsSnapshot.docs.map((doc): Transaction => {
+    const event = doc.data();
+    switch (event.type) {
+      case "transactionAdded": {
+        const { accountId, amount, comment, date, transactionId: id } = event;
+        return { id, accountId, date, amount, comment };
+      }
+      case "transactionUpdated": {
+        // TODO
+        throw new Error();
+      }
+      case "transactionDeleted": {
+        // TODO
+        throw new Error();
+      }
+    }
   });
   return transactions;
 };
@@ -124,7 +173,9 @@ export default function Account(): JSX.Element {
         <Button
           onPress={() => {
             createTransaction(db, accountId, { amount, comment, date });
-            setAmount("");
+            // do not reset "date" field
+            setAmount("0");
+            setComment("");
           }}
           title="Add Transaction"
         />
