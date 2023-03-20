@@ -7,7 +7,7 @@ import {
   getDocs,
   CollectionReference,
 } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect, useState, version } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import {
   Button,
@@ -62,12 +62,48 @@ type Transaction = {
   createdAt: string;
 };
 
-const createTransaction = async (
-  db: Firestore,
-  accountId: string,
+type Transactions = {
+  accountId: string;
+  transactions: Transaction[];
+  version: number;
+};
+
+// API
+
+const createEvent = async (event: AccountEvent): Promise<void> => {
+  const accountId = event.accountId;
+  try {
+    const eventsCollection = collection(
+      db,
+      "accounts",
+      accountId,
+      "events"
+    ) as CollectionReference<AccountEvent>;
+    const docRef = await addDoc(eventsCollection, event);
+    console.log("Document written with ID: ", docRef.id);
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+};
+
+const getEvents = async (accountId: string): Promise<AccountEvent[]> => {
+  const eventsCollection = collection(
+    db,
+    "accounts",
+    accountId,
+    "events"
+  ) as CollectionReference<AccountEvent>;
+  const eventsSnapshot = await getDocs(eventsCollection);
+  return eventsSnapshot.docs.map((doc) => doc.data());
+};
+
+//
+
+const createTransaction = (
+  transactions: Transactions,
   props: TransactionProps
-): Promise<void> => {
-  const addTransaction: TransactionAdded = {
+): [Transactions, AccountEvent] => {
+  const event: TransactionAdded = {
     type: "transactionAdded",
     transactionId: uuidv4({
       rng: () => {
@@ -76,37 +112,31 @@ const createTransaction = async (
         return array;
       },
     }),
-    accountId,
+    accountId: transactions.accountId,
     at: new Date().toISOString(),
     ...props,
   };
-  try {
-    const eventsCollection = collection(
-      db,
-      "accounts",
-      accountId,
-      "events"
-    ) as CollectionReference<AccountEvent>;
-    const docRef = await addDoc(eventsCollection, addTransaction);
-    console.log("Document written with ID: ", docRef.id);
-  } catch (e) {
-    console.error("Error adding document: ", e);
-  }
+  return [
+    {
+      accountId: transactions.accountId,
+      transactions: transactions.transactions.concat([]),
+      version: transactions.version + 1,
+    },
+    event,
+  ];
 };
 
-const getTransactions = async (
-  db: Firestore,
-  accountId: string
-): Promise<Transaction[]> => {
-  const eventsCollection = collection(
-    db,
-    "accounts",
+const newTransactions = (accountId: string): Transactions => {
+  return {
     accountId,
-    "events"
-  ) as CollectionReference<AccountEvent>;
-  const eventsSnapshot = await getDocs(eventsCollection);
-  const transactions = eventsSnapshot.docs.map((doc): Transaction => {
-    const event = doc.data();
+    transactions: [],
+    version: 1,
+  };
+};
+
+const getTransactions = async (accountId: string): Promise<Transactions> => {
+  const events = await getEvents(accountId);
+  const state = events.reduce((state, event): Transactions => {
     switch (event.type) {
       case "transactionAdded": {
         const {
@@ -117,7 +147,19 @@ const getTransactions = async (
           date,
           transactionId: id,
         } = event;
-        return { id, accountId, date, amount, comment, createdAt };
+        const transaction: Transaction = {
+          id,
+          accountId,
+          date,
+          amount,
+          comment,
+          createdAt,
+        };
+        return {
+          accountId: state.accountId,
+          transactions: state.transactions.concat([transaction]),
+          version: state.version + 1,
+        };
       }
       case "transactionUpdated": {
         // TODO
@@ -128,8 +170,8 @@ const getTransactions = async (
         throw new Error();
       }
     }
-  });
-  transactions.sort((a, b) => {
+  }, newTransactions(accountId));
+  state.transactions.sort((a, b) => {
     return a.date < b.date
       ? -1
       : a.date > b.date
@@ -140,31 +182,33 @@ const getTransactions = async (
       ? 1
       : 0;
   });
-  return transactions;
+  return state;
 };
 
 export default function Account(): JSX.Element {
   const params = useSearchParams();
+  const accountId = `${params.id}`;
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [amount, setAmount] = useState<string>("0");
+  const [amount, setAmount] = useState<string>("");
   const [comment, setComment] = useState<string>("");
   const [date, setDate] = useState<string>(
     new Date().toISOString().substring(0, 10)
   );
-  const [transactions, setTransactions] = useState<Transaction[] | null>(null);
-  const accountId = `${params.id}`;
+  const [transactions, setTransactions] = useState<Transactions>(
+    newTransactions(accountId)
+  );
   useEffect(() => {
     (async () => {
-      const loadedTransactions = await getTransactions(db, accountId);
-      setTransactions(loadedTransactions);
+      const loaded = await getTransactions(accountId);
+      setTransactions(loaded);
     })();
-  }, []);
+  }, [transactions.version]);
   return (
     <Provider>
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Stack.Screen options={{ title: `${params.id}` }} />
         <FlatList
-          data={transactions}
+          data={transactions.transactions}
           keyExtractor={(user) => user.id}
           renderItem={({ item }) => (
             <View style={styles.transaction}>
@@ -215,9 +259,25 @@ export default function Account(): JSX.Element {
               </Button>
               <Button
                 onPress={() => {
-                  createTransaction(db, accountId, { amount, comment, date });
+                  // update local state
+                  const [newTransactions, newEvent] = createTransaction(
+                    transactions,
+                    {
+                      amount,
+                      comment,
+                      date,
+                    }
+                  );
+
+                  // update remote state
+                  setTransactions(newTransactions);
+                  createEvent(newEvent).catch((_) => {
+                    setTransactions(transactions);
+                  });
+
+                  // reset form
                   // do not reset "date" field
-                  setAmount("0");
+                  setAmount("");
                   setComment("");
                   setModalVisible(false);
                 }}
