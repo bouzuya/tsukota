@@ -134,9 +134,11 @@ const newTransactions = (accountId: string): Transactions => {
   };
 };
 
-const getTransactions = async (accountId: string): Promise<Transactions> => {
-  const events = await getEvents(accountId);
-  const state = events.reduce((state, event): Transactions => {
+const restoreTransactions = (
+  accountId: string,
+  events: AccountEvent[]
+): Transactions => {
+  const transactions = events.reduce((state, event): Transactions => {
     switch (event.type) {
       case "transactionAdded": {
         const {
@@ -171,7 +173,7 @@ const getTransactions = async (accountId: string): Promise<Transactions> => {
       }
     }
   }, newTransactions(accountId));
-  state.transactions.sort((a, b) => {
+  transactions.transactions.sort((a, b) => {
     return a.date < b.date
       ? -1
       : a.date > b.date
@@ -182,8 +184,62 @@ const getTransactions = async (accountId: string): Promise<Transactions> => {
       ? 1
       : 0;
   });
-  return state;
+  return transactions;
 };
+type AddTransactionDialogProps = {
+  amount: string;
+  comment: string;
+  date: string;
+  visible: boolean;
+  onChangeAmount: (text: string) => void;
+  onChangeComment: (text: string) => void;
+  onChangeDate: (text: string) => void;
+  onClickCancel: () => void;
+  onClickOk: () => void;
+};
+
+function AddTransactionDialog({
+  amount,
+  comment,
+  date,
+  onChangeAmount,
+  onChangeComment,
+  onChangeDate,
+  onClickCancel,
+  onClickOk,
+  visible,
+}: AddTransactionDialogProps): JSX.Element {
+  return (
+    <Dialog visible={visible}>
+      <Dialog.Title>Add Transaction</Dialog.Title>
+      <Dialog.Content>
+        <TextInput
+          label="Date"
+          mode="outlined"
+          onChangeText={onChangeDate}
+          value={date}
+        />
+        <TextInput
+          keyboardType="numeric"
+          label="Amount"
+          mode="outlined"
+          onChangeText={onChangeAmount}
+          value={amount}
+        />
+        <TextInput
+          label="Comment"
+          mode="outlined"
+          onChangeText={onChangeComment}
+          value={comment}
+        />
+      </Dialog.Content>
+      <Dialog.Actions>
+        <Button onPress={onClickCancel}>Cancel</Button>
+        <Button onPress={onClickOk}>OK</Button>
+      </Dialog.Actions>
+    </Dialog>
+  );
+}
 
 export default function Account(): JSX.Element {
   const params = useSearchParams();
@@ -198,10 +254,9 @@ export default function Account(): JSX.Element {
     newTransactions(accountId)
   );
   useEffect(() => {
-    (async () => {
-      const loaded = await getTransactions(accountId);
-      setTransactions(loaded);
-    })();
+    getEvents(accountId)
+      .then((events) => restoreTransactions(accountId, events))
+      .then((transactions) => setTransactions(transactions));
   }, [transactions.version]);
   return (
     <Provider>
@@ -226,66 +281,45 @@ export default function Account(): JSX.Element {
           style={{ width: "100%", padding: 0, margin: 0 }}
         />
         <Portal>
-          <Dialog visible={modalVisible}>
-            <Dialog.Title>Add Transaction</Dialog.Title>
-            <Dialog.Content>
-              <TextInput
-                label="Date"
-                mode="outlined"
-                onChangeText={setDate}
-                value={date}
-              />
-              <TextInput
-                keyboardType="numeric"
-                label="Amount"
-                mode="outlined"
-                onChangeText={setAmount}
-                value={amount}
-              />
-              <TextInput
-                label="Comment"
-                mode="outlined"
-                onChangeText={setComment}
-                value={comment}
-              />
-            </Dialog.Content>
-            <Dialog.Actions>
-              <Button
-                onPress={() => {
-                  setModalVisible(false);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                onPress={() => {
-                  // update local state
-                  const [newTransactions, newEvent] = createTransaction(
-                    transactions,
-                    {
-                      amount,
-                      comment,
-                      date,
-                    }
-                  );
+          <AddTransactionDialog
+            amount={amount}
+            comment={comment}
+            date={date}
+            onChangeAmount={setAmount}
+            onChangeComment={setComment}
+            onChangeDate={setDate}
+            onClickCancel={() => {
+              // reset form
+              // do not reset "date" field
+              setAmount("");
+              setComment("");
+              setModalVisible(false);
+            }}
+            onClickOk={() => {
+              // update local state
+              const [newTransactions, newEvent] = createTransaction(
+                transactions,
+                {
+                  amount,
+                  comment,
+                  date,
+                }
+              );
 
-                  // update remote state
-                  setTransactions(newTransactions);
-                  createEvent(newEvent).catch((_) => {
-                    setTransactions(transactions);
-                  });
+              // update remote state
+              setTransactions(newTransactions);
+              createEvent(newEvent).catch((_) => {
+                setTransactions(transactions);
+              });
 
-                  // reset form
-                  // do not reset "date" field
-                  setAmount("");
-                  setComment("");
-                  setModalVisible(false);
-                }}
-              >
-                OK
-              </Button>
-            </Dialog.Actions>
-          </Dialog>
+              // reset form
+              // do not reset "date" field
+              setAmount("");
+              setComment("");
+              setModalVisible(false);
+            }}
+            visible={modalVisible}
+          />
         </Portal>
         <FAB
           icon="plus"
