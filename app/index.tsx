@@ -17,23 +17,56 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { db } from "../firebase";
+import { storage } from "../storage";
 
-const createAccount = async (db: Firestore, name: string): Promise<void> => {
+const createAccountInFirestore = async (name: string): Promise<Account> => {
   try {
     const accountsCollection = collection(db, "accounts");
     const docRef = await addDoc(accountsCollection, { name });
     console.log("Document written with ID: ", docRef.id);
+    const id = docRef.id;
+    return { id, name };
   } catch (e) {
     console.error("Error adding document: ", e);
+    throw e;
   }
 };
 
+const createAccount = async (
+  name: string,
+  setAccounts: (accounts: Account[]) => void
+): Promise<void> => {
+  const { id } = await createAccountInFirestore(name);
+  await storage.save({ key: "accounts", id, data: { id, name } });
+  const loaded = await getAccounts();
+  setAccounts(loaded);
+};
+
 const getAccounts = async (): Promise<Account[]> => {
-  // TODO: read from local storage
-  return Promise.resolve([
+  const key = "accounts";
+  const ids = await storage.getIdsForKey(key);
+
+  // TODO: insert dummy data for debugging
+  const dummyData = [
     { id: "MoLT1vUAru7aJ2KRBPHs", name: "Account1" },
     { id: "klzmBVOGMaF5xZqTORwy", name: "Account2" },
-  ]);
+  ];
+  for (const { id, name } of dummyData) {
+    if (ids.indexOf(id) === -1) {
+      await storage.save({ key, id, data: { id, name } });
+    }
+  }
+
+  const accounts = [];
+  for (const id of ids) {
+    const account = await storage.load<Account>({
+      key,
+      id,
+    });
+    accounts.push(account);
+  }
+
+  return accounts;
 };
 
 type Account = {
@@ -76,6 +109,7 @@ function Inner(): JSX.Element {
                     params: { id: item.id },
                   })
                 }
+                description={`id: ${item.id}`}
                 title={item.name}
               />
             )}
@@ -110,7 +144,7 @@ function Inner(): JSX.Element {
             </Button>
             <Button
               onPress={() => {
-                createAccount(db, name);
+                createAccount(name, setAccounts);
                 setName("");
                 setModalVisible(false);
               }}
