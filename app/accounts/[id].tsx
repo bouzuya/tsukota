@@ -108,7 +108,7 @@ const createTransaction = (
     type: "transactionAdded",
     transactionId: uuidv4({
       rng: () => {
-        const array = new Uint32Array(16);
+        const array = new Uint8Array(16);
         crypto.getRandomValues(array);
         return array;
       },
@@ -165,8 +165,23 @@ const restoreTransactions = (
         };
       }
       case "transactionUpdated": {
-        // TODO
-        throw new Error();
+        const { transactionId, amount, comment, date } = event;
+        return {
+          accountId: state.accountId,
+          transactions: state.transactions.map((old): Transaction => {
+            return old.id !== transactionId
+              ? old
+              : {
+                  id: old.id,
+                  accountId: old.accountId,
+                  date,
+                  amount,
+                  comment,
+                  createdAt: old.createdAt,
+                };
+          }),
+          version: state.version + 1,
+        };
       }
       case "transactionDeleted": {
         // TODO
@@ -188,10 +203,33 @@ const restoreTransactions = (
   return transactions;
 };
 
-type AddTransactionDialogProps = {
+const updateTransaction = (
+  transactions: Transactions,
+  transactionId: string,
+  props: TransactionProps
+): [Transactions, AccountEvent] => {
+  const event: TransactionUpdated = {
+    type: "transactionUpdated",
+    transactionId,
+    accountId: transactions.accountId,
+    at: new Date().toISOString(),
+    ...props,
+  };
+  return [
+    {
+      accountId: transactions.accountId,
+      transactions: transactions.transactions.concat([]),
+      version: transactions.version + 1,
+    },
+    event,
+  ];
+};
+
+type EditTransactionDialogProps = {
   amount: string;
   comment: string;
   date: string;
+  id: string | null;
   visible: boolean;
   onChangeAmount: (text: string) => void;
   onChangeComment: (text: string) => void;
@@ -200,20 +238,21 @@ type AddTransactionDialogProps = {
   onClickOk: () => void;
 };
 
-function AddTransactionDialog({
+function EditTransactionDialog({
   amount,
   comment,
   date,
+  id,
   onChangeAmount,
   onChangeComment,
   onChangeDate,
   onClickCancel,
   onClickOk,
   visible,
-}: AddTransactionDialogProps): JSX.Element {
+}: EditTransactionDialogProps): JSX.Element {
   return (
     <Dialog visible={visible}>
-      <Dialog.Title>Add Transaction</Dialog.Title>
+      <Dialog.Title>{id === null ? "Add" : "Edit"} Transaction</Dialog.Title>
       <Dialog.Content>
         <TextInput
           label="Date"
@@ -252,6 +291,7 @@ export default function Account(): JSX.Element {
   const [date, setDate] = useState<string>(
     new Date().toISOString().substring(0, 10)
   );
+  const [transactionId, setTransactionId] = useState<string | null>(null);
   const [transactions, setTransactions] = useState<Transactions>(
     newTransactions(accountId)
   );
@@ -284,7 +324,17 @@ export default function Account(): JSX.Element {
 
           {transactions.transactions.map((transaction) => {
             return (
-              <DataTable.Row key={transaction.id}>
+              <DataTable.Row
+                key={transaction.id}
+                onPress={() => {
+                  // reset form
+                  setDate(transaction.date);
+                  setAmount(transaction.amount);
+                  setComment(transaction.comment);
+                  setTransactionId(transaction.id);
+                  setModalVisible(true);
+                }}
+              >
                 <DataTable.Cell style={{ flex: 1, justifyContent: "center" }}>
                   {transaction.date}
                 </DataTable.Cell>
@@ -299,10 +349,11 @@ export default function Account(): JSX.Element {
           })}
         </DataTable>
         <Portal>
-          <AddTransactionDialog
+          <EditTransactionDialog
             amount={amount}
             comment={comment}
             date={date}
+            id={transactionId}
             onChangeAmount={setAmount}
             onChangeComment={setComment}
             onChangeDate={setDate}
@@ -311,30 +362,57 @@ export default function Account(): JSX.Element {
               // do not reset "date" field
               setAmount("");
               setComment("");
+              setTransactionId(null);
               setModalVisible(false);
             }}
             onClickOk={() => {
-              // update local state
-              const [newTransactions, newEvent] = createTransaction(
-                transactions,
-                {
-                  amount,
-                  comment,
-                  date,
-                }
-              );
+              if (transactionId === null) {
+                // update local state
+                const [newTransactions, newEvent] = createTransaction(
+                  transactions,
+                  {
+                    amount,
+                    comment,
+                    date,
+                  }
+                );
 
-              // update remote state
-              setTransactions(newTransactions);
-              createEvent(newEvent).catch((_) => {
-                setTransactions(transactions);
-              });
+                // update remote state
+                setTransactions(newTransactions);
+                createEvent(newEvent).catch((_) => {
+                  setTransactions(transactions);
+                });
 
-              // reset form
-              // do not reset "date" field
-              setAmount("");
-              setComment("");
-              setModalVisible(false);
+                // reset form
+                // do not reset "date" field
+                setAmount("");
+                setComment("");
+                setModalVisible(false);
+              } else {
+                // update local state
+                const [newTransactions, newEvent] = updateTransaction(
+                  transactions,
+                  transactionId,
+                  {
+                    amount,
+                    comment,
+                    date,
+                  }
+                );
+
+                // update remote state
+                setTransactions(newTransactions);
+                createEvent(newEvent).catch((_) => {
+                  setTransactions(transactions);
+                });
+
+                // reset form
+                // do not reset "date" field
+                setAmount("");
+                setComment("");
+                setTransactionId(null);
+                setModalVisible(false);
+              }
             }}
             visible={modalVisible}
           />
