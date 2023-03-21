@@ -11,6 +11,7 @@ import { useEffect, useState, version } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import {
   Button,
+  DataTable,
   Dialog,
   FAB,
   Portal,
@@ -186,6 +187,7 @@ const restoreTransactions = (
   });
   return transactions;
 };
+
 type AddTransactionDialogProps = {
   amount: string;
   comment: string;
@@ -262,24 +264,40 @@ export default function Account(): JSX.Element {
     <Provider>
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Stack.Screen options={{ title: `${params.id}` }} />
-        <FlatList
-          data={transactions.transactions}
-          keyExtractor={(user) => user.id}
-          renderItem={({ item }) => (
-            <View style={styles.transaction}>
-              <View style={styles.transactionHeadline}>
-                <Text style={styles.transactionHeadlineText1}>{item.date}</Text>
-                <Text style={styles.transactionHeadlineText2}>
-                  {item.amount}
-                </Text>
-              </View>
-              <Text style={styles.transactionSupportingText}>
-                {item.comment}
-              </Text>
-            </View>
-          )}
-          style={{ width: "100%", padding: 0, margin: 0 }}
-        />
+        <DataTable style={{ flex: 1 }}>
+          <DataTable.Header>
+            <DataTable.Title
+              sortDirection="ascending"
+              style={{ flex: 1, justifyContent: "center" }}
+            >
+              Date
+            </DataTable.Title>
+            <DataTable.Title
+              style={{ flex: 1, paddingEnd: 8, justifyContent: "center" }}
+            >
+              Amount
+            </DataTable.Title>
+            <DataTable.Title style={{ flex: 2, justifyContent: "center" }}>
+              Comment
+            </DataTable.Title>
+          </DataTable.Header>
+
+          {transactions.transactions.map((transaction) => {
+            return (
+              <DataTable.Row key={transaction.id}>
+                <DataTable.Cell style={{ flex: 1, justifyContent: "center" }}>
+                  {transaction.date}
+                </DataTable.Cell>
+                <DataTable.Cell numeric style={{ flex: 1, paddingEnd: 8 }}>
+                  {transaction.amount}
+                </DataTable.Cell>
+                <DataTable.Cell style={{ flex: 2 }}>
+                  {transaction.comment}
+                </DataTable.Cell>
+              </DataTable.Row>
+            );
+          })}
+        </DataTable>
         <Portal>
           <AddTransactionDialog
             amount={amount}
@@ -337,36 +355,5 @@ const styles = StyleSheet.create({
     margin: 16,
     position: "absolute",
     right: 0,
-  },
-  transaction: {
-    alignItems: "flex-start",
-    height: 56 + 8 * 2,
-    justifyContent: "center",
-    margin: 0,
-    paddingEnd: 24,
-    paddingStart: 16,
-    paddingVertical: 8,
-    width: "100%",
-  },
-  transactionHeadline: {
-    flexDirection: "row",
-    flexWrap: "nowrap",
-  },
-  transactionHeadlineText1: {
-    alignItems: "flex-start",
-    color: "#1C1B1F",
-    flex: 1,
-    fontSize: 16,
-    textAlign: "left",
-  },
-  transactionHeadlineText2: {
-    alignItems: "flex-end",
-    color: "#49454E",
-    flex: 1,
-    fontSize: 16,
-    textAlign: "right",
-  },
-  transactionSupportingText: {
-    fontSize: 14,
   },
 });
