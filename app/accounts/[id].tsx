@@ -95,7 +95,11 @@ const getEvents = async (accountId: string): Promise<AccountEvent[]> => {
     "events"
   ) as CollectionReference<AccountEvent>;
   const eventsSnapshot = await getDocs(eventsCollection);
-  return eventsSnapshot.docs.map((doc) => doc.data());
+  return eventsSnapshot.docs
+    .map((doc) => doc.data())
+    .sort((a, b) => {
+      return a.at < b.at ? -1 : a.at > b.at ? 1 : 0;
+    });
 };
 
 //
