@@ -10,6 +10,13 @@ import { generate as generateUuidV4 } from "./uuid";
 // re-export
 export { AccountEvent };
 
+export type Category = {
+  id: string;
+  accountId: string;
+  name: string;
+  createdAt: string;
+};
+
 export type Transaction = {
   id: string;
   accountId: string;
@@ -21,6 +28,7 @@ export type Transaction = {
 
 export type Account = {
   accountId: string;
+  categories: Category[];
   transactions: Transaction[];
   version: number;
 };
@@ -39,6 +47,7 @@ export const createTransaction = (
   return [
     {
       accountId: self.accountId,
+      categories: self.categories,
       transactions: self.transactions.concat([]),
       version: self.version + 1,
     },
@@ -59,6 +68,7 @@ export const deleteTransaction = (
   return [
     {
       accountId: self.accountId,
+      categories: self.categories,
       transactions: self.transactions.filter(
         (item) => item.id !== transactionId
       ),
@@ -71,6 +81,7 @@ export const deleteTransaction = (
 export const newAccount = (accountId: string): Account => {
   return {
     accountId,
+    categories: [],
     transactions: [],
     version: 1,
   };
@@ -107,6 +118,7 @@ export const restoreTransactions = (
         };
         return {
           accountId: state.accountId,
+          categories: state.categories,
           transactions: state.transactions.concat([transaction]),
           version: state.version + 1,
         };
@@ -115,6 +127,7 @@ export const restoreTransactions = (
         const { transactionId, amount, comment, date } = event;
         return {
           accountId: state.accountId,
+          categories: state.categories,
           transactions: state.transactions.map((old): Transaction => {
             return old.id !== transactionId
               ? old
@@ -134,6 +147,7 @@ export const restoreTransactions = (
         const { transactionId } = event;
         return {
           accountId: state.accountId,
+          categories: state.categories,
           transactions: state.transactions.filter(
             (old) => old.id !== transactionId
           ),
@@ -171,6 +185,7 @@ export const updateTransaction = (
   return [
     {
       accountId: self.accountId,
+      categories: self.categories,
       transactions: self.transactions.map((item) => {
         return item.id !== transactionId
           ? item
