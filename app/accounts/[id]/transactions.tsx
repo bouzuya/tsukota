@@ -1,4 +1,4 @@
-import { Stack, useSearchParams } from "expo-router";
+import { Stack, Tabs, useSearchParams } from "expo-router";
 import {
   addDoc,
   collection,
@@ -16,7 +16,7 @@ import {
   Provider,
   TextInput,
 } from "react-native-paper";
-import { db } from "../../firebase";
+import { db } from "../../../firebase";
 import {
   AccountEvent,
   createTransaction,
@@ -25,7 +25,7 @@ import {
   restoreTransactions,
   Transactions,
   updateTransaction,
-} from "../../lib/transactions";
+} from "../../../lib/transactions";
 
 // API
 
@@ -155,7 +155,7 @@ function EditTransactionDialog({
   );
 }
 
-export default function Account(): JSX.Element {
+export default function TransactionsRoot(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
