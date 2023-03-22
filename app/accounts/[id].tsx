@@ -1,29 +1,24 @@
 import * as crypto from "expo-crypto";
-import { Stack, useSearchParams, useRouter } from "expo-router";
+import { Stack, useSearchParams } from "expo-router";
 import {
-  Firestore,
   addDoc,
   collection,
   getDocs,
   CollectionReference,
 } from "firebase/firestore";
-import { useEffect, useState, version } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import {
   Button,
-  DataTable,
   Dialog,
   FAB,
+  List,
   Portal,
   Provider,
   TextInput,
 } from "react-native-paper";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "../../firebase";
-
-type EventCommon = {
-  eventId: string;
-};
 
 type TransactionProps = {
   date: string;
@@ -308,28 +303,42 @@ export default function Account(): JSX.Element {
     <Provider>
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Stack.Screen options={{ title: `${params.id}` }} />
-        <DataTable style={{ flex: 1 }}>
-          <DataTable.Header>
-            <DataTable.Title
-              sortDirection="ascending"
-              style={{ flex: 1, justifyContent: "center" }}
-            >
-              Date
-            </DataTable.Title>
-            <DataTable.Title
-              style={{ flex: 1, paddingEnd: 8, justifyContent: "center" }}
-            >
-              Amount
-            </DataTable.Title>
-            <DataTable.Title style={{ flex: 2, justifyContent: "center" }}>
-              Comment
-            </DataTable.Title>
-          </DataTable.Header>
-
-          {transactions.transactions.map((transaction) => {
+        <FlatList
+          data={transactions.transactions}
+          renderItem={({ item: transaction }) => {
+            const ensureDescription = (s: string): string =>
+              s.length === 0 ? " " : s;
             return (
-              <DataTable.Row
+              <List.Item
+                description={ensureDescription(transaction.comment)}
                 key={transaction.id}
+                left={() => (
+                  <View
+                    style={{
+                      flexWrap: "nowrap",
+                      flexDirection: "row",
+                      paddingStart: 16,
+                      position: "absolute",
+                      width: "100%",
+                      margin: 0,
+                    }}
+                  >
+                    <Text style={{ flex: 1, fontSize: 16, color: "#1C1B1F" }}>
+                      {transaction.date}
+                    </Text>
+                    <Text
+                      style={{
+                        flex: 1,
+                        fontSize: 16,
+                        color: "#1C1B1F",
+                        textAlign: "right",
+                        paddingHorizontal: 8,
+                      }}
+                    >
+                      {transaction.amount}
+                    </Text>
+                  </View>
+                )}
                 onPress={() => {
                   // reset form
                   setDate(transaction.date);
@@ -338,20 +347,12 @@ export default function Account(): JSX.Element {
                   setTransactionId(transaction.id);
                   setModalVisible(true);
                 }}
-              >
-                <DataTable.Cell style={{ flex: 1, justifyContent: "center" }}>
-                  {transaction.date}
-                </DataTable.Cell>
-                <DataTable.Cell numeric style={{ flex: 1, paddingEnd: 8 }}>
-                  {transaction.amount}
-                </DataTable.Cell>
-                <DataTable.Cell style={{ flex: 2 }}>
-                  {transaction.comment}
-                </DataTable.Cell>
-              </DataTable.Row>
+                title=""
+              />
             );
-          })}
-        </DataTable>
+          }}
+          style={{ flex: 1, width: "100%" }}
+        />
         <Portal>
           <EditTransactionDialog
             amount={amount}
