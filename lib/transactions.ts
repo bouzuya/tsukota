@@ -1,5 +1,3 @@
-import * as crypto from "expo-crypto";
-import { v4 as uuidv4 } from "uuid";
 import {
   AccountEvent,
   TransactionAdded,
@@ -7,6 +5,7 @@ import {
   TransactionProps,
   TransactionUpdated,
 } from "./account-events";
+import { generate as generateUuidV4 } from "./uuid";
 
 // re-export
 export { AccountEvent };
@@ -32,13 +31,7 @@ export const createTransaction = (
 ): [Transactions, AccountEvent] => {
   const event: TransactionAdded = {
     type: "transactionAdded",
-    transactionId: uuidv4({
-      rng: () => {
-        const array = new Uint8Array(16);
-        crypto.getRandomValues(array);
-        return array;
-      },
-    }),
+    transactionId: generateUuidV4(),
     accountId: transactions.accountId,
     at: new Date().toISOString(),
     ...props,
