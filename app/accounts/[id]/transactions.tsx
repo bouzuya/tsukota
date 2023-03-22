@@ -21,11 +21,11 @@ import {
   AccountEvent,
   createTransaction,
   deleteTransaction,
-  newTransactions,
+  newAccount,
   restoreTransactions,
-  Transactions,
+  Account,
   updateTransaction,
-} from "../../../lib/transactions";
+} from "../../../lib/account";
 
 // API
 
@@ -166,8 +166,8 @@ export default function TransactionsRoot(): JSX.Element {
     new Date().toISOString().substring(0, 10)
   );
   const [transactionId, setTransactionId] = useState<string | null>(null);
-  const [transactions, setTransactions] = useState<Transactions>(
-    newTransactions(accountId)
+  const [transactions, setTransactions] = useState<Account>(
+    newAccount(accountId)
   );
   useEffect(() => {
     getEvents(accountId)

@@ -19,56 +19,56 @@ export type Transaction = {
   createdAt: string;
 };
 
-export type Transactions = {
+export type Account = {
   accountId: string;
   transactions: Transaction[];
   version: number;
 };
 
 export const createTransaction = (
-  transactions: Transactions,
+  self: Account,
   props: TransactionProps
-): [Transactions, AccountEvent] => {
+): [Account, AccountEvent] => {
   const event: TransactionAdded = {
     type: "transactionAdded",
     transactionId: generateUuidV4(),
-    accountId: transactions.accountId,
+    accountId: self.accountId,
     at: new Date().toISOString(),
     ...props,
   };
   return [
     {
-      accountId: transactions.accountId,
-      transactions: transactions.transactions.concat([]),
-      version: transactions.version + 1,
+      accountId: self.accountId,
+      transactions: self.transactions.concat([]),
+      version: self.version + 1,
     },
     event,
   ];
 };
 
 export const deleteTransaction = (
-  transactions: Transactions,
+  self: Account,
   transactionId: string
-): [Transactions, AccountEvent] => {
+): [Account, AccountEvent] => {
   const event: TransactionDeleted = {
     type: "transactionDeleted",
     transactionId,
-    accountId: transactions.accountId,
+    accountId: self.accountId,
     at: new Date().toISOString(),
   };
   return [
     {
-      accountId: transactions.accountId,
-      transactions: transactions.transactions.filter(
+      accountId: self.accountId,
+      transactions: self.transactions.filter(
         (item) => item.id !== transactionId
       ),
-      version: transactions.version + 1,
+      version: self.version + 1,
     },
     event,
   ];
 };
 
-export const newTransactions = (accountId: string): Transactions => {
+export const newAccount = (accountId: string): Account => {
   return {
     accountId,
     transactions: [],
@@ -79,8 +79,8 @@ export const newTransactions = (accountId: string): Transactions => {
 export const restoreTransactions = (
   accountId: string,
   events: AccountEvent[]
-): Transactions => {
-  const transactions = events.reduce((state, event): Transactions => {
+): Account => {
+  const transactions = events.reduce((state, event): Account => {
     switch (event.type) {
       case "categoryAdded":
         throw new Error("TODO: Not Implemented Yet");
@@ -141,7 +141,7 @@ export const restoreTransactions = (
         };
       }
     }
-  }, newTransactions(accountId));
+  }, newAccount(accountId));
   transactions.transactions.sort((a, b) => {
     return a.date < b.date
       ? -1
@@ -157,21 +157,21 @@ export const restoreTransactions = (
 };
 
 export const updateTransaction = (
-  transactions: Transactions,
+  self: Account,
   transactionId: string,
   props: TransactionProps
-): [Transactions, AccountEvent] => {
+): [Account, AccountEvent] => {
   const event: TransactionUpdated = {
     type: "transactionUpdated",
     transactionId,
-    accountId: transactions.accountId,
+    accountId: self.accountId,
     at: new Date().toISOString(),
     ...props,
   };
   return [
     {
-      accountId: transactions.accountId,
-      transactions: transactions.transactions.map((item) => {
+      accountId: self.accountId,
+      transactions: self.transactions.map((item) => {
         return item.id !== transactionId
           ? item
           : {
@@ -181,7 +181,7 @@ export const updateTransaction = (
               comment: event.comment,
             };
       }),
-      version: transactions.version + 1,
+      version: self.version + 1,
     },
     event,
   ];
