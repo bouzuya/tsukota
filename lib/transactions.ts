@@ -1,34 +1,15 @@
 import * as crypto from "expo-crypto";
 import { v4 as uuidv4 } from "uuid";
+import {
+  AccountEvent,
+  TransactionAdded,
+  TransactionDeleted,
+  TransactionProps,
+  TransactionUpdated,
+} from "./account-events";
 
-export type TransactionProps = {
-  date: string;
-  amount: string;
-  comment: string;
-};
-
-export type TransactionAdded = {
-  type: "transactionAdded";
-  transactionId: string;
-  accountId: string;
-  at: string;
-} & TransactionProps;
-
-export type TransactionUpdated = {
-  type: "transactionUpdated";
-  transactionId: string;
-  accountId: string;
-  at: string;
-} & TransactionProps;
-
-export type TransactionDeleted = {
-  type: "transactionDeleted";
-  transactionId: string;
-  accountId: string;
-  at: string;
-};
-
-export type AccountEvent = TransactionAdded | TransactionUpdated | TransactionDeleted;
+// re-export
+export { AccountEvent };
 
 export type Transaction = {
   id: string;
@@ -108,6 +89,12 @@ export const restoreTransactions = (
 ): Transactions => {
   const transactions = events.reduce((state, event): Transactions => {
     switch (event.type) {
+      case "categoryAdded":
+        throw new Error("TODO: Not Implemented Yet");
+      case "categoryDeleted":
+        throw new Error("TODO: Not Implemented Yet");
+      case "categoryUpdated":
+        throw new Error("TODO: Not Implemented Yet");
       case "transactionAdded": {
         const {
           accountId,
