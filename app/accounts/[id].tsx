@@ -126,6 +126,28 @@ const createTransaction = (
   ];
 };
 
+const deleteTransaction = (
+  transactions: Transactions,
+  transactionId: string
+): [Transactions, AccountEvent] => {
+  const event: TransactionDeleted = {
+    type: "transactionDeleted",
+    transactionId,
+    accountId: transactions.accountId,
+    at: new Date().toISOString(),
+  };
+  return [
+    {
+      accountId: transactions.accountId,
+      transactions: transactions.transactions.filter(
+        (item) => item.id !== transactionId
+      ),
+      version: transactions.version + 1,
+    },
+    event,
+  ];
+};
+
 const newTransactions = (accountId: string): Transactions => {
   return {
     accountId,
@@ -183,8 +205,14 @@ const restoreTransactions = (
         };
       }
       case "transactionDeleted": {
-        // TODO
-        throw new Error();
+        const { transactionId } = event;
+        return {
+          accountId: state.accountId,
+          transactions: state.transactions.filter(
+            (old) => old.id !== transactionId
+          ),
+          version: state.version + 1,
+        };
       }
     }
   }, newTransactions(accountId));
@@ -217,24 +245,69 @@ const updateTransaction = (
   return [
     {
       accountId: transactions.accountId,
-      transactions: transactions.transactions.concat([]),
+      transactions: transactions.transactions.map((item) => {
+        return item.id !== transactionId
+          ? item
+          : {
+              ...item,
+              date: event.date,
+              amount: event.amount,
+              comment: event.comment,
+            };
+      }),
       version: transactions.version + 1,
     },
     event,
   ];
 };
 
+type DeleteTransactionDialogProps = {
+  amount: string;
+  comment: string;
+  date: string;
+  id: string | null;
+  onClickCancel: () => void;
+  onClickOk: () => void;
+  visible: boolean;
+};
+
+function DeleteTransactionDialog({
+  amount,
+  comment,
+  date,
+  id,
+  onClickCancel,
+  onClickOk,
+  visible,
+}: DeleteTransactionDialogProps): JSX.Element | null {
+  return id === null ? null : (
+    <Dialog visible={visible}>
+      <Dialog.Title>Delete Transaction</Dialog.Title>
+      <Dialog.Content>
+        <Text>Delete the transaction?</Text>
+        <Text>Date: {date}</Text>
+        <Text>Amount: {amount}</Text>
+        <Text>Comment: {comment}</Text>
+      </Dialog.Content>
+      <Dialog.Actions>
+        <Button onPress={onClickCancel}>Cancel</Button>
+        <Button onPress={onClickOk}>OK</Button>
+      </Dialog.Actions>
+    </Dialog>
+  );
+}
+
 type EditTransactionDialogProps = {
   amount: string;
   comment: string;
   date: string;
   id: string | null;
-  visible: boolean;
   onChangeAmount: (text: string) => void;
   onChangeComment: (text: string) => void;
   onChangeDate: (text: string) => void;
   onClickCancel: () => void;
   onClickOk: () => void;
+  visible: boolean;
 };
 
 function EditTransactionDialog({
@@ -284,7 +357,8 @@ function EditTransactionDialog({
 export default function Account(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
+  const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
   const [amount, setAmount] = useState<string>("");
   const [comment, setComment] = useState<string>("");
   const [date, setDate] = useState<string>(
@@ -339,13 +413,20 @@ export default function Account(): JSX.Element {
                     </Text>
                   </View>
                 )}
+                onLongPress={() => {
+                  setDate(transaction.date);
+                  setAmount(transaction.amount);
+                  setComment(transaction.comment);
+                  setTransactionId(transaction.id);
+                  setDeleteModalVisible(true);
+                }}
                 onPress={() => {
                   // reset form
                   setDate(transaction.date);
                   setAmount(transaction.amount);
                   setComment(transaction.comment);
                   setTransactionId(transaction.id);
-                  setModalVisible(true);
+                  setEditModalVisible(true);
                 }}
                 title=""
               />
@@ -354,6 +435,43 @@ export default function Account(): JSX.Element {
           style={{ flex: 1, width: "100%" }}
         />
         <Portal>
+          <DeleteTransactionDialog
+            amount={amount}
+            comment={comment}
+            date={date}
+            id={transactionId}
+            onClickCancel={() => {
+              // reset form
+              // do not reset "date" field
+              setAmount("");
+              setComment("");
+              setTransactionId(null);
+              setDeleteModalVisible(false);
+            }}
+            onClickOk={() => {
+              if (transactionId !== null) {
+                // update local state
+                const [newTransactions, newEvent] = deleteTransaction(
+                  transactions,
+                  transactionId
+                );
+
+                // update remote state
+                setTransactions(newTransactions);
+                createEvent(newEvent).catch((_) => {
+                  setTransactions(transactions);
+                });
+              }
+
+              // reset form
+              // do not reset "date" field
+              setAmount("");
+              setComment("");
+              setTransactionId(null);
+              setDeleteModalVisible(false);
+            }}
+            visible={deleteModalVisible}
+          />
           <EditTransactionDialog
             amount={amount}
             comment={comment}
@@ -368,7 +486,7 @@ export default function Account(): JSX.Element {
               setAmount("");
               setComment("");
               setTransactionId(null);
-              setModalVisible(false);
+              setEditModalVisible(false);
             }}
             onClickOk={() => {
               if (transactionId === null) {
@@ -392,7 +510,7 @@ export default function Account(): JSX.Element {
                 // do not reset "date" field
                 setAmount("");
                 setComment("");
-                setModalVisible(false);
+                setEditModalVisible(false);
               } else {
                 // update local state
                 const [newTransactions, newEvent] = updateTransaction(
@@ -416,16 +534,16 @@ export default function Account(): JSX.Element {
                 setAmount("");
                 setComment("");
                 setTransactionId(null);
-                setModalVisible(false);
+                setEditModalVisible(false);
               }
             }}
-            visible={modalVisible}
+            visible={editModalVisible}
           />
         </Portal>
         <FAB
           icon="plus"
           style={styles.fab}
-          onPress={() => setModalVisible(true)}
+          onPress={() => setEditModalVisible(true)}
         />
       </View>
     </Provider>
