@@ -3,6 +3,7 @@
 import {
   AccountEvent,
   CategoryAdded,
+  CategoryDeleted,
   CategoryUpdated,
   TransactionAdded,
   TransactionDeleted,
@@ -61,6 +62,19 @@ export const createTransaction = (
     accountId: self.accountId,
     at: new Date().toISOString(),
     ...props,
+  };
+  return [applyEvent(self, event), event];
+};
+
+export const deleteCategory = (
+  self: Account,
+  categoryId: string
+): [Account, AccountEvent] => {
+  const event: CategoryDeleted = {
+    type: "categoryDeleted",
+    categoryId,
+    accountId: self.accountId,
+    at: new Date().toISOString(),
   };
   return [applyEvent(self, event), event];
 };
@@ -157,8 +171,15 @@ const applyEvent = (self: Account, event: AccountEvent): Account => {
         version: self.version + 1,
       };
     }
-    case "categoryDeleted":
-      throw new Error("TODO: Not Implemented Yet");
+    case "categoryDeleted": {
+      const { categoryId } = event;
+      return {
+        accountId: self.accountId,
+        categories: self.categories.filter((old) => old.id !== categoryId),
+        transactions: self.transactions,
+        version: self.version + 1,
+      };
+    }
     case "categoryUpdated": {
       const { categoryId, name } = event;
       return {
