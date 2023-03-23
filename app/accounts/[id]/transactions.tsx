@@ -7,7 +7,6 @@ import { EditTransactionDialog } from "../../../components/EditTransactionDialog
 import {
   createTransaction,
   deleteTransaction,
-  newAccount,
   restoreAccount,
   Account,
   updateTransaction,
@@ -25,17 +24,17 @@ export default function Transactions(): JSX.Element {
     new Date().toISOString().substring(0, 10)
   );
   const [transactionId, setTransactionId] = useState<string | null>(null);
-  const [account, setAccount] = useState<Account>(newAccount(accountId));
+  const [account, setAccount] = useState<Account | null>(null);
   useEffect(() => {
     getEvents(accountId)
-      .then((events) => restoreAccount(accountId, events))
+      .then((events) => restoreAccount(events))
       .then((account) => setAccount(account));
-  }, [account.version]);
+  }, [account?.version]);
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Stack.Screen options={{ title: `${params.id}` }} />
       <FlatList
-        data={account.transactions}
+        data={account?.transactions ?? []}
         renderItem={({ item: transaction }) => {
           const ensureDescription = (s: string): string =>
             s.length === 0 ? " " : s;
@@ -110,6 +109,7 @@ export default function Transactions(): JSX.Element {
           setDeleteModalVisible(false);
         }}
         onClickOk={() => {
+          if (account === null) return;
           if (transactionId !== null) {
             // update local state
             const [newTransactions, newEvent] = deleteTransaction(
@@ -150,6 +150,7 @@ export default function Transactions(): JSX.Element {
           setEditModalVisible(false);
         }}
         onClickOk={() => {
+          if (account === null) return;
           if (transactionId === null) {
             // update local state
             const [newTransactions, newEvent] = createTransaction(account, {

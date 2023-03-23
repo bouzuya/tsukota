@@ -3,9 +3,25 @@ import {
   collection,
   getDocs,
   CollectionReference,
+  doc,
+  setDoc,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { AccountEvent } from "./account";
+
+export const createAccount = async (
+  id: string,
+  name: string
+): Promise<void> => {
+  try {
+    const accountDocument = doc(db, "accounts", id);
+    await setDoc(accountDocument, { name });
+    console.log("Document written with ID: ", id);
+  } catch (e) {
+    console.error("Error adding document: ", e);
+    throw e;
+  }
+};
 
 export const createEvent = async (event: AccountEvent): Promise<void> => {
   const accountId = event.accountId;

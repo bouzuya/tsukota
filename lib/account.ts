@@ -1,6 +1,7 @@
 // Account Aggregate
 
 import {
+  AccountCreated,
   AccountEvent,
   CategoryAdded,
   CategoryDeleted,
@@ -34,6 +35,7 @@ export type Transaction = {
 export type Account = {
   accountId: string;
   categories: Category[];
+  name: string;
   transactions: Transaction[];
   version: number;
 };
@@ -92,35 +94,24 @@ export const deleteTransaction = (
   return [applyEvent(self, event), event];
 };
 
-export const newAccount = (accountId: string): Account => {
-  return {
-    accountId,
-    categories: [],
-    transactions: [],
-    version: 1,
+export const createAccount = (name: string): [Account, AccountEvent] => {
+  const event: AccountCreated = {
+    type: "accountCreated",
+    accountId: generateUuidV4(),
+    name,
+    at: new Date().toISOString(),
   };
+  return [applyEvent(null, event), event];
 };
 
-export const restoreAccount = (
-  accountId: string,
-  events: AccountEvent[]
-): Account => {
-  const account = events.reduce(
-    (state, event) => applyEvent(state, event),
-    newAccount(accountId)
-  );
-  account.transactions.sort((a, b) => {
-    return a.date < b.date
-      ? -1
-      : a.date > b.date
-      ? 1
-      : a.createdAt < b.createdAt
-      ? -1
-      : a.createdAt > b.createdAt
-      ? 1
-      : 0;
-  });
-  return account;
+export const restoreAccount = (events: AccountEvent[]): Account => {
+  if (events.length === 0) throw new Error("events is empty");
+  return events
+    .slice(1)
+    .reduce(
+      (state, event) => applyEvent(state, event),
+      applyEvent(null, events[0])
+    );
 };
 
 export const updateCategory = (
@@ -153,12 +144,26 @@ export const updateTransaction = (
   return [applyEvent(self, event), event];
 };
 
-const applyEvent = (self: Account, event: AccountEvent): Account => {
+const applyEvent = (self: Account | null, event: AccountEvent): Account => {
+  if (self === null) {
+    if (event.type !== "accountCreated")
+      throw new Error("Account is not created");
+    const { accountId, name } = event;
+    return {
+      accountId,
+      name,
+      categories: [],
+      transactions: [],
+      version: 1,
+    };
+  }
   switch (event.type) {
+    case "accountCreated":
+      throw new Error("applyEvent can't handle AccountCreated event");
     case "categoryAdded": {
       const { at: createdAt, name, categoryId: id } = event;
       return {
-        accountId: self.accountId,
+        ...self,
         categories: self.categories.concat([
           {
             id,
@@ -167,23 +172,21 @@ const applyEvent = (self: Account, event: AccountEvent): Account => {
             createdAt,
           },
         ]),
-        transactions: self.transactions,
         version: self.version + 1,
       };
     }
     case "categoryDeleted": {
       const { categoryId } = event;
       return {
-        accountId: self.accountId,
+        ...self,
         categories: self.categories.filter((old) => old.id !== categoryId),
-        transactions: self.transactions,
         version: self.version + 1,
       };
     }
     case "categoryUpdated": {
       const { categoryId, name } = event;
       return {
-        accountId: self.accountId,
+        ...self,
         categories: self.categories.map((old): Category => {
           return old.id !== categoryId
             ? old
@@ -194,7 +197,6 @@ const applyEvent = (self: Account, event: AccountEvent): Account => {
                 createdAt: old.createdAt,
               };
         }),
-        transactions: self.transactions,
         version: self.version + 1,
       };
     }
@@ -215,18 +217,28 @@ const applyEvent = (self: Account, event: AccountEvent): Account => {
         comment,
         createdAt,
       };
+      const transactions = self.transactions.concat([transaction]);
+      transactions.sort((a, b) => {
+        return a.date < b.date
+          ? -1
+          : a.date > b.date
+          ? 1
+          : a.createdAt < b.createdAt
+          ? -1
+          : a.createdAt > b.createdAt
+          ? 1
+          : 0;
+      });
       return {
-        accountId: self.accountId,
-        categories: self.categories,
-        transactions: self.transactions.concat([transaction]),
+        ...self,
+        transactions,
         version: self.version + 1,
       };
     }
     case "transactionDeleted": {
       const { transactionId } = event;
       return {
-        accountId: self.accountId,
-        categories: self.categories,
+        ...self,
         transactions: self.transactions.filter(
           (old) => old.id !== transactionId
         ),
@@ -236,8 +248,7 @@ const applyEvent = (self: Account, event: AccountEvent): Account => {
     case "transactionUpdated": {
       const { transactionId, amount, comment, date } = event;
       return {
-        accountId: self.accountId,
-        categories: self.categories,
+        ...self,
         transactions: self.transactions.map((old): Transaction => {
           return old.id !== transactionId
             ? old

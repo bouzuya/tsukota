@@ -9,7 +9,6 @@ import {
   Account,
   createCategory,
   deleteCategory,
-  newAccount,
   restoreAccount,
   updateCategory,
 } from "../../../lib/account";
@@ -18,7 +17,7 @@ import { createEvent, getEvents } from "../../../lib/api";
 export default function Categories(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
-  const [account, setAccount] = useState<Account>(newAccount(accountId));
+  const [account, setAccount] = useState<Account | null>(null);
   const [name, setName] = useState<string>("");
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [editDialogVisible, setEditDialogVisible] = useState<boolean>(false);
@@ -26,13 +25,13 @@ export default function Categories(): JSX.Element {
     useState<boolean>(false);
   useEffect(() => {
     getEvents(accountId)
-      .then((events) => restoreAccount(accountId, events))
+      .then((events) => restoreAccount(events))
       .then((account) => setAccount(account));
-  }, [account.version]);
+  }, [account?.version]);
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <CategoryList
-        data={account.categories}
+        data={account?.categories ?? []}
         onLongPressCategory={(category) => {
           setName(category.name);
           setCategoryId(category.id);
@@ -58,6 +57,7 @@ export default function Categories(): JSX.Element {
           setDeleteDialogVisible(false);
         }}
         onClickOk={() => {
+          if (account === null) return;
           if (categoryId !== null) {
             // update local state
             const [newAccount, newEvent] = deleteCategory(account, categoryId);
@@ -85,6 +85,7 @@ export default function Categories(): JSX.Element {
           setEditDialogVisible(false);
         }}
         onClickOk={() => {
+          if (account === null) return;
           if (categoryId === null) {
             // update local state
             const [newAccount, newEvent] = createCategory(account, name);

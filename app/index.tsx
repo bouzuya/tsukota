@@ -1,6 +1,5 @@
-import { Stack, useNavigation, useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Firestore, addDoc, collection } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { FAB, Button, Dialog, List, TextInput } from "react-native-paper";
@@ -8,33 +7,31 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { db } from "../lib/firebase";
+import { createAccount } from "../lib/account";
+import {
+  createAccount as createAccountInFirestore,
+  createEvent,
+} from "../lib/api";
 import { storage } from "../lib/storage";
 
-const createAccountInFirestore = async (name: string): Promise<Account> => {
-  try {
-    const accountsCollection = collection(db, "accounts");
-    const docRef = await addDoc(accountsCollection, { name });
-    console.log("Document written with ID: ", docRef.id);
-    const id = docRef.id;
-    return { id, name };
-  } catch (e) {
-    console.error("Error adding document: ", e);
-    throw e;
-  }
-};
-
-const createAccount = async (
+const createAccount_ = async (
   name: string,
-  setAccounts: (accounts: Account[]) => void
+  setAccounts: (accounts: AccountSummary[]) => void
 ): Promise<void> => {
-  const { id } = await createAccountInFirestore(name);
+  const [account, newEvent] = createAccount(name);
+
+  await createEvent(newEvent);
+  await createAccountInFirestore(account.accountId, name);
+
+  const id = account.accountId;
+
   await storage.save({ key: "accounts", id, data: { id, name } });
+
   const loaded = await getAccounts();
   setAccounts(loaded);
 };
 
-const getAccounts = async (): Promise<Account[]> => {
+const getAccounts = async (): Promise<AccountSummary[]> => {
   const key = "accounts";
   const ids = await storage.getIdsForKey(key);
 
@@ -51,7 +48,7 @@ const getAccounts = async (): Promise<Account[]> => {
 
   const accounts = [];
   for (const id of ids) {
-    const account = await storage.load<Account>({
+    const account = await storage.load<AccountSummary>({
       key,
       id,
     });
@@ -61,14 +58,14 @@ const getAccounts = async (): Promise<Account[]> => {
   return accounts;
 };
 
-type Account = {
+type AccountSummary = {
   id: string;
   name: string;
 };
 
 function Inner(): JSX.Element {
   const insets = useSafeAreaInsets();
-  const [accounts, setAccounts] = useState<Account[] | null>(null);
+  const [accounts, setAccounts] = useState<AccountSummary[] | null>(null);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [name, setName] = useState<string>("");
   const router = useRouter();
@@ -133,7 +130,7 @@ function Inner(): JSX.Element {
           </Button>
           <Button
             onPress={() => {
-              createAccount(name, setAccounts);
+              createAccount_(name, setAccounts);
               setName("");
               setModalVisible(false);
             }}

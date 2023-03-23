@@ -1,3 +1,10 @@
+export type AccountCreated = {
+  type: "accountCreated";
+  accountId: string;
+  name: string;
+  at: string;
+};
+
 export type CategoryAdded = {
   type: "categoryAdded";
   categoryId: string;
@@ -49,6 +56,7 @@ export type TransactionProps = {
 };
 
 export type AccountEvent =
+  | AccountCreated
   | CategoryAdded
   | CategoryDeleted
   | CategoryUpdated
