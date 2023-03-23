@@ -1,7 +1,7 @@
 import { FlatList, FlatListProps } from "react-native";
 import { List } from "react-native-paper";
 
-type Item = {
+export type Item = {
   id: string;
   name: string;
 };

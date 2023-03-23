@@ -7,39 +7,25 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { AccountList } from "../components/AccountList";
+import {
+  AccountList,
+  Item as AccountListItem,
+} from "../components/AccountList";
 import { AddAccountDialog } from "../components/AddAccountDialog";
-import { createAccount } from "../lib/account";
+import { Account, AccountEvent, createAccount } from "../lib/account";
 import {
   createAccount as createAccountInFirestore,
   createEvent,
 } from "../lib/api";
 import { storage } from "../lib/storage";
 
-const createAccount_ = async (
-  name: string,
-  setAccounts: (accounts: AccountSummary[]) => void
-): Promise<void> => {
-  const [account, newEvent] = createAccount(name);
-
-  await createEvent(newEvent);
-  await createAccountInFirestore(account.accountId, name);
-
-  const id = account.accountId;
-
-  await storage.save({ key: "accounts", id, data: { id, name } });
-
-  const loaded = await getAccounts();
-  setAccounts(loaded);
-};
-
-const getAccounts = async (): Promise<AccountSummary[]> => {
+const loadAccountsFromLocal = async (): Promise<AccountListItem[]> => {
   const key = "accounts";
   const ids = await storage.getIdsForKey(key);
 
   const accounts = [];
   for (const id of ids) {
-    const account = await storage.load<AccountSummary>({
+    const account = await storage.load<AccountListItem>({
       key,
       id,
     });
@@ -49,22 +35,26 @@ const getAccounts = async (): Promise<AccountSummary[]> => {
   return accounts;
 };
 
-type AccountSummary = {
-  id: string;
-  name: string;
+const storeLocal = async (item: AccountListItem): Promise<void> => {
+  await storage.save({ key: "accounts", id: item.id, data: item });
+};
+
+const storeRemote = async (
+  account: Account,
+  event: AccountEvent
+): Promise<void> => {
+  await createEvent(event);
+  await createAccountInFirestore(account.accountId, account.name);
 };
 
 function Inner(): JSX.Element {
   const insets = useSafeAreaInsets();
-  const [accounts, setAccounts] = useState<AccountSummary[] | null>(null);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [accounts, setAccounts] = useState<AccountListItem[] | null>(null);
+  const [editDialogVisible, setEditDialogVisible] = useState<boolean>(false);
   const [name, setName] = useState<string>("");
   const router = useRouter();
   useEffect(() => {
-    (async () => {
-      const loadedAccounts = await getAccounts();
-      setAccounts(loadedAccounts);
-    })();
+    loadAccountsFromLocal().then((accounts) => setAccounts(accounts));
   }, []);
   return (
     <View
@@ -91,22 +81,33 @@ function Inner(): JSX.Element {
       <FAB
         icon="plus"
         style={styles.fab}
-        onPress={() => setModalVisible(true)}
+        onPress={() => {
+          setName("");
+          setEditDialogVisible(true);
+        }}
       />
       <StatusBar style="auto" />
       <AddAccountDialog
         name={name}
         onChangeName={setName}
-        onClickCancel={() => {
-          setModalVisible(false);
-          setName("");
-        }}
+        onClickCancel={() => setEditDialogVisible(false)}
         onClickOk={() => {
-          createAccount_(name, setAccounts);
-          setName("");
-          setModalVisible(false);
+          const [account, event] = createAccount(name);
+
+          const item = {
+            id: account.accountId,
+            name: account.name,
+          };
+          setAccounts(accounts?.concat([item]) ?? []);
+          storeRemote(account, event).catch((_) => {
+            setAccounts(accounts);
+          });
+
+          storeLocal(item);
+
+          setEditDialogVisible(false);
         }}
-        visible={modalVisible}
+        visible={editDialogVisible}
       />
     </View>
   );
@@ -131,9 +132,5 @@ const styles = StyleSheet.create({
     margin: 16,
     position: "absolute",
     right: 0,
-  },
-  list: {
-    flex: 1,
-    width: "100%",
   },
 });
