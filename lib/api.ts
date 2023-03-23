@@ -4,7 +4,7 @@ import {
   getDocs,
   CollectionReference,
 } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "./firebase";
 import { AccountEvent } from "./account";
 
 export const createEvent = async (event: AccountEvent): Promise<void> => {
