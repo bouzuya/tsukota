@@ -3,10 +3,12 @@ import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { FAB, Portal, Provider } from "react-native-paper";
 import CategoryList from "../../../components/CategoryList";
+import DeleteCategoryDialog from "../../../components/DeleteCategoryDialog";
 import EditCategoryDialog from "../../../components/EditCategoryDialog";
 import {
   Account,
   createCategory,
+  deleteCategory,
   newAccount,
   restoreAccount,
   updateCategory,
@@ -20,6 +22,8 @@ export default function Categories(): JSX.Element {
   const [name, setName] = useState<string>("");
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [editDialogVisible, setEditDialogVisible] = useState<boolean>(false);
+  const [deleteDialogVisible, setDeleteDialogVisible] =
+    useState<boolean>(false);
   useEffect(() => {
     getEvents(accountId)
       .then((events) => restoreAccount(accountId, events))
@@ -30,6 +34,11 @@ export default function Categories(): JSX.Element {
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <CategoryList
           data={account.categories}
+          onLongPressCategory={(category) => {
+            setName(category.name);
+            setCategoryId(category.id);
+            setDeleteDialogVisible(true);
+          }}
           onPressCategory={(category) => {
             setName(category.name);
             setCategoryId(category.id);
@@ -43,6 +52,35 @@ export default function Categories(): JSX.Element {
         />
       </View>
       <Portal>
+        <DeleteCategoryDialog
+          id={categoryId}
+          name={name}
+          onClickCancel={() => {
+            setName("");
+            setCategoryId(null);
+            setDeleteDialogVisible(false);
+          }}
+          onClickOk={() => {
+            if (categoryId !== null) {
+              // update local state
+              const [newAccount, newEvent] = deleteCategory(
+                account,
+                categoryId
+              );
+
+              // update remote state
+              setAccount(newAccount);
+              createEvent(newEvent).catch((_) => {
+                setAccount(account);
+              });
+            }
+
+            setName("");
+            setCategoryId(null);
+            setDeleteDialogVisible(false);
+          }}
+          visible={deleteDialogVisible}
+        />
         <EditCategoryDialog
           id={categoryId}
           name={name}
