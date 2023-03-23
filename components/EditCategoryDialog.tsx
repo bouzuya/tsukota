@@ -1,6 +1,6 @@
 import { Button, Dialog, TextInput } from "react-native-paper";
 
-type EditCategoryDialogProps = {
+type Props = {
   id: string | null;
   name: string;
   onChangeName: (text: string) => void;
@@ -9,14 +9,14 @@ type EditCategoryDialogProps = {
   visible: boolean;
 };
 
-export default function EditCategoryDialog({
+export function EditCategoryDialog({
   id,
   name,
   onChangeName,
   onClickCancel,
   onClickOk,
   visible,
-}: EditCategoryDialogProps): JSX.Element {
+}: Props): JSX.Element {
   return (
     <Dialog visible={visible}>
       <Dialog.Title>{id === null ? "Add" : "Edit"} Category</Dialog.Title>

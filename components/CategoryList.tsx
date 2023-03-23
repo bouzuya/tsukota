@@ -7,7 +7,7 @@ type Props = Omit<FlatListProps<Category>, "renderItem" | "style"> & {
   onPressCategory: (category: Category) => void;
 };
 
-export default function CategoryList(props: Props): JSX.Element {
+export function CategoryList(props: Props): JSX.Element {
   const { onLongPressCategory, onPressCategory, ...p } = props;
   return (
     <FlatList

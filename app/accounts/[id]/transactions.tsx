@@ -1,7 +1,9 @@
 import { Stack, useSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import { Button, Dialog, FAB, List, TextInput } from "react-native-paper";
+import { FAB, List } from "react-native-paper";
+import { DeleteTransactionDialog } from "../../../components/DeleteTransactionDialog";
+import { EditTransactionDialog } from "../../../components/EditTransactionDialog";
 import {
   createTransaction,
   deleteTransaction,
@@ -12,100 +14,7 @@ import {
 } from "../../../lib/account";
 import { createEvent, getEvents } from "../../../lib/api";
 
-type DeleteTransactionDialogProps = {
-  amount: string;
-  comment: string;
-  date: string;
-  id: string | null;
-  onClickCancel: () => void;
-  onClickOk: () => void;
-  visible: boolean;
-};
-
-function DeleteTransactionDialog({
-  amount,
-  comment,
-  date,
-  id,
-  onClickCancel,
-  onClickOk,
-  visible,
-}: DeleteTransactionDialogProps): JSX.Element | null {
-  return id === null ? null : (
-    <Dialog visible={visible}>
-      <Dialog.Title>Delete Transaction</Dialog.Title>
-      <Dialog.Content>
-        <Text>Delete the transaction?</Text>
-        <Text>Date: {date}</Text>
-        <Text>Amount: {amount}</Text>
-        <Text>Comment: {comment}</Text>
-      </Dialog.Content>
-      <Dialog.Actions>
-        <Button onPress={onClickCancel}>Cancel</Button>
-        <Button onPress={onClickOk}>OK</Button>
-      </Dialog.Actions>
-    </Dialog>
-  );
-}
-
-type EditTransactionDialogProps = {
-  amount: string;
-  comment: string;
-  date: string;
-  id: string | null;
-  onChangeAmount: (text: string) => void;
-  onChangeComment: (text: string) => void;
-  onChangeDate: (text: string) => void;
-  onClickCancel: () => void;
-  onClickOk: () => void;
-  visible: boolean;
-};
-
-function EditTransactionDialog({
-  amount,
-  comment,
-  date,
-  id,
-  onChangeAmount,
-  onChangeComment,
-  onChangeDate,
-  onClickCancel,
-  onClickOk,
-  visible,
-}: EditTransactionDialogProps): JSX.Element {
-  return (
-    <Dialog visible={visible}>
-      <Dialog.Title>{id === null ? "Add" : "Edit"} Transaction</Dialog.Title>
-      <Dialog.Content>
-        <TextInput
-          label="Date"
-          mode="outlined"
-          onChangeText={onChangeDate}
-          value={date}
-        />
-        <TextInput
-          keyboardType="numeric"
-          label="Amount"
-          mode="outlined"
-          onChangeText={onChangeAmount}
-          value={amount}
-        />
-        <TextInput
-          label="Comment"
-          mode="outlined"
-          onChangeText={onChangeComment}
-          value={comment}
-        />
-      </Dialog.Content>
-      <Dialog.Actions>
-        <Button onPress={onClickCancel}>Cancel</Button>
-        <Button onPress={onClickOk}>OK</Button>
-      </Dialog.Actions>
-    </Dialog>
-  );
-}
-
-export default function TransactionsRoot(): JSX.Element {
+export default function Transactions(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);

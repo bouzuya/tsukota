@@ -2,9 +2,9 @@ import { useSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { FAB } from "react-native-paper";
-import CategoryList from "../../../components/CategoryList";
-import DeleteCategoryDialog from "../../../components/DeleteCategoryDialog";
-import EditCategoryDialog from "../../../components/EditCategoryDialog";
+import { CategoryList } from "../../../components/CategoryList";
+import { DeleteCategoryDialog } from "../../../components/DeleteCategoryDialog";
+import { EditCategoryDialog } from "../../../components/EditCategoryDialog";
 import {
   Account,
   createCategory,
