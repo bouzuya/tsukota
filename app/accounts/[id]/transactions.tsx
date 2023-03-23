@@ -1,15 +1,7 @@
-import { Stack, Tabs, useSearchParams } from "expo-router";
+import { Stack, useSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import {
-  Button,
-  Dialog,
-  FAB,
-  List,
-  Portal,
-  Provider,
-  TextInput,
-} from "react-native-paper";
+import { Button, Dialog, FAB, List, TextInput } from "react-native-paper";
 import {
   createTransaction,
   deleteTransaction,
@@ -131,176 +123,172 @@ export default function TransactionsRoot(): JSX.Element {
       .then((account) => setAccount(account));
   }, [account.version]);
   return (
-    <Provider>
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Stack.Screen options={{ title: `${params.id}` }} />
-        <FlatList
-          data={account.transactions}
-          renderItem={({ item: transaction }) => {
-            const ensureDescription = (s: string): string =>
-              s.length === 0 ? " " : s;
-            return (
-              <List.Item
-                description={ensureDescription(transaction.comment)}
-                key={transaction.id}
-                left={() => (
-                  <View
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Stack.Screen options={{ title: `${params.id}` }} />
+      <FlatList
+        data={account.transactions}
+        renderItem={({ item: transaction }) => {
+          const ensureDescription = (s: string): string =>
+            s.length === 0 ? " " : s;
+          return (
+            <List.Item
+              description={ensureDescription(transaction.comment)}
+              key={transaction.id}
+              left={() => (
+                <View
+                  style={{
+                    flexWrap: "nowrap",
+                    flexDirection: "row",
+                    paddingStart: 16,
+                    position: "absolute",
+                    width: "100%",
+                    margin: 0,
+                  }}
+                >
+                  <Text style={{ flex: 1, fontSize: 16, color: "#1C1B1F" }}>
+                    {transaction.date}
+                  </Text>
+                  <Text
                     style={{
-                      flexWrap: "nowrap",
-                      flexDirection: "row",
-                      paddingStart: 16,
-                      position: "absolute",
-                      width: "100%",
-                      margin: 0,
+                      flex: 1,
+                      fontSize: 16,
+                      color: "#1C1B1F",
+                      textAlign: "right",
+                      paddingHorizontal: 8,
                     }}
                   >
-                    <Text style={{ flex: 1, fontSize: 16, color: "#1C1B1F" }}>
-                      {transaction.date}
-                    </Text>
-                    <Text
-                      style={{
-                        flex: 1,
-                        fontSize: 16,
-                        color: "#1C1B1F",
-                        textAlign: "right",
-                        paddingHorizontal: 8,
-                      }}
-                    >
-                      {transaction.amount}
-                    </Text>
-                  </View>
-                )}
-                onLongPress={() => {
-                  setDate(transaction.date);
-                  setAmount(transaction.amount);
-                  setComment(transaction.comment);
-                  setTransactionId(transaction.id);
-                  setDeleteModalVisible(true);
-                }}
-                onPress={() => {
-                  // reset form
-                  setDate(transaction.date);
-                  setAmount(transaction.amount);
-                  setComment(transaction.comment);
-                  setTransactionId(transaction.id);
-                  setEditModalVisible(true);
-                }}
-                title=""
-              />
+                    {transaction.amount}
+                  </Text>
+                </View>
+              )}
+              onLongPress={() => {
+                setDate(transaction.date);
+                setAmount(transaction.amount);
+                setComment(transaction.comment);
+                setTransactionId(transaction.id);
+                setDeleteModalVisible(true);
+              }}
+              onPress={() => {
+                // reset form
+                setDate(transaction.date);
+                setAmount(transaction.amount);
+                setComment(transaction.comment);
+                setTransactionId(transaction.id);
+                setEditModalVisible(true);
+              }}
+              title=""
+            />
+          );
+        }}
+        style={{ flex: 1, width: "100%" }}
+      />
+      <FAB
+        icon="plus"
+        style={styles.fab}
+        onPress={() => setEditModalVisible(true)}
+      />
+      <DeleteTransactionDialog
+        amount={amount}
+        comment={comment}
+        date={date}
+        id={transactionId}
+        onClickCancel={() => {
+          // reset form
+          // do not reset "date" field
+          setAmount("");
+          setComment("");
+          setTransactionId(null);
+          setDeleteModalVisible(false);
+        }}
+        onClickOk={() => {
+          if (transactionId !== null) {
+            // update local state
+            const [newTransactions, newEvent] = deleteTransaction(
+              account,
+              transactionId
             );
-          }}
-          style={{ flex: 1, width: "100%" }}
-        />
-        <Portal>
-          <DeleteTransactionDialog
-            amount={amount}
-            comment={comment}
-            date={date}
-            id={transactionId}
-            onClickCancel={() => {
-              // reset form
-              // do not reset "date" field
-              setAmount("");
-              setComment("");
-              setTransactionId(null);
-              setDeleteModalVisible(false);
-            }}
-            onClickOk={() => {
-              if (transactionId !== null) {
-                // update local state
-                const [newTransactions, newEvent] = deleteTransaction(
-                  account,
-                  transactionId
-                );
 
-                // update remote state
-                setAccount(newTransactions);
-                createEvent(newEvent).catch((_) => {
-                  setAccount(account);
-                });
+            // update remote state
+            setAccount(newTransactions);
+            createEvent(newEvent).catch((_) => {
+              setAccount(account);
+            });
+          }
+
+          // reset form
+          // do not reset "date" field
+          setAmount("");
+          setComment("");
+          setTransactionId(null);
+          setDeleteModalVisible(false);
+        }}
+        visible={deleteModalVisible}
+      />
+      <EditTransactionDialog
+        amount={amount}
+        comment={comment}
+        date={date}
+        id={transactionId}
+        onChangeAmount={setAmount}
+        onChangeComment={setComment}
+        onChangeDate={setDate}
+        onClickCancel={() => {
+          // reset form
+          // do not reset "date" field
+          setAmount("");
+          setComment("");
+          setTransactionId(null);
+          setEditModalVisible(false);
+        }}
+        onClickOk={() => {
+          if (transactionId === null) {
+            // update local state
+            const [newTransactions, newEvent] = createTransaction(account, {
+              amount,
+              comment,
+              date,
+            });
+
+            // update remote state
+            setAccount(newTransactions);
+            createEvent(newEvent).catch((_) => {
+              setAccount(account);
+            });
+
+            // reset form
+            // do not reset "date" field
+            setAmount("");
+            setComment("");
+            setEditModalVisible(false);
+          } else {
+            // update local state
+            const [newTransactions, newEvent] = updateTransaction(
+              account,
+              transactionId,
+              {
+                amount,
+                comment,
+                date,
               }
+            );
 
-              // reset form
-              // do not reset "date" field
-              setAmount("");
-              setComment("");
-              setTransactionId(null);
-              setDeleteModalVisible(false);
-            }}
-            visible={deleteModalVisible}
-          />
-          <EditTransactionDialog
-            amount={amount}
-            comment={comment}
-            date={date}
-            id={transactionId}
-            onChangeAmount={setAmount}
-            onChangeComment={setComment}
-            onChangeDate={setDate}
-            onClickCancel={() => {
-              // reset form
-              // do not reset "date" field
-              setAmount("");
-              setComment("");
-              setTransactionId(null);
-              setEditModalVisible(false);
-            }}
-            onClickOk={() => {
-              if (transactionId === null) {
-                // update local state
-                const [newTransactions, newEvent] = createTransaction(account, {
-                  amount,
-                  comment,
-                  date,
-                });
+            // update remote state
+            setAccount(newTransactions);
+            createEvent(newEvent).catch((_) => {
+              setAccount(account);
+            });
 
-                // update remote state
-                setAccount(newTransactions);
-                createEvent(newEvent).catch((_) => {
-                  setAccount(account);
-                });
-
-                // reset form
-                // do not reset "date" field
-                setAmount("");
-                setComment("");
-                setEditModalVisible(false);
-              } else {
-                // update local state
-                const [newTransactions, newEvent] = updateTransaction(
-                  account,
-                  transactionId,
-                  {
-                    amount,
-                    comment,
-                    date,
-                  }
-                );
-
-                // update remote state
-                setAccount(newTransactions);
-                createEvent(newEvent).catch((_) => {
-                  setAccount(account);
-                });
-
-                // reset form
-                // do not reset "date" field
-                setAmount("");
-                setComment("");
-                setTransactionId(null);
-                setEditModalVisible(false);
-              }
-            }}
-            visible={editModalVisible}
-          />
-        </Portal>
-        <FAB
-          icon="plus"
-          style={styles.fab}
-          onPress={() => setEditModalVisible(true)}
-        />
-      </View>
-    </Provider>
+            // reset form
+            // do not reset "date" field
+            setAmount("");
+            setComment("");
+            setTransactionId(null);
+            setEditModalVisible(false);
+          }
+        }}
+        visible={editModalVisible}
+      />
+    </View>
   );
 }
 

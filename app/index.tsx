@@ -3,15 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { Firestore, addDoc, collection } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
-import {
-  FAB,
-  Button,
-  Dialog,
-  List,
-  Portal,
-  Provider,
-  TextInput,
-} from "react-native-paper";
+import { FAB, Button, Dialog, List, TextInput } from "react-native-paper";
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
@@ -87,74 +79,70 @@ function Inner(): JSX.Element {
     })();
   }, []);
   return (
-    <Provider>
-      <View
-        style={[
-          styles.container,
-          {
-            paddingTop: insets.top,
-          },
-        ]}
-      >
-        <Stack.Screen options={{ title: "Home" }} />
-        <View style={styles.list}>
-          <FlatList
-            data={accounts}
-            keyExtractor={(user) => user.id}
-            renderItem={({ item }) => (
-              <List.Item
-                onPress={(_) =>
-                  router.push({
-                    pathname: "/accounts/[id]",
-                    params: { id: item.id },
-                  })
-                }
-                description={`id: ${item.id}`}
-                title={item.name}
-              />
-            )}
-          />
-        </View>
-        <FAB
-          icon="plus"
-          style={styles.fab}
-          onPress={() => setModalVisible(true)}
-        />
-        <StatusBar style="auto" />
-      </View>
-      <Portal>
-        <Dialog visible={modalVisible}>
-          <Dialog.Title>Add Account</Dialog.Title>
-          <Dialog.Content>
-            <TextInput
-              label="Name"
-              mode="outlined"
-              onChangeText={setName}
-              value={name}
+    <View
+      style={[
+        styles.container,
+        {
+          paddingTop: insets.top,
+        },
+      ]}
+    >
+      <Stack.Screen options={{ title: "Home" }} />
+      <View style={styles.list}>
+        <FlatList
+          data={accounts}
+          keyExtractor={(user) => user.id}
+          renderItem={({ item }) => (
+            <List.Item
+              onPress={(_) =>
+                router.push({
+                  pathname: "/accounts/[id]",
+                  params: { id: item.id },
+                })
+              }
+              description={`id: ${item.id}`}
+              title={item.name}
             />
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button
-              onPress={() => {
-                setModalVisible(false);
-                setName("");
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              onPress={() => {
-                createAccount(name, setAccounts);
-                setName("");
-                setModalVisible(false);
-              }}
-            >
-              OK
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
-    </Provider>
+          )}
+        />
+      </View>
+      <FAB
+        icon="plus"
+        style={styles.fab}
+        onPress={() => setModalVisible(true)}
+      />
+      <StatusBar style="auto" />
+      <Dialog visible={modalVisible}>
+        <Dialog.Title>Add Account</Dialog.Title>
+        <Dialog.Content>
+          <TextInput
+            label="Name"
+            mode="outlined"
+            onChangeText={setName}
+            value={name}
+          />
+        </Dialog.Content>
+        <Dialog.Actions>
+          <Button
+            onPress={() => {
+              setModalVisible(false);
+              setName("");
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onPress={() => {
+              createAccount(name, setAccounts);
+              setName("");
+              setModalVisible(false);
+            }}
+          >
+            OK
+          </Button>
+        </Dialog.Actions>
+      </Dialog>
+    </View>
   );
 }
 
