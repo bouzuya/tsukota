@@ -2,11 +2,12 @@ import { Stack, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
-import { FAB, Button, Dialog, List, TextInput } from "react-native-paper";
+import { FAB, List } from "react-native-paper";
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { AddAccountDialog } from "../components/AddAccountDialog";
 import { createAccount } from "../lib/account";
 import {
   createAccount as createAccountInFirestore,
@@ -98,36 +99,20 @@ function Inner(): JSX.Element {
         onPress={() => setModalVisible(true)}
       />
       <StatusBar style="auto" />
-      <Dialog visible={modalVisible}>
-        <Dialog.Title>Add Account</Dialog.Title>
-        <Dialog.Content>
-          <TextInput
-            label="Name"
-            mode="outlined"
-            onChangeText={setName}
-            value={name}
-          />
-        </Dialog.Content>
-        <Dialog.Actions>
-          <Button
-            onPress={() => {
-              setModalVisible(false);
-              setName("");
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onPress={() => {
-              createAccount_(name, setAccounts);
-              setName("");
-              setModalVisible(false);
-            }}
-          >
-            OK
-          </Button>
-        </Dialog.Actions>
-      </Dialog>
+      <AddAccountDialog
+        name={name}
+        onChangeName={setName}
+        onClickCancel={() => {
+          setModalVisible(false);
+          setName("");
+        }}
+        onClickOk={() => {
+          createAccount_(name, setAccounts);
+          setName("");
+          setModalVisible(false);
+        }}
+        visible={modalVisible}
+      />
     </View>
   );
 }
