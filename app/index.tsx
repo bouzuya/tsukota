@@ -35,17 +35,6 @@ const getAccounts = async (): Promise<AccountSummary[]> => {
   const key = "accounts";
   const ids = await storage.getIdsForKey(key);
 
-  // TODO: insert dummy data for debugging
-  const dummyData = [
-    { id: "MoLT1vUAru7aJ2KRBPHs", name: "Account1" },
-    { id: "klzmBVOGMaF5xZqTORwy", name: "Account2" },
-  ];
-  for (const { id, name } of dummyData) {
-    if (ids.indexOf(id) === -1) {
-      await storage.save({ key, id, data: { id, name } });
-    }
-  }
-
   const accounts = [];
   for (const id of ids) {
     const account = await storage.load<AccountSummary>({
