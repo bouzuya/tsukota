@@ -9,7 +9,7 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { db } from "../firebase";
-import { storage } from "../storage";
+import { storage } from "../lib/storage";
 
 const createAccountInFirestore = async (name: string): Promise<Account> => {
   try {
