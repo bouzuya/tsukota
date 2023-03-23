@@ -7,6 +7,7 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { AccountList } from "../components/AccountList";
 import { AddAccountDialog } from "../components/AddAccountDialog";
 import { createAccount } from "../lib/account";
 import {
@@ -75,24 +76,18 @@ function Inner(): JSX.Element {
       ]}
     >
       <Stack.Screen options={{ title: "Home" }} />
-      <View style={styles.list}>
-        <FlatList
-          data={accounts}
-          keyExtractor={(user) => user.id}
-          renderItem={({ item }) => (
-            <List.Item
-              onPress={(_) =>
-                router.push({
-                  pathname: "/accounts/[id]",
-                  params: { id: item.id },
-                })
-              }
-              description={`id: ${item.id}`}
-              title={item.name}
-            />
-          )}
-        />
-      </View>
+      <AccountList
+        data={accounts}
+        onLongPressAccount={(_account) => {
+          // TODO: edit or delete
+        }}
+        onPressAccount={(account) =>
+          router.push({
+            pathname: "/accounts/[id]",
+            params: { id: account.id },
+          })
+        }
+      />
       <FAB
         icon="plus"
         style={styles.fab}
