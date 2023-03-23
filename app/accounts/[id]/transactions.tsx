@@ -1,10 +1,4 @@
 import { Stack, Tabs, useSearchParams } from "expo-router";
-import {
-  addDoc,
-  collection,
-  getDocs,
-  CollectionReference,
-} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import {
@@ -16,51 +10,15 @@ import {
   Provider,
   TextInput,
 } from "react-native-paper";
-import { db } from "../../../firebase";
 import {
-  AccountEvent,
   createTransaction,
   deleteTransaction,
   newAccount,
-  restoreTransactions,
+  restoreAccount,
   Account,
   updateTransaction,
 } from "../../../lib/account";
-
-// API
-
-const createEvent = async (event: AccountEvent): Promise<void> => {
-  const accountId = event.accountId;
-  try {
-    const eventsCollection = collection(
-      db,
-      "accounts",
-      accountId,
-      "events"
-    ) as CollectionReference<AccountEvent>;
-    const docRef = await addDoc(eventsCollection, event);
-    console.log("Document written with ID: ", docRef.id);
-  } catch (e) {
-    console.error("Error adding document: ", e);
-  }
-};
-
-const getEvents = async (accountId: string): Promise<AccountEvent[]> => {
-  const eventsCollection = collection(
-    db,
-    "accounts",
-    accountId,
-    "events"
-  ) as CollectionReference<AccountEvent>;
-  const eventsSnapshot = await getDocs(eventsCollection);
-  return eventsSnapshot.docs
-    .map((doc) => doc.data())
-    .sort((a, b) => {
-      return a.at < b.at ? -1 : a.at > b.at ? 1 : 0;
-    });
-};
-
-//
+import { createEvent, getEvents } from "../../../lib/api";
 
 type DeleteTransactionDialogProps = {
   amount: string;
@@ -166,20 +124,18 @@ export default function TransactionsRoot(): JSX.Element {
     new Date().toISOString().substring(0, 10)
   );
   const [transactionId, setTransactionId] = useState<string | null>(null);
-  const [transactions, setTransactions] = useState<Account>(
-    newAccount(accountId)
-  );
+  const [account, setAccount] = useState<Account>(newAccount(accountId));
   useEffect(() => {
     getEvents(accountId)
-      .then((events) => restoreTransactions(accountId, events))
-      .then((transactions) => setTransactions(transactions));
-  }, [transactions.version]);
+      .then((events) => restoreAccount(accountId, events))
+      .then((account) => setAccount(account));
+  }, [account.version]);
   return (
     <Provider>
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Stack.Screen options={{ title: `${params.id}` }} />
         <FlatList
-          data={transactions.transactions}
+          data={account.transactions}
           renderItem={({ item: transaction }) => {
             const ensureDescription = (s: string): string =>
               s.length === 0 ? " " : s;
@@ -253,14 +209,14 @@ export default function TransactionsRoot(): JSX.Element {
               if (transactionId !== null) {
                 // update local state
                 const [newTransactions, newEvent] = deleteTransaction(
-                  transactions,
+                  account,
                   transactionId
                 );
 
                 // update remote state
-                setTransactions(newTransactions);
+                setAccount(newTransactions);
                 createEvent(newEvent).catch((_) => {
-                  setTransactions(transactions);
+                  setAccount(account);
                 });
               }
 
@@ -292,19 +248,16 @@ export default function TransactionsRoot(): JSX.Element {
             onClickOk={() => {
               if (transactionId === null) {
                 // update local state
-                const [newTransactions, newEvent] = createTransaction(
-                  transactions,
-                  {
-                    amount,
-                    comment,
-                    date,
-                  }
-                );
+                const [newTransactions, newEvent] = createTransaction(account, {
+                  amount,
+                  comment,
+                  date,
+                });
 
                 // update remote state
-                setTransactions(newTransactions);
+                setAccount(newTransactions);
                 createEvent(newEvent).catch((_) => {
-                  setTransactions(transactions);
+                  setAccount(account);
                 });
 
                 // reset form
@@ -315,7 +268,7 @@ export default function TransactionsRoot(): JSX.Element {
               } else {
                 // update local state
                 const [newTransactions, newEvent] = updateTransaction(
-                  transactions,
+                  account,
                   transactionId,
                   {
                     amount,
@@ -325,9 +278,9 @@ export default function TransactionsRoot(): JSX.Element {
                 );
 
                 // update remote state
-                setTransactions(newTransactions);
+                setAccount(newTransactions);
                 createEvent(newEvent).catch((_) => {
-                  setTransactions(transactions);
+                  setAccount(account);
                 });
 
                 // reset form

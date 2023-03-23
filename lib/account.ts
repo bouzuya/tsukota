@@ -84,7 +84,7 @@ export const newAccount = (accountId: string): Account => {
   };
 };
 
-export const restoreTransactions = (
+export const restoreAccount = (
   accountId: string,
   events: AccountEvent[]
 ): Account => {
