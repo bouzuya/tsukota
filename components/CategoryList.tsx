@@ -1,21 +1,24 @@
-import { FlatList } from "react-native";
+import { FlatList, FlatListProps, Text } from "react-native";
 import { List } from "react-native-paper";
+import { Category } from "../lib/account";
 
-type Category = {
-  name: string;
+type Props = Omit<FlatListProps<Category>, "renderItem" | "style"> & {
+  onPressCategory: (category: Category) => void;
 };
 
-type Props = {
-  categories: Category[];
-};
-
-export default function CategoryList({ categories }: Props): JSX.Element {
+export default function CategoryList(props: Props): JSX.Element {
+  const { onPressCategory, ...p } = props;
   return (
     <FlatList
-      data={categories}
-      renderItem={({ item }) => {
-        return <List.Item title={item.name} />;
-      }}
+      {...p}
+      renderItem={({ item }) => (
+        <List.Item
+          key={item.id}
+          onPress={() => onPressCategory(item)}
+          title={item.name}
+        />
+      )}
+      style={{ flex: 1, width: "100%" }}
     />
   );
 }
