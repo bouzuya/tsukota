@@ -9,6 +9,7 @@ import {
   createCategory,
   newAccount,
   restoreAccount,
+  updateCategory,
 } from "../../../lib/account";
 import { createEvent, getEvents } from "../../../lib/api";
 
@@ -29,8 +30,10 @@ export default function Categories(): JSX.Element {
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <CategoryList
           data={account.categories}
-          onPressCategory={(_category) => {
-            // TODO: edit
+          onPressCategory={(category) => {
+            setName(category.name);
+            setCategoryId(category.id);
+            setEditDialogVisible(true);
           }}
         />
         <FAB
@@ -64,7 +67,22 @@ export default function Categories(): JSX.Element {
               setCategoryId(null);
               setEditDialogVisible(false);
             } else {
-              // TODO: update
+              // update local state
+              const [newAccount, newEvent] = updateCategory(
+                account,
+                categoryId,
+                name
+              );
+
+              // update remote state
+              setAccount(newAccount);
+              createEvent(newEvent).catch((_) => {
+                setAccount(account);
+              });
+
+              setName("");
+              setCategoryId(null);
+              setEditDialogVisible(false);
             }
           }}
           visible={editDialogVisible}
