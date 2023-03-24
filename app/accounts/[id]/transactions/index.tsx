@@ -2,16 +2,16 @@ import { Stack, useSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { FAB, List } from "react-native-paper";
-import { DeleteTransactionDialog } from "../../../components/DeleteTransactionDialog";
-import { EditTransactionDialog } from "../../../components/EditTransactionDialog";
+import { DeleteTransactionDialog } from "../../../../components/DeleteTransactionDialog";
+import { EditTransactionDialog } from "../../../../components/EditTransactionDialog";
 import {
   createTransaction,
   deleteTransaction,
   restoreAccount,
   Account,
   updateTransaction,
-} from "../../../lib/account";
-import { createEvent, getEvents } from "../../../lib/api";
+} from "../../../../lib/account";
+import { createEvent, getEvents } from "../../../../lib/api";
 
 export default function Transactions(): JSX.Element {
   const params = useSearchParams();
