@@ -1,4 +1,4 @@
-import { Stack, useSearchParams } from "expo-router";
+import { useSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { FAB, List } from "react-native-paper";
@@ -32,7 +32,6 @@ export default function Transactions(): JSX.Element {
   }, [account?.version]);
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Stack.Screen options={{ title: `${params.id}` }} />
       <FlatList
         data={account?.transactions ?? []}
         renderItem={({ item: transaction }) => {
