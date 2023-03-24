@@ -3,13 +3,10 @@ import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { FAB, List } from "react-native-paper";
 import { DeleteTransactionDialog } from "../../../../components/DeleteTransactionDialog";
-import { EditTransactionDialog } from "../../../../components/EditTransactionDialog";
 import {
-  createTransaction,
   deleteTransaction,
   restoreAccount,
   Account,
-  updateTransaction,
 } from "../../../../lib/account";
 import { createEvent, getEvents } from "../../../../lib/api";
 
@@ -19,7 +16,6 @@ export default function Transactions(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
-  const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
   const [amount, setAmount] = useState<string>("");
   const [comment, setComment] = useState<string>("");
   const [date, setDate] = useState<string>(
@@ -78,12 +74,16 @@ export default function Transactions(): JSX.Element {
                 setDeleteModalVisible(true);
               }}
               onPress={() => {
-                // reset form
-                setDate(transaction.date);
-                setAmount(transaction.amount);
-                setComment(transaction.comment);
-                setTransactionId(transaction.id);
-                setEditModalVisible(true);
+                router.push({
+                  pathname: "/accounts/[id]/transactions/[transactionId]/edit",
+                  params: {
+                    id: accountId,
+                    transactionId: transaction.id,
+                    date: transaction.date,
+                    amount: transaction.amount,
+                    comment: encodeURIComponent(transaction.comment),
+                  },
+                });
               }}
               title=""
             />
@@ -140,71 +140,6 @@ export default function Transactions(): JSX.Element {
           setDeleteModalVisible(false);
         }}
         visible={deleteModalVisible}
-      />
-      <EditTransactionDialog
-        amount={amount}
-        comment={comment}
-        date={date}
-        id={transactionId}
-        onChangeAmount={setAmount}
-        onChangeComment={setComment}
-        onChangeDate={setDate}
-        onClickCancel={() => {
-          // reset form
-          // do not reset "date" field
-          setAmount("");
-          setComment("");
-          setTransactionId(null);
-          setEditModalVisible(false);
-        }}
-        onClickOk={() => {
-          if (account === null) return;
-          if (transactionId === null) {
-            // update local state
-            const [newTransactions, newEvent] = createTransaction(account, {
-              amount,
-              comment,
-              date,
-            });
-
-            // update remote state
-            setAccount(newTransactions);
-            createEvent(newEvent).catch((_) => {
-              setAccount(account);
-            });
-
-            // reset form
-            // do not reset "date" field
-            setAmount("");
-            setComment("");
-            setEditModalVisible(false);
-          } else {
-            // update local state
-            const [newTransactions, newEvent] = updateTransaction(
-              account,
-              transactionId,
-              {
-                amount,
-                comment,
-                date,
-              }
-            );
-
-            // update remote state
-            setAccount(newTransactions);
-            createEvent(newEvent).catch((_) => {
-              setAccount(account);
-            });
-
-            // reset form
-            // do not reset "date" field
-            setAmount("");
-            setComment("");
-            setTransactionId(null);
-            setEditModalVisible(false);
-          }
-        }}
-        visible={editModalVisible}
       />
     </View>
   );
