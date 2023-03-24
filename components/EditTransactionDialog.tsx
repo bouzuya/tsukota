@@ -1,4 +1,5 @@
-import { Button, Dialog, TextInput } from "react-native-paper";
+import { Button, Dialog } from "react-native-paper";
+import { TransactionForm } from "./TransactionForm";
 
 type Props = {
   amount: string;
@@ -29,24 +30,13 @@ export function EditTransactionDialog({
     <Dialog visible={visible}>
       <Dialog.Title>{id === null ? "Add" : "Edit"} Transaction</Dialog.Title>
       <Dialog.Content>
-        <TextInput
-          label="Date"
-          mode="outlined"
-          onChangeText={onChangeDate}
-          value={date}
-        />
-        <TextInput
-          keyboardType="numeric"
-          label="Amount"
-          mode="outlined"
-          onChangeText={onChangeAmount}
-          value={amount}
-        />
-        <TextInput
-          label="Comment"
-          mode="outlined"
-          onChangeText={onChangeComment}
-          value={comment}
+        <TransactionForm
+          amount={amount}
+          comment={comment}
+          date={date}
+          onChangeAmount={onChangeAmount}
+          onChangeComment={onChangeComment}
+          onChangeDate={onChangeDate}
         />
       </Dialog.Content>
       <Dialog.Actions>
