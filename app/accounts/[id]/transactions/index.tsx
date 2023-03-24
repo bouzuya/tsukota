@@ -1,4 +1,4 @@
-import { useSearchParams } from "expo-router";
+import { usePathname, useRouter, useSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { FAB, List } from "react-native-paper";
@@ -14,6 +14,8 @@ import {
 import { createEvent, getEvents } from "../../../../lib/api";
 
 export default function Transactions(): JSX.Element {
+  const pathname = usePathname();
+  const router = useRouter();
   const params = useSearchParams();
   const accountId = `${params.id}`;
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
@@ -29,7 +31,7 @@ export default function Transactions(): JSX.Element {
     getEvents(accountId)
       .then((events) => restoreAccount(events))
       .then((account) => setAccount(account));
-  }, [account?.version]);
+  }, [pathname]);
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <FlatList
@@ -92,7 +94,14 @@ export default function Transactions(): JSX.Element {
       <FAB
         icon="plus"
         style={styles.fab}
-        onPress={() => setEditModalVisible(true)}
+        onPress={() => {
+          router.push({
+            pathname: "/accounts/[id]/transactions/new",
+            params: {
+              id: accountId,
+            },
+          });
+        }}
       />
       <DeleteTransactionDialog
         amount={amount}

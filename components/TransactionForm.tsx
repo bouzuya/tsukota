@@ -1,5 +1,5 @@
 import { TextInput } from "react-native-paper";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 type Props = {
   amount: string;
@@ -24,6 +24,7 @@ export function TransactionForm({
         label="Date"
         mode="outlined"
         onChangeText={onChangeDate}
+        style={styles.input}
         value={date}
       />
       <TextInput
@@ -31,14 +32,23 @@ export function TransactionForm({
         label="Amount"
         mode="outlined"
         onChangeText={onChangeAmount}
+        style={styles.input}
         value={amount}
       />
       <TextInput
         label="Comment"
         mode="outlined"
         onChangeText={onChangeComment}
+        style={styles.input}
         value={comment}
       />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  input: {
+    marginHorizontal: 16,
+    marginVertical: 8,
+  },
+});
