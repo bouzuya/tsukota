@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import { useState } from "react";
 import { BottomNavigation } from "react-native-paper";
-import Categories from "./categories";
+import Categories from "./categories/index";
 import Transactions from "./transactions/index";
 
 export default function AccountRoot(): JSX.Element {
