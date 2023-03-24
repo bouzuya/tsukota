@@ -1,8 +1,8 @@
-import { Stack, useRouter } from "expo-router";
+import { Stack, usePathname, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { FAB, List } from "react-native-paper";
+import { StyleSheet, View } from "react-native";
+import { FAB } from "react-native-paper";
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
@@ -11,12 +11,6 @@ import {
   AccountList,
   Item as AccountListItem,
 } from "../components/AccountList";
-import { AddAccountDialog } from "../components/AddAccountDialog";
-import { Account, AccountEvent, createAccount } from "../lib/account";
-import {
-  createAccount as createAccountInFirestore,
-  createEvent,
-} from "../lib/api";
 import { storage } from "../lib/storage";
 
 const loadAccountsFromLocal = async (): Promise<AccountListItem[]> => {
@@ -35,27 +29,14 @@ const loadAccountsFromLocal = async (): Promise<AccountListItem[]> => {
   return accounts;
 };
 
-const storeLocal = async (item: AccountListItem): Promise<void> => {
-  await storage.save({ key: "accounts", id: item.id, data: item });
-};
-
-const storeRemote = async (
-  account: Account,
-  event: AccountEvent
-): Promise<void> => {
-  await createEvent(event);
-  await createAccountInFirestore(account.accountId, account.name);
-};
-
 function Inner(): JSX.Element {
   const insets = useSafeAreaInsets();
   const [accounts, setAccounts] = useState<AccountListItem[] | null>(null);
-  const [editDialogVisible, setEditDialogVisible] = useState<boolean>(false);
-  const [name, setName] = useState<string>("");
   const router = useRouter();
+  const pathname = usePathname();
   useEffect(() => {
     loadAccountsFromLocal().then((accounts) => setAccounts(accounts));
-  }, []);
+  }, [pathname]);
   return (
     <View
       style={[
@@ -65,6 +46,7 @@ function Inner(): JSX.Element {
         },
       ]}
     >
+      <StatusBar style="auto" />
       <Stack.Screen options={{ title: "Home" }} />
       <AccountList
         data={accounts}
@@ -82,32 +64,11 @@ function Inner(): JSX.Element {
         icon="plus"
         style={styles.fab}
         onPress={() => {
-          setName("");
-          setEditDialogVisible(true);
-        }}
-      />
-      <StatusBar style="auto" />
-      <AddAccountDialog
-        name={name}
-        onChangeName={setName}
-        onClickCancel={() => setEditDialogVisible(false)}
-        onClickOk={() => {
-          const [account, event] = createAccount(name);
-
-          const item = {
-            id: account.accountId,
-            name: account.name,
-          };
-          setAccounts(accounts?.concat([item]) ?? []);
-          storeRemote(account, event).catch((_) => {
-            setAccounts(accounts);
+          router.push({
+            pathname: "/accounts/new",
+            params: {},
           });
-
-          storeLocal(item);
-
-          setEditDialogVisible(false);
         }}
-        visible={editDialogVisible}
       />
     </View>
   );
