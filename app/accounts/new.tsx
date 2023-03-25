@@ -1,13 +1,9 @@
-import { Stack, useRouter } from "expo-router";
-import { StatusBar } from "expo-status-bar";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { IconButton, TextInput } from "react-native-paper";
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
 import { Item as AccountListItem } from "../../components/AccountList";
+import { Screen } from "../../components/Screen";
 import { Account, AccountEvent, createAccount } from "../../lib/account";
 import {
   createAccount as createAccountInFirestore,
@@ -27,8 +23,7 @@ const storeRemote = async (
   await createAccountInFirestore(account.accountId, account.name);
 };
 
-function Inner(): JSX.Element {
-  const insets = useSafeAreaInsets();
+export default function AccountNew(): JSX.Element {
   const [accounts, setAccounts] = useState<AccountListItem[] | null>(null);
   const [name, setName] = useState<string>("");
   const router = useRouter();
@@ -49,25 +44,15 @@ function Inner(): JSX.Element {
 
     router.back();
   };
-
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          paddingTop: insets.top,
-        },
-      ]}
+    <Screen
+      options={{
+        title: "Add Account",
+        headerRight: () => (
+          <IconButton icon="check" onPress={onClickOk}></IconButton>
+        ),
+      }}
     >
-      <StatusBar style="auto" />
-      <Stack.Screen
-        options={{
-          title: "Add Account",
-          headerRight: () => (
-            <IconButton icon="check" onPress={onClickOk}></IconButton>
-          ),
-        }}
-      />
       <View style={{ flex: 1, width: "100%" }}>
         <TextInput
           label="Name"
@@ -77,22 +62,6 @@ function Inner(): JSX.Element {
           value={name}
         />
       </View>
-    </View>
+    </Screen>
   );
 }
-
-export default function AccountNew() {
-  return (
-    <SafeAreaProvider>
-      <Inner />
-    </SafeAreaProvider>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    flex: 1,
-    justifyContent: "center",
-  },
-});

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { FAB, List } from "react-native-paper";
 import { DeleteTransactionDialog } from "../../../../components/DeleteTransactionDialog";
+import { Screen } from "../../../../components/Screen";
 import {
   deleteTransaction,
   restoreAccount,
@@ -29,7 +30,7 @@ export default function Transactions(): JSX.Element {
       .then((account) => setAccount(account));
   }, [pathname]);
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+    <Screen>
       <FlatList
         data={account?.transactions ?? []}
         renderItem={({ item: transaction }) => {
@@ -141,7 +142,7 @@ export default function Transactions(): JSX.Element {
         }}
         visible={deleteModalVisible}
       />
-    </View>
+    </Screen>
   );
 }
 

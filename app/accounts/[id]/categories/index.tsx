@@ -4,6 +4,7 @@ import { StyleSheet, View } from "react-native";
 import { FAB } from "react-native-paper";
 import { CategoryList } from "../../../../components/CategoryList";
 import { DeleteCategoryDialog } from "../../../../components/DeleteCategoryDialog";
+import { Screen } from "../../../../components/Screen";
 import {
   Account,
   deleteCategory,
@@ -27,7 +28,7 @@ export default function Categories(): JSX.Element {
       .then((account) => setAccount(account));
   }, [pathname]);
   return (
-    <View style={styles.container}>
+    <Screen>
       <CategoryList
         data={account?.categories ?? []}
         onLongPressCategory={(category) => {
@@ -85,16 +86,11 @@ export default function Categories(): JSX.Element {
         }}
         visible={deleteDialogVisible}
       />
-    </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    flex: 1,
-    justifyContent: "center",
-  },
   fab: {
     bottom: 0,
     margin: 16,

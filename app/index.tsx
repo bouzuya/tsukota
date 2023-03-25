@@ -1,16 +1,12 @@
-import { Stack, usePathname, useRouter } from "expo-router";
-import { StatusBar } from "expo-status-bar";
+import { usePathname, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { FAB } from "react-native-paper";
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
 import {
   AccountList,
   Item as AccountListItem,
 } from "../components/AccountList";
+import { Screen } from "../components/Screen";
 import { storage } from "../lib/storage";
 
 const loadAccountsFromLocal = async (): Promise<AccountListItem[]> => {
@@ -29,8 +25,7 @@ const loadAccountsFromLocal = async (): Promise<AccountListItem[]> => {
   return accounts;
 };
 
-function Inner(): JSX.Element {
-  const insets = useSafeAreaInsets();
+export default function Index(): JSX.Element {
   const [accounts, setAccounts] = useState<AccountListItem[] | null>(null);
   const router = useRouter();
   const pathname = usePathname();
@@ -38,16 +33,7 @@ function Inner(): JSX.Element {
     loadAccountsFromLocal().then((accounts) => setAccounts(accounts));
   }, [pathname]);
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          paddingTop: insets.top,
-        },
-      ]}
-    >
-      <StatusBar style="auto" />
-      <Stack.Screen options={{ title: "Home" }} />
+    <Screen options={{ title: "Home" }}>
       <AccountList
         data={accounts}
         onLongPressAccount={(_account) => {
@@ -70,24 +56,11 @@ function Inner(): JSX.Element {
           });
         }}
       />
-    </View>
-  );
-}
-
-export default function Index() {
-  return (
-    <SafeAreaProvider>
-      <Inner />
-    </SafeAreaProvider>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    flex: 1,
-    justifyContent: "center",
-  },
   fab: {
     bottom: 0,
     margin: 16,
