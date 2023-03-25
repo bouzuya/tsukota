@@ -20,7 +20,7 @@ const storeRemote = async (
   event: AccountEvent
 ): Promise<void> => {
   await createEvent(event);
-  await createAccountInFirestore(account.accountId, account.name);
+  await createAccountInFirestore(account.id, account.name);
 };
 
 export default function AccountNew(): JSX.Element {
@@ -32,7 +32,7 @@ export default function AccountNew(): JSX.Element {
     const [account, event] = createAccount(name);
 
     const item = {
-      id: account.accountId,
+      id: account.id,
       name: account.name,
     };
     setAccounts(accounts?.concat([item]) ?? []);

@@ -33,7 +33,7 @@ export type Transaction = {
 };
 
 export type Account = {
-  accountId: string;
+  id: string;
   categories: Category[];
   name: string;
   transactions: Transaction[];
@@ -47,7 +47,7 @@ export const createCategory = (
   const event: CategoryAdded = {
     type: "categoryAdded",
     categoryId: generateUuidV4(),
-    accountId: self.accountId,
+    accountId: self.id,
     name,
     at: new Date().toISOString(),
   };
@@ -61,7 +61,7 @@ export const createTransaction = (
   const event: TransactionAdded = {
     type: "transactionAdded",
     transactionId: generateUuidV4(),
-    accountId: self.accountId,
+    accountId: self.id,
     at: new Date().toISOString(),
     ...props,
   };
@@ -75,7 +75,7 @@ export const deleteCategory = (
   const event: CategoryDeleted = {
     type: "categoryDeleted",
     categoryId,
-    accountId: self.accountId,
+    accountId: self.id,
     at: new Date().toISOString(),
   };
   return [applyEvent(self, event), event];
@@ -88,7 +88,7 @@ export const deleteTransaction = (
   const event: TransactionDeleted = {
     type: "transactionDeleted",
     transactionId,
-    accountId: self.accountId,
+    accountId: self.id,
     at: new Date().toISOString(),
   };
   return [applyEvent(self, event), event];
@@ -122,7 +122,7 @@ export const updateCategory = (
   const event: CategoryUpdated = {
     type: "categoryUpdated",
     categoryId,
-    accountId: self.accountId,
+    accountId: self.id,
     at: new Date().toISOString(),
     name,
   };
@@ -137,7 +137,7 @@ export const updateTransaction = (
   const event: TransactionUpdated = {
     type: "transactionUpdated",
     transactionId,
-    accountId: self.accountId,
+    accountId: self.id,
     at: new Date().toISOString(),
     ...props,
   };
@@ -150,7 +150,7 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
       throw new Error("Account is not created");
     const { accountId, name } = event;
     return {
-      accountId,
+      id: accountId,
       name,
       categories: [],
       transactions: [],
@@ -167,7 +167,7 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
         categories: self.categories.concat([
           {
             id,
-            accountId: self.accountId,
+            accountId: self.id,
             name,
             createdAt,
           },
