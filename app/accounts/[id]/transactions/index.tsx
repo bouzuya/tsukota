@@ -1,14 +1,11 @@
 import { usePathname, useRouter, useSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { FAB, List } from "react-native-paper";
+import { useAccount } from "../../../../components/AccountContext";
 import { DeleteTransactionDialog } from "../../../../components/DeleteTransactionDialog";
 import { Screen } from "../../../../components/Screen";
-import {
-  deleteTransaction,
-  restoreAccount,
-  Account,
-} from "../../../../lib/account";
+import { deleteTransaction } from "../../../../lib/account";
 import { createEvent, getEvents } from "../../../../lib/api";
 
 export default function Transactions(): JSX.Element {
@@ -23,12 +20,7 @@ export default function Transactions(): JSX.Element {
     new Date().toISOString().substring(0, 10)
   );
   const [transactionId, setTransactionId] = useState<string | null>(null);
-  const [account, setAccount] = useState<Account | null>(null);
-  useEffect(() => {
-    getEvents(accountId)
-      .then((events) => restoreAccount(events))
-      .then((account) => setAccount(account));
-  }, [pathname]);
+  const [account, setAccount] = useAccount(accountId, [pathname]);
   return (
     <Screen>
       <FlatList

@@ -1,7 +1,8 @@
 import { useRouter, useSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useState } from "react";
+import { View } from "react-native";
 import { IconButton } from "react-native-paper";
+import { useAccount } from "../../../../components/AccountContext";
 import { Screen } from "../../../../components/Screen";
 import { TransactionForm } from "../../../../components/TransactionForm";
 import {
@@ -14,19 +15,13 @@ import { createEvent, getEvents } from "../../../../lib/api";
 export default function TransactionNew(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
-  const [account, setAccount] = useState<Account | null>(null);
+  const [account, _setAccount] = useAccount(accountId, []);
   const [amount, setAmount] = useState<string>("");
   const [comment, setComment] = useState<string>("");
   const [date, setDate] = useState<string>(
     new Date().toISOString().substring(0, 10)
   );
   const router = useRouter();
-
-  useEffect(() => {
-    getEvents(accountId)
-      .then((events) => restoreAccount(events))
-      .then((account) => setAccount(account));
-  }, []);
 
   const onClickOk = () => {
     if (account === null) return;

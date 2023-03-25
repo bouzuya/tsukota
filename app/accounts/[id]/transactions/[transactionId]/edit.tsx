@@ -1,14 +1,11 @@
 import { useRouter, useSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useState } from "react";
+import { View } from "react-native";
 import { IconButton } from "react-native-paper";
+import { useAccount } from "../../../../../components/AccountContext";
 import { Screen } from "../../../../../components/Screen";
 import { TransactionForm } from "../../../../../components/TransactionForm";
-import {
-  Account,
-  restoreAccount,
-  updateTransaction,
-} from "../../../../../lib/account";
+import { updateTransaction } from "../../../../../lib/account";
 import { createEvent, getEvents } from "../../../../../lib/api";
 
 export default function TransactionEdit(): JSX.Element {
@@ -18,17 +15,11 @@ export default function TransactionEdit(): JSX.Element {
   const commentDefault = decodeURIComponent(`${params.comment}`);
   const dateDefault = `${params.date}`;
   const transactionId = `${params.transactionId}`;
-  const [account, setAccount] = useState<Account | null>(null);
+  const [account, _setAccount] = useAccount(accountId, []);
   const [amount, setAmount] = useState<string>(amountDefault);
   const [comment, setComment] = useState<string>(commentDefault);
   const [date, setDate] = useState<string>(dateDefault);
   const router = useRouter();
-
-  useEffect(() => {
-    getEvents(accountId)
-      .then((events) => restoreAccount(events))
-      .then((account) => setAccount(account));
-  }, []);
 
   const onClickOk = () => {
     if (account === null) return;

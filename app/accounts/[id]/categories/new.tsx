@@ -1,27 +1,18 @@
 import { useRouter, useSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { IconButton, TextInput } from "react-native-paper";
+import { useAccount } from "../../../../components/AccountContext";
 import { Screen } from "../../../../components/Screen";
-import {
-  Account,
-  createCategory,
-  restoreAccount,
-} from "../../../../lib/account";
-import { createEvent, getEvents } from "../../../../lib/api";
+import { createCategory } from "../../../../lib/account";
+import { createEvent } from "../../../../lib/api";
 
 export default function CategoryNew(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
-  const [account, setAccount] = useState<Account | null>(null);
+  const [account, _setAccount] = useAccount(accountId, []);
   const [name, setName] = useState<string>("");
   const router = useRouter();
-
-  useEffect(() => {
-    getEvents(accountId)
-      .then((events) => restoreAccount(events))
-      .then((account) => setAccount(account));
-  }, []);
 
   const onClickOk = () => {
     if (account === null) return;

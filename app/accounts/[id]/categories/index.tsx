@@ -1,32 +1,24 @@
 import { usePathname, useRouter, useSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { useState } from "react";
+import { StyleSheet } from "react-native";
 import { FAB } from "react-native-paper";
+import { useAccount } from "../../../../components/AccountContext";
 import { CategoryList } from "../../../../components/CategoryList";
 import { DeleteCategoryDialog } from "../../../../components/DeleteCategoryDialog";
 import { Screen } from "../../../../components/Screen";
-import {
-  Account,
-  deleteCategory,
-  restoreAccount,
-} from "../../../../lib/account";
-import { createEvent, getEvents } from "../../../../lib/api";
+import { deleteCategory } from "../../../../lib/account";
+import { createEvent } from "../../../../lib/api";
 
 export default function Categories(): JSX.Element {
   const pathname = usePathname();
   const params = useSearchParams();
   const router = useRouter();
   const accountId = `${params.id}`;
-  const [account, setAccount] = useState<Account | null>(null);
+  const [account, setAccount] = useAccount(accountId, [pathname]);
   const [name, setName] = useState<string>("");
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [deleteDialogVisible, setDeleteDialogVisible] =
     useState<boolean>(false);
-  useEffect(() => {
-    getEvents(accountId)
-      .then((events) => restoreAccount(events))
-      .then((account) => setAccount(account));
-  }, [pathname]);
   return (
     <Screen>
       <CategoryList
