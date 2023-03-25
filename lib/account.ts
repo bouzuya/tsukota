@@ -26,6 +26,7 @@ export type Category = {
 export type Transaction = {
   id: string;
   accountId: string;
+  categoryId: string;
   date: string;
   amount: string;
   comment: string;
@@ -205,6 +206,7 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
         accountId,
         amount,
         at: createdAt,
+        categoryId,
         comment,
         date,
         transactionId: id,
@@ -212,6 +214,7 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
       const transaction: Transaction = {
         id,
         accountId,
+        categoryId,
         date,
         amount,
         comment,
@@ -246,7 +249,7 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
       };
     }
     case "transactionUpdated": {
-      const { transactionId, amount, comment, date } = event;
+      const { transactionId, amount, categoryId, comment, date } = event;
       return {
         ...self,
         transactions: self.transactions.map((old): Transaction => {
@@ -255,6 +258,7 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
             : {
                 id: old.id,
                 accountId: old.accountId,
+                categoryId,
                 date,
                 amount,
                 comment,

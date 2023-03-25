@@ -50,6 +50,7 @@ export type TransactionUpdated = {
 } & TransactionProps;
 
 export type TransactionProps = {
+  categoryId: string;
   date: string;
   amount: string;
   comment: string;
