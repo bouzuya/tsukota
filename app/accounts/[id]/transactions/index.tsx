@@ -6,7 +6,7 @@ import { useAccount } from "../../../../components/AccountContext";
 import { DeleteTransactionDialog } from "../../../../components/DeleteTransactionDialog";
 import { Screen } from "../../../../components/Screen";
 import { deleteTransaction } from "../../../../lib/account";
-import { createEvent, getEvents } from "../../../../lib/api";
+import { createEvent } from "../../../../lib/api";
 
 export default function Transactions(): JSX.Element {
   const pathname = usePathname();
@@ -71,6 +71,7 @@ export default function Transactions(): JSX.Element {
                   pathname: "/accounts/[id]/transactions/[transactionId]/edit",
                   params: {
                     id: accountId,
+                    categoryId: transaction.categoryId,
                     transactionId: transaction.id,
                     date: transaction.date,
                     amount: transaction.amount,
