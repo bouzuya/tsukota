@@ -1,25 +1,12 @@
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
 
-function SafeArea({ children, options }: Props): JSX.Element {
-  const insets = useSafeAreaInsets();
+export function Screen({ children, options }: Props): JSX.Element {
+  // SafeAreaProvider, StatusBar は expo-router の ExpoRoot に含まれるため不要
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          paddingTop: insets.top,
-        },
-      ]}
-    >
-      <StatusBar style="auto" />
+    <View style={styles.container}>
       {options ? <Stack.Screen options={options} /> : null}
       {children}
     </View>
@@ -30,14 +17,6 @@ type Props = {
   children: React.ReactNode;
   options?: NativeStackNavigationOptions;
 };
-
-export function Screen(props: Props) {
-  return (
-    <SafeAreaProvider>
-      <SafeArea {...props} />
-    </SafeAreaProvider>
-  );
-}
 
 const styles = StyleSheet.create({
   container: {

@@ -2,7 +2,7 @@
   "expo": {
     "name": "tsukota",
     "slug": "tsukota",
-    "version": "1.0.0",
+    "version": "0.1.9",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -23,7 +23,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "net.bouzuya.lab.tsukota"
+      "package": "net.bouzuya.lab.tsukota",
+      "versionCode": 9
     },
     "web": {
       "favicon": "./assets/favicon.png"

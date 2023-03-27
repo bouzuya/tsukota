@@ -23,6 +23,12 @@
     }
   },
   "submit": {
+    "preview": {
+      "android": {
+        "releaseStatus": "draft",
+        "track": "internal"
+      }
+    },
     "production": {}
   }
 }
