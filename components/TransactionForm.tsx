@@ -1,8 +1,8 @@
-import { Button, IconButton, Text, TextInput } from "react-native-paper";
+import { TextInput } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
 import { Category } from "../lib/account";
 import { usePathname, useRouter, useSearchParams } from "expo-router";
-import { ReactNode, useEffect } from "react";
+import { useEffect } from "react";
 
 type Props = {
   amount: string;

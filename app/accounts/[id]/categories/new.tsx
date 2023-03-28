@@ -26,7 +26,13 @@ export default function CategoryNew(): JSX.Element {
     <Screen
       options={{
         title: "Add Category",
-        headerRight: () => <IconButton icon="check" onPress={onClickOk} />,
+        headerRight: () => (
+          <IconButton
+            accessibilityLabel="Save"
+            icon="check"
+            onPress={onClickOk}
+          />
+        ),
       }}
     >
       <View style={{ flex: 1, width: "100%" }}>

@@ -49,7 +49,11 @@ export default function AccountNew(): JSX.Element {
       options={{
         title: "Add Account",
         headerRight: () => (
-          <IconButton icon="check" onPress={onClickOk}></IconButton>
+          <IconButton
+            accessibilityLabel="Save"
+            icon="check"
+            onPress={onClickOk}
+          />
         ),
       }}
     >

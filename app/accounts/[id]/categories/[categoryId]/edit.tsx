@@ -28,7 +28,13 @@ export default function CategoryEdit(): JSX.Element {
     <Screen
       options={{
         title: "Edit Category",
-        headerRight: () => <IconButton icon="check" onPress={onClickOk} />,
+        headerRight: () => (
+          <IconButton
+            accessibilityLabel="Save"
+            icon="check"
+            onPress={onClickOk}
+          />
+        ),
       }}
     >
       <View style={{ flex: 1, width: "100%" }}>

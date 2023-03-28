@@ -36,7 +36,13 @@ export default function TransactionNew(): JSX.Element {
     <Screen
       options={{
         title: "Add Transaction",
-        headerRight: () => <IconButton icon="check" onPress={onClickOk} />,
+        headerRight: () => (
+          <IconButton
+            accessibilityLabel="Save"
+            icon="check"
+            onPress={onClickOk}
+          />
+        ),
       }}
     >
       <View style={{ flex: 1, width: "100%" }}>
