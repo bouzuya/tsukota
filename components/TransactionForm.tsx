@@ -74,6 +74,7 @@ export function TransactionForm({
                 },
               });
             }}
+            size={28}
           />
         }
       />

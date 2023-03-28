@@ -31,6 +31,7 @@ export default function CategoryNew(): JSX.Element {
             accessibilityLabel="Save"
             icon="check"
             onPress={onClickOk}
+            size={28}
           />
         ),
       }}

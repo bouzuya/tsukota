@@ -1,4 +1,4 @@
-import { FlatList, FlatListProps, Text } from "react-native";
+import { FlatList, FlatListProps } from "react-native";
 import { List } from "react-native-paper";
 import { Category } from "../lib/account";
 

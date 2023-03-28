@@ -41,6 +41,7 @@ export default function TransactionNew(): JSX.Element {
             accessibilityLabel="Save"
             icon="check"
             onPress={onClickOk}
+            size={28}
           />
         ),
       }}
