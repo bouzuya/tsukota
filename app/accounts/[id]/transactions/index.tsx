@@ -23,80 +23,91 @@ export default function Transactions(): JSX.Element {
   const [account, setAccount] = useAccount(accountId, [pathname]);
   return (
     <Screen>
-      <FlatList
-        data={account?.transactions ?? []}
-        renderItem={({ item: transaction }) => {
-          const ensureDescription = (s: string): string =>
-            s.length === 0 ? " " : s;
-          return (
-            <List.Item
-              description={ensureDescription(transaction.comment)}
-              key={transaction.id}
-              left={() => (
-                <View
-                  style={{
-                    flexWrap: "nowrap",
-                    flexDirection: "row",
-                    paddingStart: 16,
-                    position: "absolute",
-                    width: "100%",
-                    margin: 0,
-                  }}
-                >
-                  <Text style={{ flex: 1, fontSize: 16, color: "#1C1B1F" }}>
-                    {transaction.date}
-                  </Text>
-                  <Text
+      {(account?.transactions ?? []).length === 0 ? (
+        (account?.categories ?? []).length === 0 ? (
+          <Text>Register a new category</Text>
+        ) : (
+          <Text>Register a new transaction</Text>
+        )
+      ) : (
+        <FlatList
+          data={account?.transactions ?? []}
+          renderItem={({ item: transaction }) => {
+            const ensureDescription = (s: string): string =>
+              s.length === 0 ? " " : s;
+            return (
+              <List.Item
+                description={ensureDescription(transaction.comment)}
+                key={transaction.id}
+                left={() => (
+                  <View
                     style={{
-                      flex: 1,
-                      fontSize: 16,
-                      color: "#1C1B1F",
-                      textAlign: "right",
-                      paddingHorizontal: 8,
+                      flexWrap: "nowrap",
+                      flexDirection: "row",
+                      paddingStart: 16,
+                      position: "absolute",
+                      width: "100%",
+                      margin: 0,
                     }}
                   >
-                    {transaction.amount}
-                  </Text>
-                </View>
-              )}
-              onLongPress={() => {
-                setDate(transaction.date);
-                setAmount(transaction.amount);
-                setComment(transaction.comment);
-                setTransactionId(transaction.id);
-                setDeleteModalVisible(true);
-              }}
-              onPress={() => {
-                router.push({
-                  pathname: "/accounts/[id]/transactions/[transactionId]/edit",
-                  params: {
-                    id: accountId,
-                    categoryId: transaction.categoryId,
-                    transactionId: transaction.id,
-                    date: transaction.date,
-                    amount: transaction.amount,
-                    comment: encodeURIComponent(transaction.comment),
-                  },
-                });
-              }}
-              title=""
-            />
-          );
-        }}
-        style={{ flex: 1, width: "100%" }}
-      />
-      <FAB
-        icon="plus"
-        style={styles.fab}
-        onPress={() => {
-          router.push({
-            pathname: "/accounts/[id]/transactions/new",
-            params: {
-              id: accountId,
-            },
-          });
-        }}
-      />
+                    <Text style={{ flex: 1, fontSize: 16, color: "#1C1B1F" }}>
+                      {transaction.date}
+                    </Text>
+                    <Text
+                      style={{
+                        flex: 1,
+                        fontSize: 16,
+                        color: "#1C1B1F",
+                        textAlign: "right",
+                        paddingHorizontal: 8,
+                      }}
+                    >
+                      {transaction.amount}
+                    </Text>
+                  </View>
+                )}
+                onLongPress={() => {
+                  setDate(transaction.date);
+                  setAmount(transaction.amount);
+                  setComment(transaction.comment);
+                  setTransactionId(transaction.id);
+                  setDeleteModalVisible(true);
+                }}
+                onPress={() => {
+                  router.push({
+                    pathname:
+                      "/accounts/[id]/transactions/[transactionId]/edit",
+                    params: {
+                      id: accountId,
+                      categoryId: transaction.categoryId,
+                      transactionId: transaction.id,
+                      date: transaction.date,
+                      amount: transaction.amount,
+                      comment: encodeURIComponent(transaction.comment),
+                    },
+                  });
+                }}
+                title=""
+              />
+            );
+          }}
+          style={{ flex: 1, width: "100%" }}
+        />
+      )}
+      {(account?.categories ?? []).length === 0 ? null : (
+        <FAB
+          icon="plus"
+          style={styles.fab}
+          onPress={() => {
+            router.push({
+              pathname: "/accounts/[id]/transactions/new",
+              params: {
+                id: accountId,
+              },
+            });
+          }}
+        />
+      )}
       <DeleteTransactionDialog
         amount={amount}
         comment={comment}

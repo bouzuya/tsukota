@@ -1,7 +1,7 @@
 import { usePathname, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
-import { FAB } from "react-native-paper";
+import { FAB, Text } from "react-native-paper";
 import {
   AccountList,
   Item as AccountListItem,
@@ -34,18 +34,22 @@ export default function Index(): JSX.Element {
   }, [pathname]);
   return (
     <Screen options={{ title: "Home" }}>
-      <AccountList
-        data={accounts}
-        onLongPressAccount={(_account) => {
-          // TODO: edit or delete
-        }}
-        onPressAccount={(account) =>
-          router.push({
-            pathname: "/accounts/[id]",
-            params: { id: account.id },
-          })
-        }
-      />
+      {(accounts ?? []).length === 0 ? (
+        <Text>Register a new account</Text>
+      ) : (
+        <AccountList
+          data={accounts}
+          onLongPressAccount={(_account) => {
+            // TODO: edit or delete
+          }}
+          onPressAccount={(account) =>
+            router.push({
+              pathname: "/accounts/[id]",
+              params: { id: account.id },
+            })
+          }
+        />
+      )}
       <FAB
         icon="plus"
         style={styles.fab}

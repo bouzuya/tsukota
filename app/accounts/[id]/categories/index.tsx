@@ -1,7 +1,7 @@
 import { usePathname, useRouter, useSearchParams } from "expo-router";
 import { useState } from "react";
 import { StyleSheet } from "react-native";
-import { FAB } from "react-native-paper";
+import { FAB, Text } from "react-native-paper";
 import { useAccount } from "../../../../components/AccountContext";
 import { CategoryList } from "../../../../components/CategoryList";
 import { DeleteCategoryDialog } from "../../../../components/DeleteCategoryDialog";
@@ -21,24 +21,28 @@ export default function Categories(): JSX.Element {
     useState<boolean>(false);
   return (
     <Screen>
-      <CategoryList
-        data={account?.categories ?? []}
-        onLongPressCategory={(category) => {
-          setName(category.name);
-          setCategoryId(category.id);
-          setDeleteDialogVisible(true);
-        }}
-        onPressCategory={(category) => {
-          router.push({
-            pathname: "/accounts/[id]/categories/[categoryId]/edit",
-            params: {
-              id: accountId,
-              categoryId: category.id,
-              name: encodeURIComponent(category.name),
-            },
-          });
-        }}
-      />
+      {(account?.categories ?? []).length === 0 ? (
+        <Text>Register a new category</Text>
+      ) : (
+        <CategoryList
+          data={account?.categories ?? []}
+          onLongPressCategory={(category) => {
+            setName(category.name);
+            setCategoryId(category.id);
+            setDeleteDialogVisible(true);
+          }}
+          onPressCategory={(category) => {
+            router.push({
+              pathname: "/accounts/[id]/categories/[categoryId]/edit",
+              params: {
+                id: accountId,
+                categoryId: category.id,
+                name: encodeURIComponent(category.name),
+              },
+            });
+          }}
+        />
+      )}
       <FAB
         icon="plus"
         style={styles.fab}
