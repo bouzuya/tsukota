@@ -12,14 +12,15 @@ export default function CategoryEdit(): JSX.Element {
   const accountId = `${params.id}`;
   const nameDefault = decodeURIComponent(`${params.name}`);
   const categoryId = `${params.categoryId}`;
-  const [account, _setAccount] = useAccount(accountId, []);
+  const [account, setAccount] = useAccount(accountId, []);
   const [name, setName] = useState<string>(nameDefault);
   const router = useRouter();
 
   const onClickOk = () => {
     if (account === null) return;
-    const [_, event] = updateCategory(account, categoryId, name);
+    const [newAccount, event] = updateCategory(account, categoryId, name);
     createEvent(event).then((_) => {
+      setAccount(newAccount);
       router.back();
     });
   };

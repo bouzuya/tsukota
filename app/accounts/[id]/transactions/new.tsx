@@ -11,7 +11,7 @@ import { createEvent } from "../../../../lib/api";
 export default function TransactionNew(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
-  const [account, _setAccount] = useAccount(accountId, []);
+  const [account, setAccount] = useAccount(accountId, []);
   const [amount, setAmount] = useState<string>("");
   const [categoryId, setCategoryId] = useState<string>("");
   const [comment, setComment] = useState<string>("");
@@ -22,13 +22,14 @@ export default function TransactionNew(): JSX.Element {
 
   const onClickOk = () => {
     if (account === null) return;
-    const [_, event] = createTransaction(account, {
+    const [newAccount, event] = createTransaction(account, {
       amount,
       categoryId,
       comment,
       date,
     });
     createEvent(event).then((_) => {
+      setAccount(newAccount);
       router.back();
     });
   };

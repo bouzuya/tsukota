@@ -10,14 +10,15 @@ import { createEvent } from "../../../../lib/api";
 export default function CategoryNew(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
-  const [account, _setAccount] = useAccount(accountId, []);
+  const [account, setAccount] = useAccount(accountId, []);
   const [name, setName] = useState<string>("");
   const router = useRouter();
 
   const onClickOk = () => {
     if (account === null) return;
-    const [_, event] = createCategory(account, name);
+    const [newAccount, event] = createCategory(account, name);
     createEvent(event).then((_) => {
+      setAccount(newAccount);
       router.back();
     });
   };

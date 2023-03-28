@@ -1,7 +1,10 @@
 import {
   createContext,
   DependencyList,
+  Dispatch,
   ReactNode,
+  SetStateAction,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -9,21 +12,24 @@ import {
 import { Account, restoreAccount } from "../lib/account";
 import { getEvents } from "../lib/api";
 
-export const AccountContext = createContext<
-  (accountId: string) => Promise<Account>
->((_accountId: string) => Promise.reject());
+type ContextValue = {
+  accounts: { [accountId: string]: Account };
+  setAccounts: Dispatch<SetStateAction<{ [accountId: string]: Account }>>;
+};
+
+const AccountContext = createContext<ContextValue>({
+  accounts: {},
+  setAccounts: () => {},
+});
 
 type Props = {
   children: ReactNode;
 };
 
 export function AccountContextProvider({ children }: Props): JSX.Element {
+  const [accounts, setAccounts] = useState({});
   return (
-    <AccountContext.Provider
-      value={(accountId) =>
-        getEvents(accountId).then((events) => restoreAccount(events))
-      }
-    >
+    <AccountContext.Provider value={{ accounts, setAccounts }}>
       {children}
     </AccountContext.Provider>
   );
@@ -33,10 +39,17 @@ export function useAccount(
   accountId: string,
   deps: DependencyList
 ): [Account | null, (account: Account) => void] {
-  const [account, setAccount] = useState<Account | null>(null);
-  const getAccount = useContext(AccountContext);
+  const { accounts, setAccounts } = useContext(AccountContext);
+  const setAccount = (account: Account) => {
+    setAccounts((accounts) => ({ ...accounts, [accountId]: account }));
+  };
   useEffect(() => {
-    getAccount(accountId).then((account) => setAccount(account));
+    const cachedAccount = accounts[accountId];
+    if (cachedAccount === undefined) {
+      getEvents(accountId)
+        .then((events) => restoreAccount(events))
+        .then((account) => setAccount(account));
+    }
   }, deps);
-  return [account, setAccount];
+  return [accounts[accountId], setAccount];
 }

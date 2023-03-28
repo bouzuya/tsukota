@@ -16,7 +16,7 @@ export default function TransactionEdit(): JSX.Element {
   const categoryIdDefault = `${params.categoryId}`;
   const dateDefault = `${params.date}`;
   const transactionId = `${params.transactionId}`;
-  const [account, _setAccount] = useAccount(accountId, []);
+  const [account, setAccount] = useAccount(accountId, []);
   const [amount, setAmount] = useState<string>(amountDefault);
   const [categoryId, setCategoryId] = useState<string>(categoryIdDefault);
   const [comment, setComment] = useState<string>(commentDefault);
@@ -25,13 +25,14 @@ export default function TransactionEdit(): JSX.Element {
 
   const onClickOk = () => {
     if (account === null) return;
-    const [_, event] = updateTransaction(account, transactionId, {
+    const [newAccount, event] = updateTransaction(account, transactionId, {
       amount,
       categoryId,
       comment,
       date,
     });
     createEvent(event).then((_) => {
+      setAccount(newAccount);
       router.back();
     });
   };
