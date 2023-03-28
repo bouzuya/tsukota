@@ -28,7 +28,7 @@ export function AccountList(props: Props): JSX.Element {
           title={item.name}
         />
       )}
-      style={{ flex: 1, width: "100%" }}
+      style={[{ flex: 1, width: "100%" }]}
     />
   );
 }

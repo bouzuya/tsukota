@@ -5,7 +5,7 @@
     "version": "0.1.11",
     "orientation": "portrait",
     "icon": "./assets/icon-v2.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "scheme": "tsukota",
     "splash": {
       "backgroundColor": "#4e6a41",

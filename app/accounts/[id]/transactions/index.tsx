@@ -1,7 +1,7 @@
 import { usePathname, useRouter, useSearchParams } from "expo-router";
 import { useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
-import { FAB, List } from "react-native-paper";
+import { FlatList, StyleSheet, View } from "react-native";
+import { FAB, List, Text } from "react-native-paper";
 import { useAccount } from "../../../../components/AccountContext";
 import { DeleteTransactionDialog } from "../../../../components/DeleteTransactionDialog";
 import { Screen } from "../../../../components/Screen";
@@ -42,22 +42,18 @@ export default function Transactions(): JSX.Element {
                 left={() => (
                   <View
                     style={{
-                      flexWrap: "nowrap",
                       flexDirection: "row",
+                      flexWrap: "nowrap",
+                      margin: 0,
                       paddingStart: 16,
                       position: "absolute",
                       width: "100%",
-                      margin: 0,
                     }}
                   >
-                    <Text style={{ flex: 1, fontSize: 16, color: "#1C1B1F" }}>
-                      {transaction.date}
-                    </Text>
+                    <Text style={{ flex: 1 }}>{transaction.date}</Text>
                     <Text
                       style={{
                         flex: 1,
-                        fontSize: 16,
-                        color: "#1C1B1F",
                         textAlign: "right",
                         paddingHorizontal: 8,
                       }}
@@ -113,35 +109,21 @@ export default function Transactions(): JSX.Element {
         comment={comment}
         date={date}
         id={transactionId}
-        onClickCancel={() => {
-          // reset form
-          // do not reset "date" field
-          setAmount("");
-          setComment("");
-          setTransactionId(null);
-          setDeleteModalVisible(false);
-        }}
+        onClickCancel={() => setDeleteModalVisible(false)}
         onClickOk={() => {
-          if (account === null) return;
-          if (transactionId !== null) {
-            // update local state
-            const [newTransactions, newEvent] = deleteTransaction(
-              account,
-              transactionId
-            );
+          if (account === null || transactionId === null) return;
+          // update local state
+          const [newAccount, newEvent] = deleteTransaction(
+            account,
+            transactionId
+          );
 
-            // update remote state
-            setAccount(newTransactions);
-            createEvent(newEvent).catch((_) => {
-              setAccount(account);
-            });
-          }
+          // update remote state
+          setAccount(newAccount);
+          createEvent(newEvent).catch((_) => {
+            setAccount(account);
+          });
 
-          // reset form
-          // do not reset "date" field
-          setAmount("");
-          setComment("");
-          setTransactionId(null);
           setDeleteModalVisible(false);
         }}
         visible={deleteModalVisible}

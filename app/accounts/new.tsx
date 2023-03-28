@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import { IconButton, TextInput } from "react-native-paper";
 import { Item as AccountListItem } from "../../components/AccountList";
 import { Screen } from "../../components/Screen";
