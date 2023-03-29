@@ -3,6 +3,7 @@ import { useState } from "react";
 import { BottomNavigation } from "react-native-paper";
 import Categories from "./categories/index";
 import Transactions from "./transactions/index";
+import Settings from "./settings";
 
 export default function AccountRoot(): JSX.Element {
   // 本来は _layout.tsx で expo-router の Tabs を使うべきだが、
@@ -13,6 +14,7 @@ export default function AccountRoot(): JSX.Element {
   //
   // - `/accounts/[id]/transactions`
   // - `/accounts/[id]/categories`
+  // - `/accounts/[id]/settings`
   //
   // ファイル配置は以前のものを維持しているため、
   // Expo Router のルールから外れている点に注意が必要になる。
@@ -32,11 +34,17 @@ export default function AccountRoot(): JSX.Element {
       title: "Categories",
       focusedIcon: "shape",
     },
+    {
+      key: "settings",
+      title: "Settings",
+      focusedIcon: "cogs",
+    },
   ]);
 
   const renderScene = BottomNavigation.SceneMap({
     categories: Categories,
     transactions: Transactions,
+    settings: Settings,
   });
 
   return (

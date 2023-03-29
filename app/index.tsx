@@ -7,23 +7,7 @@ import {
   Item as AccountListItem,
 } from "../components/AccountList";
 import { Screen } from "../components/Screen";
-import { storage } from "../lib/storage";
-
-const loadAccountsFromLocal = async (): Promise<AccountListItem[]> => {
-  const key = "accounts";
-  const ids = await storage.getIdsForKey(key);
-
-  const accounts = [];
-  for (const id of ids) {
-    const account = await storage.load<AccountListItem>({
-      key,
-      id,
-    });
-    accounts.push(account);
-  }
-
-  return accounts;
-};
+import { loadAccountsFromLocal } from "../lib/account-local-storage";
 
 export default function Index(): JSX.Element {
   const [accounts, setAccounts] = useState<AccountListItem[] | null>(null);
@@ -39,9 +23,7 @@ export default function Index(): JSX.Element {
       ) : (
         <AccountList
           data={accounts}
-          onLongPressAccount={(_account) => {
-            // TODO: edit or delete
-          }}
+          onLongPressAccount={() => {}}
           onPressAccount={(account) =>
             router.push({
               pathname: "/accounts/[id]",
