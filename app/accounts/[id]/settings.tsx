@@ -5,7 +5,7 @@ import { Divider, List, Text } from "react-native-paper";
 import { useAccount } from "../../../components/AccountContext";
 import { DeleteAccountDialog } from "../../../components/DeleteAccountDialog";
 import { Screen } from "../../../components/Screen";
-import { listCategory } from "../../../lib/account";
+import { getLastEventId, listCategory } from "../../../lib/account";
 import { deleteAccountFromLocal } from "../../../lib/account-local-storage";
 
 export default function Settings(): JSX.Element {
@@ -47,6 +47,18 @@ export default function Settings(): JSX.Element {
         <List.Item
           title="Number of categories"
           description={`${listCategory(account, false).length}`}
+          style={{ width: "100%" }}
+        />
+        <Divider style={{ width: "100%" }} />
+        <List.Item
+          title="Number of events"
+          description={`${account.events.length}`}
+          style={{ width: "100%" }}
+        />
+        <Divider style={{ width: "100%" }} />
+        <List.Item
+          title="Last updated"
+          description={`${account.events[account.events.length - 1].at}`}
           style={{ width: "100%" }}
         />
         <Divider style={{ width: "100%" }} />
