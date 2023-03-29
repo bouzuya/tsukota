@@ -5,8 +5,8 @@ import { IconButton } from "react-native-paper";
 import { useAccount } from "../../../../components/AccountContext";
 import { Screen } from "../../../../components/Screen";
 import { TransactionForm } from "../../../../components/TransactionForm";
-import { createTransaction } from "../../../../lib/account";
-import { createEvent } from "../../../../lib/api";
+import { createTransaction, getLastEventId } from "../../../../lib/account";
+import { storeEvent } from "../../../../lib/api";
 
 export default function TransactionNew(): JSX.Element {
   const params = useSearchParams();
@@ -28,7 +28,7 @@ export default function TransactionNew(): JSX.Element {
       comment,
       date,
     });
-    createEvent(event).then((_) => {
+    storeEvent(getLastEventId(account), event).then((_) => {
       setAccount(newAccount);
       router.back();
     });

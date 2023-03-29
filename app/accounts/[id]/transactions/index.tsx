@@ -5,8 +5,8 @@ import { FAB, List, Text } from "react-native-paper";
 import { useAccount } from "../../../../components/AccountContext";
 import { DeleteTransactionDialog } from "../../../../components/DeleteTransactionDialog";
 import { Screen } from "../../../../components/Screen";
-import { deleteTransaction } from "../../../../lib/account";
-import { createEvent } from "../../../../lib/api";
+import { deleteTransaction, getLastEventId } from "../../../../lib/account";
+import { storeEvent } from "../../../../lib/api";
 
 export default function Transactions(): JSX.Element {
   const pathname = usePathname();
@@ -120,7 +120,7 @@ export default function Transactions(): JSX.Element {
 
           // update remote state
           setAccount(newAccount);
-          createEvent(newEvent).catch((_) => {
+          storeEvent(getLastEventId(account), newEvent).catch((_) => {
             setAccount(account);
           });
 

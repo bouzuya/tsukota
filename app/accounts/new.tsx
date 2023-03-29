@@ -4,11 +4,13 @@ import { View } from "react-native";
 import { IconButton, TextInput } from "react-native-paper";
 import { Item as AccountListItem } from "../../components/AccountList";
 import { Screen } from "../../components/Screen";
-import { Account, AccountEvent, createAccount } from "../../lib/account";
 import {
-  createAccount as createAccountInFirestore,
-  createEvent,
-} from "../../lib/api";
+  Account,
+  AccountEvent,
+  createAccount,
+  getLastEventId,
+} from "../../lib/account";
+import { storeEvent } from "../../lib/api";
 import { storage } from "../../lib/storage";
 
 const storeLocal = async (item: AccountListItem): Promise<void> => {
@@ -16,11 +18,10 @@ const storeLocal = async (item: AccountListItem): Promise<void> => {
 };
 
 const storeRemote = async (
-  account: Account,
+  _account: Account,
   event: AccountEvent
 ): Promise<void> => {
-  await createEvent(event);
-  await createAccountInFirestore(account.id, account.name);
+  await storeEvent(null, event);
 };
 
 export default function AccountNew(): JSX.Element {

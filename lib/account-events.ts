@@ -3,6 +3,7 @@ export type AccountCreated = {
   accountId: string;
   name: string;
   at: string;
+  id: string;
 };
 
 export type CategoryAdded = {
@@ -11,6 +12,7 @@ export type CategoryAdded = {
   accountId: string;
   name: string;
   at: string;
+  id: string;
 };
 
 export type CategoryDeleted = {
@@ -18,6 +20,7 @@ export type CategoryDeleted = {
   categoryId: string;
   accountId: string;
   at: string;
+  id: string;
 };
 
 export type CategoryUpdated = {
@@ -26,6 +29,7 @@ export type CategoryUpdated = {
   accountId: string;
   name: string;
   at: string;
+  id: string;
 };
 
 export type TransactionAdded = {
@@ -33,6 +37,7 @@ export type TransactionAdded = {
   transactionId: string;
   accountId: string;
   at: string;
+  id: string;
 } & TransactionProps;
 
 export type TransactionDeleted = {
@@ -40,6 +45,7 @@ export type TransactionDeleted = {
   transactionId: string;
   accountId: string;
   at: string;
+  id: string;
 };
 
 export type TransactionUpdated = {
@@ -47,6 +53,7 @@ export type TransactionUpdated = {
   transactionId: string;
   accountId: string;
   at: string;
+  id: string;
 } & TransactionProps;
 
 export type TransactionProps = {

@@ -1,42 +1,76 @@
 import {
-  addDoc,
   collection,
   getDocs,
   CollectionReference,
   doc,
-  setDoc,
+  runTransaction,
+  DocumentReference,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { AccountEvent } from "./account";
 
-export const createAccount = async (
-  id: string,
-  name: string
-): Promise<void> => {
-  try {
-    const accountDocument = doc(db, "accounts", id);
-    await setDoc(accountDocument, { name });
-    console.log("Document written with ID: ", id);
-  } catch (e) {
-    console.error("Error adding document: ", e);
-    throw e;
-  }
+type AccountDocument = {
+  id: string;
+  lastEventId: string;
 };
 
-export const createEvent = async (event: AccountEvent): Promise<void> => {
-  const accountId = event.accountId;
-  try {
-    const eventsCollection = collection(
-      db,
-      "accounts",
-      accountId,
-      "events"
-    ) as CollectionReference<AccountEvent>;
-    const docRef = await addDoc(eventsCollection, event);
-    console.log("Document written with ID: ", docRef.id);
-  } catch (e) {
-    console.error("Error adding document: ", e);
-  }
+type EventDocument = AccountEvent;
+
+export const storeEvent = (
+  lastEventId: string | null,
+  event: AccountEvent
+): Promise<void> => {
+  return runTransaction(
+    db,
+    async (transaction) => {
+      // create or update account
+      const accountDocRef = doc(
+        db,
+        "accounts",
+        event.accountId
+      ) as DocumentReference<AccountDocument>;
+      const accountDocSnapshot = await transaction.get(accountDocRef);
+      if (lastEventId === null) {
+        if (accountDocSnapshot.exists())
+          return Promise.reject(
+            `account already exist (accountId: ${event.accountId})`
+          );
+        if (event.type !== "accountCreated")
+          return Promise.reject(
+            `event type is not accountCreated (accountId: ${event.accountId})`
+          );
+        transaction.set(accountDocRef, {
+          id: event.accountId,
+          lastEventId: event.id,
+        });
+      } else {
+        if (!accountDocSnapshot.exists())
+          return Promise.reject(
+            `account does not exist (accountId: ${event.accountId})`
+          );
+        const docData = accountDocSnapshot.data();
+        if (docData.lastEventId !== lastEventId)
+          return Promise.reject(
+            `account already updated (accountId: ${event.accountId}, expected: ${lastEventId}, actual: ${docData.lastEventId})`
+          );
+        transaction.update(accountDocRef, {
+          ...docData,
+          lastEventId: event.id,
+        });
+      }
+
+      // create event
+      const eventDocRef = doc(
+        db,
+        "accounts",
+        event.accountId,
+        "events",
+        event.id
+      ) as DocumentReference<EventDocument>;
+      transaction.set(eventDocRef, event);
+    },
+    { maxAttempts: 1 }
+  );
 };
 
 export const getEvents = async (accountId: string): Promise<AccountEvent[]> => {

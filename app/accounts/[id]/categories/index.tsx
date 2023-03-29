@@ -6,8 +6,12 @@ import { useAccount } from "../../../../components/AccountContext";
 import { CategoryList } from "../../../../components/CategoryList";
 import { DeleteCategoryDialog } from "../../../../components/DeleteCategoryDialog";
 import { Screen } from "../../../../components/Screen";
-import { deleteCategory, listCategory } from "../../../../lib/account";
-import { createEvent } from "../../../../lib/api";
+import {
+  deleteCategory,
+  getLastEventId,
+  listCategory,
+} from "../../../../lib/account";
+import { storeEvent } from "../../../../lib/api";
 
 export default function Categories(): JSX.Element {
   const pathname = usePathname();
@@ -72,7 +76,7 @@ export default function Categories(): JSX.Element {
 
             // update remote state
             setAccount(newAccount);
-            createEvent(newEvent).catch((_) => {
+            storeEvent(getLastEventId(account), newEvent).catch((_) => {
               setAccount(account);
             });
           }

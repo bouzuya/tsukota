@@ -4,8 +4,8 @@ import { StyleSheet, View } from "react-native";
 import { IconButton, TextInput } from "react-native-paper";
 import { useAccount } from "../../../../../components/AccountContext";
 import { Screen } from "../../../../../components/Screen";
-import { updateCategory } from "../../../../../lib/account";
-import { createEvent } from "../../../../../lib/api";
+import { getLastEventId, updateCategory } from "../../../../../lib/account";
+import { storeEvent } from "../../../../../lib/api";
 
 export default function CategoryEdit(): JSX.Element {
   const params = useSearchParams();
@@ -19,7 +19,7 @@ export default function CategoryEdit(): JSX.Element {
   const onClickOk = () => {
     if (account === null) return;
     const [newAccount, event] = updateCategory(account, categoryId, name);
-    createEvent(event).then((_) => {
+    storeEvent(getLastEventId(account), event).then((_) => {
       setAccount(newAccount);
       router.back();
     });

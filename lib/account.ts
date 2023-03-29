@@ -35,11 +35,11 @@ export type Transaction = {
 };
 
 export type Account = {
-  id: string;
   categories: Category[];
+  events: AccountEvent[];
+  id: string;
   name: string;
   transactions: Transaction[];
-  version: number;
 };
 
 export const createCategory = (
@@ -50,6 +50,7 @@ export const createCategory = (
     type: "categoryAdded",
     categoryId: generateUuidV4(),
     accountId: self.id,
+    id: generateUuidV4(),
     name,
     at: new Date().toISOString(),
   };
@@ -65,6 +66,7 @@ export const createTransaction = (
     transactionId: generateUuidV4(),
     accountId: self.id,
     at: new Date().toISOString(),
+    id: generateUuidV4(),
     ...props,
   };
   return [applyEvent(self, event), event];
@@ -79,6 +81,7 @@ export const deleteCategory = (
     categoryId,
     accountId: self.id,
     at: new Date().toISOString(),
+    id: generateUuidV4(),
   };
   return [applyEvent(self, event), event];
 };
@@ -92,6 +95,7 @@ export const deleteTransaction = (
     transactionId,
     accountId: self.id,
     at: new Date().toISOString(),
+    id: generateUuidV4(),
   };
   return [applyEvent(self, event), event];
 };
@@ -102,8 +106,14 @@ export const createAccount = (name: string): [Account, AccountEvent] => {
     accountId: generateUuidV4(),
     name,
     at: new Date().toISOString(),
+    id: generateUuidV4(),
   };
   return [applyEvent(null, event), event];
+};
+
+// query
+export const getLastEventId = (self: Account): string => {
+  return self.events[self.events.length - 1].id;
 };
 
 // query
@@ -140,6 +150,7 @@ export const updateCategory = (
     categoryId,
     accountId: self.id,
     at: new Date().toISOString(),
+    id: generateUuidV4(),
     name,
   };
   return [applyEvent(self, event), event];
@@ -155,6 +166,7 @@ export const updateTransaction = (
     transactionId,
     accountId: self.id,
     at: new Date().toISOString(),
+    id: generateUuidV4(),
     ...props,
   };
   return [applyEvent(self, event), event];
@@ -166,11 +178,11 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
       throw new Error("Account is not created");
     const { accountId, name } = event;
     return {
+      categories: [],
+      events: [event],
       id: accountId,
       name,
-      categories: [],
       transactions: [],
-      version: 1,
     };
   }
   switch (event.type) {
@@ -189,7 +201,7 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
             deletedAt: null,
           },
         ]),
-        version: self.version + 1,
+        events: self.events.concat([event]),
       };
     }
     case "categoryDeleted": {
@@ -207,7 +219,7 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
                 deletedAt,
               };
         }),
-        version: self.version + 1,
+        events: self.events.concat([event]),
       };
     }
     case "categoryUpdated": {
@@ -225,7 +237,7 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
                 deletedAt: old.deletedAt,
               };
         }),
-        version: self.version + 1,
+        events: self.events.concat([event]),
       };
     }
     case "transactionAdded": {
@@ -261,24 +273,25 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
       });
       return {
         ...self,
+        events: self.events.concat([event]),
         transactions,
-        version: self.version + 1,
       };
     }
     case "transactionDeleted": {
       const { transactionId } = event;
       return {
         ...self,
+        events: self.events.concat([event]),
         transactions: self.transactions.filter(
           (old) => old.id !== transactionId
         ),
-        version: self.version + 1,
       };
     }
     case "transactionUpdated": {
       const { transactionId, amount, categoryId, comment, date } = event;
       return {
         ...self,
+        events: self.events.concat([event]),
         transactions: self.transactions.map((old): Transaction => {
           return old.id !== transactionId
             ? old
@@ -292,7 +305,6 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
                 createdAt: old.createdAt,
               };
         }),
-        version: self.version + 1,
       };
     }
   }
