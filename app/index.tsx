@@ -6,13 +6,20 @@ import {
   AccountList,
   Item as AccountListItem,
 } from "../components/AccountList";
+import { DeleteAccountDialog } from "../components/DeleteAccountDialog";
 import { Screen } from "../components/Screen";
-import { loadAccountsFromLocal } from "../lib/account-local-storage";
+import {
+  deleteAccountFromLocal,
+  loadAccountsFromLocal,
+} from "../lib/account-local-storage";
 
 export default function Index(): JSX.Element {
   const [accounts, setAccounts] = useState<AccountListItem[] | null>(null);
   const router = useRouter();
   const pathname = usePathname();
+  const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
+  const [accountName, setAccountName] = useState<string | null>(null);
+  const [accountId, setAccountId] = useState<string | null>(null);
   useEffect(() => {
     loadAccountsFromLocal().then((accounts) => setAccounts(accounts));
   }, [pathname]);
@@ -23,7 +30,11 @@ export default function Index(): JSX.Element {
       ) : (
         <AccountList
           data={accounts}
-          onLongPressAccount={() => {}}
+          onLongPressAccount={(account) => {
+            setAccountName(account.name);
+            setAccountId(account.id);
+            setDeleteModalVisible(true);
+          }}
           onPressAccount={(account) =>
             router.push({
               pathname: "/accounts/[id]",
@@ -41,6 +52,17 @@ export default function Index(): JSX.Element {
             params: {},
           });
         }}
+      />
+      <DeleteAccountDialog
+        id={accountId ?? ""}
+        name={accountName ?? ""}
+        onClickCancel={() => setDeleteModalVisible(false)}
+        onClickOk={() => {
+          if (accountId === null) return;
+          deleteAccountFromLocal(accountId);
+          setDeleteModalVisible(false);
+        }}
+        visible={deleteModalVisible}
       />
     </Screen>
   );
