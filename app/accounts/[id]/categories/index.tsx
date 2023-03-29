@@ -6,7 +6,7 @@ import { useAccount } from "../../../../components/AccountContext";
 import { CategoryList } from "../../../../components/CategoryList";
 import { DeleteCategoryDialog } from "../../../../components/DeleteCategoryDialog";
 import { Screen } from "../../../../components/Screen";
-import { deleteCategory } from "../../../../lib/account";
+import { deleteCategory, listCategory } from "../../../../lib/account";
 import { createEvent } from "../../../../lib/api";
 
 export default function Categories(): JSX.Element {
@@ -19,13 +19,14 @@ export default function Categories(): JSX.Element {
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [deleteDialogVisible, setDeleteDialogVisible] =
     useState<boolean>(false);
+  const categories = account === null ? [] : listCategory(account, false);
   return (
     <Screen>
-      {(account?.categories ?? []).length === 0 ? (
+      {categories.length === 0 ? (
         <Text>Register a new category</Text>
       ) : (
         <CategoryList
-          data={account?.categories ?? []}
+          data={categories}
           onLongPressCategory={(category) => {
             setName(category.name);
             setCategoryId(category.id);

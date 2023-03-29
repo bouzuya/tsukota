@@ -21,6 +21,7 @@ export type Category = {
   accountId: string;
   name: string;
   createdAt: string;
+  deletedAt: string | null;
 };
 
 export type Transaction = {
@@ -105,6 +106,20 @@ export const createAccount = (name: string): [Account, AccountEvent] => {
   return [applyEvent(null, event), event];
 };
 
+// query
+export const listCategory = (
+  self: Account,
+  withDeleted: boolean
+): Category[] => {
+  return self.categories
+    .filter(({ deletedAt }) => deletedAt === null)
+    .concat(
+      withDeleted
+        ? self.categories.filter(({ deletedAt }) => deletedAt !== null)
+        : []
+    );
+};
+
 export const restoreAccount = (events: AccountEvent[]): Account => {
   if (events.length === 0) throw new Error("events is empty");
   return events
@@ -171,16 +186,27 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
             accountId: self.id,
             name,
             createdAt,
+            deletedAt: null,
           },
         ]),
         version: self.version + 1,
       };
     }
     case "categoryDeleted": {
-      const { categoryId } = event;
+      const { categoryId, at: deletedAt } = event;
       return {
         ...self,
-        categories: self.categories.filter((old) => old.id !== categoryId),
+        categories: self.categories.map((old): Category => {
+          return old.id !== categoryId
+            ? old
+            : {
+                id: old.id,
+                accountId: old.accountId,
+                name: old.name,
+                createdAt: old.createdAt,
+                deletedAt,
+              };
+        }),
         version: self.version + 1,
       };
     }
@@ -196,6 +222,7 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
                 accountId: old.accountId,
                 name,
                 createdAt: old.createdAt,
+                deletedAt: old.deletedAt,
               };
         }),
         version: self.version + 1,
