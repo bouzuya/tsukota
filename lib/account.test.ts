@@ -1,5 +1,10 @@
 import { describe, expect, it } from "@jest/globals";
-import { createAccount, createCategory, createTransaction } from "./account";
+import {
+  createAccount,
+  createCategory,
+  createTransaction,
+  deleteCategory,
+} from "./account";
 
 describe("createAccount", () => {
   describe("happy path", () => {
@@ -180,6 +185,54 @@ describe("createTransaction", () => {
       f("99999-01-02");
       f("2023-13-02");
       f("2023-01-32");
+    });
+  });
+});
+
+describe("deleteCategory", () => {
+  describe("happy path", () => {
+    it("works", () => {
+      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const selectedCategory = v2.categories[0];
+      if (selectedCategory === undefined) throw new Error();
+      const categoryId = selectedCategory.id;
+      const result = deleteCategory(v2, categoryId);
+      if (result.isErr()) throw new Error();
+      const [v3, event] = result.value;
+
+      expect(v3.categories).not.toStrictEqual(v2.categories);
+      expect(v3.events).not.toStrictEqual(v2.events);
+      expect(v3.id).toStrictEqual(v2.id);
+      expect(v3.name).toStrictEqual(v2.name);
+      expect(v3.transactions).toStrictEqual(v2.transactions);
+
+      if (event.type !== "categoryDeleted") throw new Error();
+      const categoryDeleted = event;
+      expect(v3.events[v3.events.length - 1]).toStrictEqual(event);
+      expect(categoryDeleted.accountId).toStrictEqual(v3.id);
+      expect(categoryDeleted.at).not.toStrictEqual("");
+      expect(categoryDeleted.categoryId).toStrictEqual(categoryId);
+      expect(categoryDeleted.id).not.toStrictEqual("");
+
+      expect(v3.categories.length).toBe(1);
+      const category = v3.categories[v3.categories.length - 1];
+      if (category === undefined) throw new Error();
+      expect(category.accountId).toStrictEqual(v3.id);
+      expect(category.deletedAt).toStrictEqual(categoryDeleted.at);
+      expect(category.id).toStrictEqual(categoryDeleted.categoryId);
+    });
+  });
+
+  describe("when categoryId is invalid", () => {
+    it("returns err", () => {
+      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const category = v2.categories[0];
+      if (category === undefined) throw new Error();
+      const categoryId = category.id + "s"; // invalid
+      const result = deleteCategory(v2, categoryId);
+      expect(result.isErr()).toBe(true);
     });
   });
 });

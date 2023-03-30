@@ -112,15 +112,17 @@ export const createTransaction = (
 export const deleteCategory = (
   self: Account,
   categoryId: string
-): [Account, AccountEvent] => {
+): Result<[Account, AccountEvent], string> => {
+  if (!self.categories.some((category) => category.id === categoryId))
+    return err("categoryId not found");
   const event: CategoryDeleted = {
-    type: "categoryDeleted",
-    categoryId,
     accountId: self.id,
     at: new Date().toISOString(),
+    categoryId,
     id: generateUuidV4(),
+    type: "categoryDeleted",
   };
-  return [applyEvent(self, event), event];
+  return ok([applyEvent(self, event), event]);
 };
 
 export const deleteTransaction = (

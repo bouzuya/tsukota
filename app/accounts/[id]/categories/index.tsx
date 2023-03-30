@@ -72,7 +72,10 @@ export default function Categories(): JSX.Element {
           if (account === null) return;
           if (categoryId !== null) {
             // update local state
-            const [newAccount, newEvent] = deleteCategory(account, categoryId);
+            const result = deleteCategory(account, categoryId);
+            // TODO: error handling
+            if (result.isErr()) return;
+            const [newAccount, newEvent] = result.value;
 
             // update remote state
             setAccount(newAccount);
