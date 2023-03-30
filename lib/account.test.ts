@@ -5,6 +5,7 @@ import {
   createTransaction,
   deleteCategory,
   deleteTransaction,
+  updateCategory,
 } from "./account";
 
 describe("createAccount", () => {
@@ -292,6 +293,74 @@ describe("deleteTransaction", () => {
       if (selectedTransaction === undefined) throw new Error();
       const transactionId = selectedTransaction.id + "s"; // invalid
       const result = deleteTransaction(v2, transactionId);
+      expect(result.isErr()).toBe(true);
+    });
+  });
+});
+
+// TODO: Add getLastEvent tests
+// TODO: Add getLastEventId tests
+// TODO: Add listCategory tests
+// TODO: Add restoreAccount tests
+
+describe("updateCategory", () => {
+  describe("happy path", () => {
+    it("works", () => {
+      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const selectedCategory = v2.categories[0];
+      if (selectedCategory === undefined) throw new Error();
+
+      const name = "category name 2";
+      const result = updateCategory(v2, selectedCategory.id, name);
+      if (result.isErr()) throw new Error();
+      const [v3, event] = result.value;
+
+      expect(v3.categories).not.toStrictEqual(v2.categories);
+      expect(v3.events).not.toStrictEqual(v2.events);
+      expect(v3.id).toStrictEqual(v2.id);
+      expect(v3.name).toStrictEqual(v2.name);
+      expect(v3.transactions).toStrictEqual(v2.transactions);
+
+      expect(v3.categories.length).toBe(1);
+      const category = v3.categories[v3.categories.length - 1];
+      if (category === undefined) throw new Error();
+      expect(category.accountId).toStrictEqual(v3.id);
+      expect(category.createdAt).not.toBe("");
+      expect(category.deletedAt).toBeNull();
+      expect(category.id).toStrictEqual(selectedCategory.id);
+      expect(category.name).toStrictEqual(name);
+
+      if (event.type !== "categoryUpdated") throw new Error();
+      const categoryUpdated = event;
+      expect(v3.events[v3.events.length - 1]).toStrictEqual(event);
+      expect(categoryUpdated.accountId).toStrictEqual(v3.id);
+      expect(categoryUpdated.at).not.toStrictEqual("");
+      expect(categoryUpdated.categoryId).toStrictEqual(selectedCategory.id);
+      expect(categoryUpdated.id).not.toStrictEqual("");
+      expect(categoryUpdated.name).toStrictEqual(name);
+    });
+  });
+
+  describe("when categoryId is invalid", () => {
+    it("returns err", () => {
+      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const selectedCategory = v2.categories[0];
+      if (selectedCategory === undefined) throw new Error();
+      const categoryId = selectedCategory.id + "s";
+      const result = updateCategory(v2, categoryId, "category name 2");
+      expect(result.isErr()).toBe(true);
+    });
+  });
+
+  describe("when name is invalid", () => {
+    it("returns err", () => {
+      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const selectedCategory = v2.categories[0];
+      if (selectedCategory === undefined) throw new Error();
+      const result = updateCategory(v2, selectedCategory.id, "");
       expect(result.isErr()).toBe(true);
     });
   });

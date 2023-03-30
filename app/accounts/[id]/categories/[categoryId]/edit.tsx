@@ -18,7 +18,10 @@ export default function CategoryEdit(): JSX.Element {
 
   const onClickOk = () => {
     if (account === null) return;
-    const [newAccount, event] = updateCategory(account, categoryId, name);
+    const result = updateCategory(account, categoryId, name);
+    // TODO: error handling
+    if (result.isErr()) return;
+    const [newAccount, event] = result.value;
     storeEvent(getLastEventId(account), event).then((_) => {
       setAccount(newAccount);
       router.back();

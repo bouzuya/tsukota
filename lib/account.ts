@@ -18,11 +18,11 @@ import { generate as generateUuidV4 } from "./uuid";
 export { AccountEvent };
 
 export type Category = {
-  id: string;
   accountId: string;
-  name: string;
   createdAt: string;
   deletedAt: string | null;
+  id: string;
+  name: string;
 };
 
 export type Transaction = {
@@ -183,16 +183,19 @@ export const updateCategory = (
   self: Account,
   categoryId: string,
   name: string
-): [Account, AccountEvent] => {
+): Result<[Account, AccountEvent], string> => {
+  if (!self.categories.some((category) => category.id === categoryId))
+    return err("categoryId not found");
+  if (name.length === 0) return err("name is empty");
   const event: CategoryUpdated = {
-    type: "categoryUpdated",
-    categoryId,
     accountId: self.id,
     at: new Date().toISOString(),
+    categoryId,
     id: generateUuidV4(),
     name,
+    type: "categoryUpdated",
   };
-  return [applyEvent(self, event), event];
+  return ok([applyEvent(self, event), event]);
 };
 
 export const updateTransaction = (
