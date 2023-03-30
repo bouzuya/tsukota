@@ -116,8 +116,15 @@ export const deleteTransaction = (
 };
 
 // query
+export function getLastEvent(self: Account): AccountEvent {
+  const lastEvent = self.events[self.events.length - 1];
+  if (lastEvent === undefined) throw new Error("assertion error");
+  return lastEvent;
+}
+
+// query
 export const getLastEventId = (self: Account): string => {
-  return self.events[self.events.length - 1].id;
+  return getLastEvent(self).id;
 };
 
 // query
@@ -136,11 +143,13 @@ export const listCategory = (
 
 export const restoreAccount = (events: AccountEvent[]): Account => {
   if (events.length === 0) throw new Error("events is empty");
+  const firstEvent = events[0];
+  if (firstEvent === undefined) throw new Error("assertion error");
   return events
     .slice(1)
     .reduce(
       (state, event) => applyEvent(state, event),
-      applyEvent(null, events[0])
+      applyEvent(null, firstEvent)
     );
 };
 

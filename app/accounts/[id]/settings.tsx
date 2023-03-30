@@ -5,7 +5,11 @@ import { Divider, List, Text } from "react-native-paper";
 import { useAccount } from "../../../components/AccountContext";
 import { DeleteAccountDialog } from "../../../components/DeleteAccountDialog";
 import { Screen } from "../../../components/Screen";
-import { getLastEventId, listCategory } from "../../../lib/account";
+import {
+  getLastEvent,
+  getLastEventId,
+  listCategory,
+} from "../../../lib/account";
 import { deleteAccountFromLocal } from "../../../lib/account-local-storage";
 
 export default function Settings(): JSX.Element {
@@ -58,7 +62,7 @@ export default function Settings(): JSX.Element {
         <Divider style={{ width: "100%" }} />
         <List.Item
           title="Last updated"
-          description={`${account.events[account.events.length - 1].at}`}
+          description={`${getLastEvent(account).at}`}
           style={{ width: "100%" }}
         />
         <Divider style={{ width: "100%" }} />

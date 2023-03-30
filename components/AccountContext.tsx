@@ -51,5 +51,5 @@ export function useAccount(
         .then((account) => setAccount(account));
     }
   }, deps);
-  return [accounts[accountId], setAccount];
+  return [accounts[accountId] ?? null, setAccount];
 }
