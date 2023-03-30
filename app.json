@@ -2,7 +2,7 @@
   "expo": {
     "name": "tsukota",
     "slug": "tsukota",
-    "version": "0.1.13",
+    "version": "0.1.14",
     "orientation": "portrait",
     "icon": "./assets/icon-v2.png",
     "userInterfaceStyle": "automatic",
@@ -21,7 +21,7 @@
         "foregroundImage": "./assets/adaptive-icon-v2.png"
       },
       "package": "net.bouzuya.lab.tsukota",
-      "versionCode": 13
+      "versionCode": 14
     },
     "extra": {
       "eas": {
