@@ -57,10 +57,10 @@ export type TransactionUpdated = {
 } & TransactionProps;
 
 export type TransactionProps = {
-  categoryId: string;
-  date: string;
   amount: string;
+  categoryId: string;
   comment: string;
+  date: string;
 };
 
 export type AccountEvent =

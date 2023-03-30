@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import { createAccount, createCategory } from "./account";
+import { createAccount, createCategory, createTransaction } from "./account";
 
 describe("createAccount", () => {
   describe("happy path", () => {
@@ -59,6 +59,127 @@ describe("createCategory", () => {
       const name = "";
       const result = createCategory(before, name);
       expect(result.isErr()).toBe(true);
+    });
+  });
+});
+
+describe("createTransaction", () => {
+  describe("happy path", () => {
+    it("works", () => {
+      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const category = v2.categories[0];
+      if (category === undefined) throw new Error();
+      const amount = "123";
+      const categoryId = category.id;
+      const comment = "comment1";
+      const date = "2023-01-02";
+      const result = createTransaction(v2, {
+        amount,
+        categoryId,
+        comment,
+        date,
+      });
+      if (result.isErr()) throw new Error();
+      const [v3, event] = result.value;
+
+      expect(v3.categories).toStrictEqual(v2.categories);
+      expect(v3.events).not.toStrictEqual(v2.events);
+      expect(v3.id).toStrictEqual(v2.id);
+      expect(v3.name).toStrictEqual(v2.name);
+      expect(v3.transactions).not.toStrictEqual(v2.transactions);
+
+      if (event.type !== "transactionAdded") throw new Error();
+      const transactionAdded = event;
+      expect(v3.events[v3.events.length - 1]).toStrictEqual(event);
+      expect(transactionAdded.accountId).toStrictEqual(v3.id);
+      expect(transactionAdded.amount).toStrictEqual(amount);
+      expect(transactionAdded.at).not.toStrictEqual("");
+      expect(transactionAdded.categoryId).toStrictEqual(categoryId);
+      expect(transactionAdded.comment).toStrictEqual(comment);
+      expect(transactionAdded.date).toStrictEqual(date);
+      expect(transactionAdded.id).not.toStrictEqual("");
+      expect(transactionAdded.transactionId).not.toStrictEqual("");
+
+      expect(v3.transactions.length).toBe(1);
+      const transaction = v3.transactions[v3.transactions.length - 1];
+      if (transaction === undefined) throw new Error();
+      expect(transaction.accountId).toStrictEqual(v3.id);
+      expect(transaction.amount).toStrictEqual(amount);
+      expect(transaction.categoryId).toStrictEqual(categoryId);
+      expect(transaction.comment).toStrictEqual(comment);
+      expect(transaction.createdAt).toStrictEqual(transactionAdded.at);
+      expect(transaction.date).toStrictEqual(date);
+      expect(transaction.id).toStrictEqual(transactionAdded.transactionId);
+    });
+  });
+
+  describe("when amount is invalid", () => {
+    const f = (amount: string) => {
+      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const category = v2.categories[0];
+      if (category === undefined) throw new Error();
+      const categoryId = category.id;
+      const comment = "comment1";
+      const date = "2023-01-02";
+      const result = createTransaction(v2, {
+        amount,
+        categoryId,
+        comment,
+        date,
+      });
+      expect(result.isErr()).toBe(true);
+    };
+
+    it("returns err", () => {
+      f("");
+      f("s");
+    });
+  });
+
+  describe("when categoryId is invalid", () => {
+    it("returns err", () => {
+      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const category = v2.categories[0];
+      if (category === undefined) throw new Error();
+      const amount = "123";
+      const categoryId = category.id + "s"; // invalid
+      const comment = "comment1";
+      const date = "2023-01-02";
+      const result = createTransaction(v2, {
+        amount,
+        categoryId,
+        comment,
+        date,
+      });
+      expect(result.isErr()).toBe(true);
+    });
+  });
+
+  describe("when date is invalid", () => {
+    const f = (date: string) => {
+      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const category = v2.categories[0];
+      if (category === undefined) throw new Error();
+      const amount = "123";
+      const categoryId = category.id;
+      const comment = "comment1";
+      const result = createTransaction(v2, {
+        amount,
+        categoryId,
+        comment,
+        date,
+      });
+      expect(result.isErr()).toBe(true);
+    };
+    it("returns err", () => {
+      f("");
+      f("99999-01-02");
+      f("2023-13-02");
+      f("2023-01-32");
     });
   });
 });

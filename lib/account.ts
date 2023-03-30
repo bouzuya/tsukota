@@ -26,13 +26,13 @@ export type Category = {
 };
 
 export type Transaction = {
-  id: string;
   accountId: string;
-  categoryId: string;
-  date: string;
   amount: string;
+  categoryId: string;
   comment: string;
   createdAt: string;
+  date: string;
+  id: string;
 };
 
 export type Account = {
@@ -75,17 +75,38 @@ export const createCategory = (
 
 export const createTransaction = (
   self: Account,
-  props: TransactionProps
-): [Account, AccountEvent] => {
+  { amount, categoryId, comment, date }: TransactionProps
+): Result<[Account, AccountEvent], string> => {
+  if (amount.length === 0) return err("amount is empty");
+  if (categoryId.length === 0) return err("categoryId is empty");
+  if (date.length === 0) return err("date is empty");
+  const parsedAmount = Number.parseInt(amount, 10);
+  if (
+    amount.match(/^[+-]?[0-9]+\.?[0-9]*$/) === null ||
+    Number.isNaN(parsedAmount) ||
+    parsedAmount.toString() !== amount
+  )
+    return err("amount is invalid");
+  if (!self.categories.some((category) => category.id === categoryId))
+    return err("categoryId not found");
+  const parsedDate = new Date(date);
+  if (
+    date.match(/^[0-9]{4}-[01][0-9]-[0-3][0-9]$/) === null ||
+    Number.isNaN(parsedDate.getTime())
+  )
+    return err("date is invalid");
   const event: TransactionAdded = {
-    type: "transactionAdded",
-    transactionId: generateUuidV4(),
     accountId: self.id,
+    amount,
     at: new Date().toISOString(),
+    categoryId,
+    comment,
+    date,
     id: generateUuidV4(),
-    ...props,
+    transactionId: generateUuidV4(),
+    type: "transactionAdded",
   };
-  return [applyEvent(self, event), event];
+  return ok([applyEvent(self, event), event]);
 };
 
 export const deleteCategory = (
