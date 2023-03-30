@@ -4,6 +4,7 @@ import {
   createCategory,
   createTransaction,
   deleteCategory,
+  deleteTransaction,
 } from "./account";
 
 describe("createAccount", () => {
@@ -232,6 +233,65 @@ describe("deleteCategory", () => {
       if (category === undefined) throw new Error();
       const categoryId = category.id + "s"; // invalid
       const result = deleteCategory(v2, categoryId);
+      expect(result.isErr()).toBe(true);
+    });
+  });
+});
+
+describe("deleteTransaction", () => {
+  describe("happy path", () => {
+    it("works", () => {
+      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const selectedCategory = v2.categories[0];
+      if (selectedCategory === undefined) throw new Error();
+      const v3 = createTransaction(v2, {
+        amount: "123",
+        categoryId: selectedCategory.id,
+        comment: "comment1",
+        date: "2023-01-02",
+      })._unsafeUnwrap()[0];
+      const selectedTransaction = v3.transactions[0];
+      if (selectedTransaction === undefined) throw new Error();
+      const transactionId = selectedTransaction.id;
+      const result = deleteTransaction(v3, transactionId);
+      if (result.isErr()) throw new Error();
+      const [v4, event] = result.value;
+
+      expect(v4.categories).toStrictEqual(v3.categories);
+      expect(v4.events).not.toStrictEqual(v3.events);
+      expect(v4.id).toStrictEqual(v3.id);
+      expect(v4.name).toStrictEqual(v3.name);
+      expect(v4.transactions).not.toStrictEqual(v3.transactions);
+
+      if (event.type !== "transactionDeleted") throw new Error();
+      const transactionDeleted = event;
+      expect(v4.events[v4.events.length - 1]).toStrictEqual(event);
+      expect(transactionDeleted.accountId).toStrictEqual(v4.id);
+      expect(transactionDeleted.at).not.toStrictEqual("");
+      expect(transactionDeleted.id).not.toStrictEqual("");
+      expect(transactionDeleted.transactionId).toStrictEqual(transactionId);
+
+      expect(v4.transactions.length).toBe(0);
+    });
+  });
+
+  describe("when transactionId is invalid", () => {
+    it("returns err", () => {
+      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const selectedCategory = v2.categories[0];
+      if (selectedCategory === undefined) throw new Error();
+      const v3 = createTransaction(v2, {
+        amount: "123",
+        categoryId: selectedCategory.id,
+        comment: "comment1",
+        date: "2023-01-02",
+      })._unsafeUnwrap()[0];
+      const selectedTransaction = v3.transactions[0];
+      if (selectedTransaction === undefined) throw new Error();
+      const transactionId = selectedTransaction.id + "s"; // invalid
+      const result = deleteTransaction(v2, transactionId);
       expect(result.isErr()).toBe(true);
     });
   });

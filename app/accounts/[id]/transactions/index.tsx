@@ -113,10 +113,10 @@ export default function Transactions(): JSX.Element {
         onClickOk={() => {
           if (account === null || transactionId === null) return;
           // update local state
-          const [newAccount, newEvent] = deleteTransaction(
-            account,
-            transactionId
-          );
+          const result = deleteTransaction(account, transactionId);
+          // TODO: error handling
+          if (result.isErr()) return;
+          const [newAccount, newEvent] = result.value;
 
           // update remote state
           setAccount(newAccount);

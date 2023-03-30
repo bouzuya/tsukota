@@ -128,15 +128,17 @@ export const deleteCategory = (
 export const deleteTransaction = (
   self: Account,
   transactionId: string
-): [Account, AccountEvent] => {
+): Result<[Account, AccountEvent], string> => {
+  if (!self.transactions.some(({ id }) => id === transactionId))
+    return err("transactionId not found");
   const event: TransactionDeleted = {
-    type: "transactionDeleted",
-    transactionId,
     accountId: self.id,
     at: new Date().toISOString(),
     id: generateUuidV4(),
+    transactionId,
+    type: "transactionDeleted",
   };
-  return [applyEvent(self, event), event];
+  return ok([applyEvent(self, event), event]);
 };
 
 // query
