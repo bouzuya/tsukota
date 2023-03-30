@@ -30,7 +30,10 @@ export default function AccountNew(): JSX.Element {
   const router = useRouter();
 
   const onClickOk = () => {
-    const [account, event] = createAccount(name);
+    const result = createAccount(name);
+    // TODO: error handling
+    if (result.isErr()) return;
+    const [account, event] = result.value;
 
     const item = {
       id: account.id,

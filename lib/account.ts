@@ -1,5 +1,6 @@
 // Account Aggregate
 
+import { Result, err, ok } from "neverthrow";
 import {
   AccountCreated,
   AccountEvent,
@@ -40,6 +41,20 @@ export type Account = {
   id: string;
   name: string;
   transactions: Transaction[];
+};
+
+export const createAccount = (
+  name: string
+): Result<[Account, AccountEvent], string> => {
+  if (name.length === 0) return err("name is empty");
+  const event: AccountCreated = {
+    accountId: generateUuidV4(),
+    at: new Date().toISOString(),
+    id: generateUuidV4(),
+    name,
+    type: "accountCreated",
+  };
+  return ok([applyEvent(null, event), event]);
 };
 
 export const createCategory = (
@@ -98,17 +113,6 @@ export const deleteTransaction = (
     id: generateUuidV4(),
   };
   return [applyEvent(self, event), event];
-};
-
-export const createAccount = (name: string): [Account, AccountEvent] => {
-  const event: AccountCreated = {
-    type: "accountCreated",
-    accountId: generateUuidV4(),
-    name,
-    at: new Date().toISOString(),
-    id: generateUuidV4(),
-  };
-  return [applyEvent(null, event), event];
 };
 
 // query
