@@ -60,16 +60,17 @@ export const createAccount = (
 export const createCategory = (
   self: Account,
   name: string
-): [Account, AccountEvent] => {
+): Result<[Account, AccountEvent], string> => {
+  if (name.length === 0) return err("name is empty");
   const event: CategoryAdded = {
-    type: "categoryAdded",
-    categoryId: generateUuidV4(),
     accountId: self.id,
+    at: new Date().toISOString(),
+    categoryId: generateUuidV4(),
     id: generateUuidV4(),
     name,
-    at: new Date().toISOString(),
+    type: "categoryAdded",
   };
-  return [applyEvent(self, event), event];
+  return ok([applyEvent(self, event), event]);
 };
 
 export const createTransaction = (
