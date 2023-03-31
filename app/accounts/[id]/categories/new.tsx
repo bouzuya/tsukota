@@ -1,23 +1,32 @@
 import { useRouter, useSearchParams } from "expo-router";
-import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { IconButton, TextInput } from "react-native-paper";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { View } from "react-native";
+import { IconButton } from "react-native-paper";
 import { useAccount } from "../../../../components/AccountContext";
 import { Screen } from "../../../../components/Screen";
+import { TextInput } from "../../../../components/TextInput";
 import { createCategory, getLastEventId } from "../../../../lib/account";
 import { storeEvent } from "../../../../lib/api";
+
+type Form = {
+  name: string;
+};
 
 export default function CategoryNew(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
   const [account, setAccount] = useAccount(accountId, []);
-  const [name, setName] = useState<string>("");
   const router = useRouter();
+  const { control, handleSubmit } = useForm<Form>({
+    defaultValues: {
+      name: "",
+    },
+  });
 
-  const onClickOk = () => {
+  const onClickOk = ({ name }: Form) => {
     if (account === null) return;
     const result = createCategory(account, name);
-    // TODO: error handling
     if (result.isErr()) return;
     const [newAccount, event] = result.value;
     storeEvent(getLastEventId(account), event).then((_) => {
@@ -34,7 +43,7 @@ export default function CategoryNew(): JSX.Element {
           <IconButton
             accessibilityLabel="Save"
             icon="check"
-            onPress={onClickOk}
+            onPress={handleSubmit(onClickOk)}
             size={28}
           />
         ),
@@ -42,19 +51,17 @@ export default function CategoryNew(): JSX.Element {
     >
       <View style={{ flex: 1, width: "100%" }}>
         <TextInput
+          control={control}
           label="Name"
-          mode="outlined"
-          onChangeText={setName}
-          style={styles.input}
-          value={name}
+          name="name"
+          rules={{
+            required: {
+              message: "This is required.",
+              value: true,
+            },
+          }}
         />
       </View>
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  input: {
-    margin: 16,
-  },
-});
