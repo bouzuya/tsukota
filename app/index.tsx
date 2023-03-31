@@ -44,6 +44,7 @@ export default function Index(): JSX.Element {
         />
       )}
       <FAB
+        accessibilityLabel="Add new account"
         icon="plus"
         style={styles.fab}
         onPress={() => {

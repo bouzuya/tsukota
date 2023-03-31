@@ -92,6 +92,7 @@ export default function Transactions(): JSX.Element {
       )}
       {(account?.categories ?? []).length === 0 ? null : (
         <FAB
+          accessibilityLabel="Add new transaction"
           icon="plus"
           style={styles.fab}
           onPress={() => {

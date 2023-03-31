@@ -49,6 +49,7 @@ export default function Categories(): JSX.Element {
         />
       )}
       <FAB
+        accessibilityLabel="Add new category"
         icon="plus"
         style={styles.fab}
         onPress={() => {
