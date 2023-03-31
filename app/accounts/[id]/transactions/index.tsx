@@ -1,11 +1,17 @@
 import { usePathname, useRouter, useSearchParams } from "expo-router";
 import { useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { FAB, List, Text } from "react-native-paper";
+import { StyleSheet } from "react-native";
+import { FAB, Text } from "react-native-paper";
 import { useAccount } from "../../../../components/AccountContext";
 import { DeleteTransactionDialog } from "../../../../components/DeleteTransactionDialog";
 import { Screen } from "../../../../components/Screen";
-import { deleteTransaction, getLastEventId } from "../../../../lib/account";
+import { TransactionList } from "../../../../components/TransactionList";
+import {
+  deleteTransaction,
+  getLastEventId,
+  listCategory,
+  Transaction,
+} from "../../../../lib/account";
 import { storeEvent } from "../../../../lib/api";
 
 export default function Transactions(): JSX.Element {
@@ -30,64 +36,29 @@ export default function Transactions(): JSX.Element {
           <Text>Register a new transaction</Text>
         )
       ) : (
-        <FlatList
-          data={account?.transactions ?? []}
-          renderItem={({ item: transaction }) => {
-            const ensureDescription = (s: string): string =>
-              s.length === 0 ? " " : s;
-            return (
-              <List.Item
-                description={ensureDescription(transaction.comment)}
-                key={transaction.id}
-                left={() => (
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      flexWrap: "nowrap",
-                      margin: 0,
-                      paddingStart: 16,
-                      position: "absolute",
-                      width: "100%",
-                    }}
-                  >
-                    <Text style={{ flex: 1 }}>{transaction.date}</Text>
-                    <Text
-                      style={{
-                        flex: 1,
-                        textAlign: "right",
-                        paddingHorizontal: 8,
-                      }}
-                    >
-                      {transaction.amount}
-                    </Text>
-                  </View>
-                )}
-                onLongPress={() => {
-                  setDate(transaction.date);
-                  setAmount(transaction.amount);
-                  setComment(transaction.comment);
-                  setTransactionId(transaction.id);
-                  setDeleteModalVisible(true);
-                }}
-                onPress={() => {
-                  router.push({
-                    pathname:
-                      "/accounts/[id]/transactions/[transactionId]/edit",
-                    params: {
-                      id: accountId,
-                      categoryId: transaction.categoryId,
-                      transactionId: transaction.id,
-                      date: transaction.date,
-                      amount: transaction.amount,
-                      comment: encodeURIComponent(transaction.comment),
-                    },
-                  });
-                }}
-                title=""
-              />
-            );
+        <TransactionList
+          categories={account === null ? [] : listCategory(account, true)}
+          transactions={account?.transactions ?? []}
+          onLongPressTransaction={(transaction: Transaction) => {
+            setDate(transaction.date);
+            setAmount(transaction.amount);
+            setComment(transaction.comment);
+            setTransactionId(transaction.id);
+            setDeleteModalVisible(true);
           }}
-          style={{ flex: 1, width: "100%" }}
+          onPressTransaction={(transaction: Transaction) => {
+            router.push({
+              pathname: "/accounts/[id]/transactions/[transactionId]/edit",
+              params: {
+                id: accountId,
+                categoryId: transaction.categoryId,
+                transactionId: transaction.id,
+                date: transaction.date,
+                amount: transaction.amount,
+                comment: encodeURIComponent(transaction.comment),
+              },
+            });
+          }}
         />
       )}
       {(account?.categories ?? []).length === 0 ? null : (
