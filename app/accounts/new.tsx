@@ -1,15 +1,12 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { View } from "react-native";
-import { IconButton, TextInput } from "react-native-paper";
+import { IconButton } from "react-native-paper";
 import { Item as AccountListItem } from "../../components/AccountList";
 import { Screen } from "../../components/Screen";
-import {
-  Account,
-  AccountEvent,
-  createAccount,
-  getLastEventId,
-} from "../../lib/account";
+import { TextInput } from "../../components/TextInput";
+import { Account, AccountEvent, createAccount } from "../../lib/account";
 import { storeEvent } from "../../lib/api";
 import { storage } from "../../lib/storage";
 
@@ -24,14 +21,21 @@ const storeRemote = async (
   await storeEvent(null, event);
 };
 
+type Form = {
+  name: string;
+};
+
 export default function AccountNew(): JSX.Element {
+  const { control, handleSubmit } = useForm<Form>({
+    defaultValues: {
+      name: "",
+    },
+  });
   const [accounts, setAccounts] = useState<AccountListItem[] | null>(null);
-  const [name, setName] = useState<string>("");
   const router = useRouter();
 
-  const onClickOk = () => {
+  const onClickOk = ({ name }: Form) => {
     const result = createAccount(name);
-    // TODO: error handling
     if (result.isErr()) return;
     const [account, event] = result.value;
 
@@ -56,7 +60,7 @@ export default function AccountNew(): JSX.Element {
           <IconButton
             accessibilityLabel="Save"
             icon="check"
-            onPress={onClickOk}
+            onPress={handleSubmit(onClickOk)}
             size={28}
           />
         ),
@@ -64,11 +68,15 @@ export default function AccountNew(): JSX.Element {
     >
       <View style={{ flex: 1, width: "100%" }}>
         <TextInput
+          control={control}
           label="Name"
-          mode="outlined"
-          onChangeText={setName}
-          style={{ margin: 16 }}
-          value={name}
+          name="name"
+          rules={{
+            required: {
+              message: "This is required.",
+              value: true,
+            },
+          }}
         />
       </View>
     </Screen>
