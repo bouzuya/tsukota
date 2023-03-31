@@ -60,7 +60,9 @@ export default function Index(): JSX.Element {
         onClickCancel={() => setDeleteModalVisible(false)}
         onClickOk={() => {
           if (accountId === null) return;
-          deleteAccountFromLocal(accountId);
+          deleteAccountFromLocal(accountId).then(() =>
+            loadAccountsFromLocal().then((accounts) => setAccounts(accounts))
+          );
           setDeleteModalVisible(false);
         }}
         visible={deleteModalVisible}
