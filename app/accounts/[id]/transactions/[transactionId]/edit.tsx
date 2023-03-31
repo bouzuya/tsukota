@@ -1,29 +1,33 @@
 import { useRouter, useSearchParams } from "expo-router";
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { View } from "react-native";
 import { IconButton } from "react-native-paper";
 import { useAccount } from "../../../../../components/AccountContext";
 import { Screen } from "../../../../../components/Screen";
-import { TransactionForm } from "../../../../../components/TransactionForm";
+import {
+  Form,
+  TransactionForm,
+} from "../../../../../components/TransactionForm";
 import { getLastEventId, updateTransaction } from "../../../../../lib/account";
 import { storeEvent } from "../../../../../lib/api";
 
 export default function TransactionEdit(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
-  const amountDefault = `${params.amount}`;
-  const commentDefault = decodeURIComponent(`${params.comment}`);
-  const categoryIdDefault = `${params.categoryId}`;
-  const dateDefault = `${params.date}`;
   const transactionId = `${params.transactionId}`;
   const [account, setAccount] = useAccount(accountId, []);
-  const [amount, setAmount] = useState<string>(amountDefault);
-  const [categoryId, setCategoryId] = useState<string>(categoryIdDefault);
-  const [comment, setComment] = useState<string>(commentDefault);
-  const [date, setDate] = useState<string>(dateDefault);
   const router = useRouter();
+  const { control, getValues, handleSubmit, setValue } = useForm<Form>({
+    defaultValues: {
+      amount: `${params.amount}`,
+      categoryId: `${params.categoryId}`,
+      comment: decodeURIComponent(`${params.comment}`),
+      date: `${params.date}`,
+    },
+  });
 
-  const onClickOk = () => {
+  const onClickOk = ({ amount, categoryId, comment, date }: Form) => {
     if (account === null) return;
     const result = updateTransaction(account, transactionId, {
       amount,
@@ -31,7 +35,6 @@ export default function TransactionEdit(): JSX.Element {
       comment,
       date,
     });
-    // TODO: error handling
     if (result.isErr()) return;
     const [newAccount, event] = result.value;
     storeEvent(getLastEventId(account), event).then((_) => {
@@ -48,7 +51,7 @@ export default function TransactionEdit(): JSX.Element {
           <IconButton
             accessibilityLabel="Save"
             icon="check"
-            onPress={onClickOk}
+            onPress={handleSubmit(onClickOk)}
             size={28}
           />
         ),
@@ -56,15 +59,10 @@ export default function TransactionEdit(): JSX.Element {
     >
       <View style={{ flex: 1, width: "100%" }}>
         <TransactionForm
-          amount={amount}
+          control={control}
           categories={account?.categories ?? []}
-          categoryId={categoryId}
-          comment={comment}
-          date={date}
-          onChangeAmount={setAmount}
-          onChangeCategoryId={setCategoryId}
-          onChangeComment={setComment}
-          onChangeDate={setDate}
+          getValues={getValues}
+          setValue={setValue}
         />
       </View>
     </Screen>

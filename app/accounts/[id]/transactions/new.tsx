@@ -1,10 +1,11 @@
 import { useRouter, useSearchParams } from "expo-router";
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { View } from "react-native";
 import { IconButton } from "react-native-paper";
 import { useAccount } from "../../../../components/AccountContext";
 import { Screen } from "../../../../components/Screen";
-import { TransactionForm } from "../../../../components/TransactionForm";
+import { TransactionForm, Form } from "../../../../components/TransactionForm";
 import { createTransaction, getLastEventId } from "../../../../lib/account";
 import { storeEvent } from "../../../../lib/api";
 
@@ -12,15 +13,17 @@ export default function TransactionNew(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
   const [account, setAccount] = useAccount(accountId, []);
-  const [amount, setAmount] = useState<string>("");
-  const [categoryId, setCategoryId] = useState<string>("");
-  const [comment, setComment] = useState<string>("");
-  const [date, setDate] = useState<string>(
-    new Date().toISOString().substring(0, 10)
-  );
   const router = useRouter();
+  const { control, getValues, handleSubmit, setValue } = useForm<Form>({
+    defaultValues: {
+      amount: "",
+      categoryId: "",
+      comment: "",
+      date: new Date().toISOString().substring(0, 10),
+    },
+  });
 
-  const onClickOk = () => {
+  const onClickOk = ({ amount, categoryId, comment, date }: Form) => {
     if (account === null) return;
     const result = createTransaction(account, {
       amount,
@@ -28,7 +31,6 @@ export default function TransactionNew(): JSX.Element {
       comment,
       date,
     });
-    // TODO: error handling
     if (result.isErr()) return;
     const [newAccount, event] = result.value;
     storeEvent(getLastEventId(account), event).then((_) => {
@@ -44,7 +46,7 @@ export default function TransactionNew(): JSX.Element {
           <IconButton
             accessibilityLabel="Save"
             icon="check"
-            onPress={onClickOk}
+            onPress={handleSubmit(onClickOk)}
             size={28}
           />
         ),
@@ -52,15 +54,10 @@ export default function TransactionNew(): JSX.Element {
     >
       <View style={{ flex: 1, width: "100%" }}>
         <TransactionForm
-          amount={amount}
+          control={control}
           categories={account?.categories ?? []}
-          categoryId={categoryId}
-          comment={comment}
-          date={date}
-          onChangeAmount={setAmount}
-          onChangeCategoryId={setCategoryId}
-          onChangeComment={setComment}
-          onChangeDate={setDate}
+          getValues={getValues}
+          setValue={setValue}
         />
       </View>
     </Screen>

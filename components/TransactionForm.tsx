@@ -1,97 +1,139 @@
-import { TextInput } from "react-native-paper";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
+import {
+  HelperText,
+  TextInput as ReactNativePaperTextInput,
+} from "react-native-paper";
 import { Category } from "../lib/account";
 import { usePathname, useRouter, useSearchParams } from "expo-router";
 import { useEffect } from "react";
+import { TextInput } from "./TextInput";
+import {
+  Control,
+  Controller,
+  useController,
+  FieldErrors,
+  FormState,
+  UseFormGetValues,
+  UseFormSetValue,
+  useFormState,
+} from "react-hook-form";
+import { ErrorMessage } from "@hookform/error-message";
 
-type Props = {
+export type Form = {
   amount: string;
-  categories: Category[];
   categoryId: string;
   comment: string;
   date: string;
-  onChangeAmount: (text: string) => void;
-  onChangeCategoryId: (text: string) => void;
-  onChangeComment: (text: string) => void;
-  onChangeDate: (text: string) => void;
+};
+
+type Props = {
+  control: Control<Form>;
+  categories: Category[];
+  getValues: UseFormGetValues<Form>;
+  setValue: UseFormSetValue<Form>;
 };
 
 export function TransactionForm({
-  amount,
+  control,
   categories,
-  categoryId,
-  comment,
-  date,
-  onChangeAmount,
-  onChangeCategoryId,
-  onChangeComment,
-  onChangeDate,
+  getValues,
+  setValue,
 }: Props): JSX.Element {
   const pathname = usePathname();
   const params = useSearchParams();
   const accountId = `${params.id}`;
   const router = useRouter();
 
+  useController({
+    control,
+    name: "categoryId",
+    rules: {
+      required: {
+        message: "This is required.",
+        value: true,
+      },
+    },
+  });
+
+  const { errors } = useFormState({ control });
+
   useEffect(() => {
-    if (params.selectedCategoryId)
-      onChangeCategoryId(`${params.selectedCategoryId}`);
+    if (params.selectedCategoryId) {
+      setValue("categoryId", `${params.selectedCategoryId}`, {
+        shouldValidate: true,
+      });
+    }
   }, [pathname]);
 
+  const categoryId = getValues("categoryId");
   const categoryName =
     categories.find(({ id }) => id === categoryId)?.name ?? "";
   return (
     <View>
       <TextInput
+        control={control}
         label="Date"
-        mode="outlined"
-        onChangeText={onChangeDate}
-        style={styles.input}
-        value={date}
+        name="date"
+        rules={{
+          pattern: {
+            message: "This must be in YYYY-MM-DD format.",
+            value: /^[0-9]{4}-[01][0-9]-[0-3][0-9]$/,
+          },
+          required: {
+            message: "This is required.",
+            value: true,
+          },
+        }}
       />
       <TextInput
+        control={control}
         keyboardType="numeric"
         label="Amount"
-        mode="outlined"
-        onChangeText={onChangeAmount}
-        style={styles.input}
-        value={amount}
+        name="amount"
+        rules={{
+          pattern: {
+            message: "This must be an integer.",
+            value: /^[-+]?[0-9]+$/,
+          },
+          required: {
+            message: "This is required.",
+            value: true,
+          },
+        }}
       />
-      <TextInput
-        editable={false}
-        label="Category"
-        mode="outlined"
-        onChangeText={() => {}}
-        style={styles.input}
-        value={categoryName}
-        right={
-          <TextInput.Icon
-            icon="shape"
-            onPress={() => {
-              router.push({
-                pathname: "/accounts/[id]/categories/select",
-                params: {
-                  id: accountId,
-                },
-              });
-            }}
-            size={28}
-          />
-        }
-      />
-      <TextInput
-        label="Comment"
-        mode="outlined"
-        onChangeText={onChangeComment}
-        style={styles.input}
-        value={comment}
-      />
+      <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
+        <ReactNativePaperTextInput
+          editable={false}
+          error={errors["categoryId"] !== undefined}
+          label="Category"
+          mode="outlined"
+          onChangeText={() => {}}
+          right={
+            <ReactNativePaperTextInput.Icon
+              icon="shape"
+              onPress={() => {
+                router.push({
+                  pathname: "/accounts/[id]/categories/select",
+                  params: {
+                    id: accountId,
+                  },
+                });
+              }}
+              size={28}
+            />
+          }
+          value={categoryName}
+        />
+        <HelperText
+          padding="none"
+          type="error"
+          visible={errors["categoryId"] !== undefined}
+        >
+          <ErrorMessage errors={errors} name="categoryId" />
+        </HelperText>
+      </View>
+
+      <TextInput control={control} label="Comment" name="comment" rules={{}} />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  input: {
-    marginHorizontal: 16,
-    marginVertical: 8,
-  },
-});
