@@ -4,6 +4,7 @@ import { Result, err, ok } from "neverthrow";
 import {
   AccountCreated,
   AccountEvent,
+  AccountUpdated,
   CategoryAdded,
   CategoryDeleted,
   CategoryUpdated,
@@ -179,6 +180,21 @@ export const restoreAccount = (events: AccountEvent[]): Account => {
     );
 };
 
+export const updateAccount = (
+  self: Account,
+  name: string
+): Result<[Account, AccountEvent], string> => {
+  if (name.length === 0) return err("name is empty");
+  const event: AccountUpdated = {
+    accountId: self.id,
+    at: new Date().toISOString(),
+    id: generateUuidV4(),
+    name,
+    type: "accountUpdated",
+  };
+  return ok([applyEvent(self, event), event]);
+};
+
 export const updateCategory = (
   self: Account,
   categoryId: string,
@@ -253,6 +269,14 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
   switch (event.type) {
     case "accountCreated":
       throw new Error("applyEvent can't handle AccountCreated event");
+    case "accountUpdated": {
+      const { name } = event;
+      return {
+        ...self,
+        name,
+        events: self.events.concat([event]),
+      };
+    }
     case "categoryAdded": {
       const { at: createdAt, name, categoryId: id } = event;
       return {

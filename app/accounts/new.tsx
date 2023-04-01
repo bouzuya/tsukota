@@ -7,12 +7,8 @@ import { Item as AccountListItem } from "../../components/AccountList";
 import { Screen } from "../../components/Screen";
 import { TextInput } from "../../components/TextInput";
 import { Account, AccountEvent, createAccount } from "../../lib/account";
+import { storeAccountLocal } from "../../lib/account-local-storage";
 import { storeEvent } from "../../lib/api";
-import { storage } from "../../lib/storage";
-
-const storeLocal = async (item: AccountListItem): Promise<void> => {
-  await storage.save({ key: "accounts", id: item.id, data: item });
-};
 
 const storeRemote = async (
   _account: Account,
@@ -48,7 +44,7 @@ export default function AccountNew(): JSX.Element {
       setAccounts(accounts);
     });
 
-    storeLocal(item);
+    storeAccountLocal(item);
 
     router.back();
   };

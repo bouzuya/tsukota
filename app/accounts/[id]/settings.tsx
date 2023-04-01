@@ -5,11 +5,7 @@ import { Divider, List, Text } from "react-native-paper";
 import { useAccount } from "../../../components/AccountContext";
 import { DeleteAccountDialog } from "../../../components/DeleteAccountDialog";
 import { Screen } from "../../../components/Screen";
-import {
-  getLastEvent,
-  getLastEventId,
-  listCategory,
-} from "../../../lib/account";
+import { getLastEvent, listCategory } from "../../../lib/account";
 import { deleteAccountFromLocal } from "../../../lib/account-local-storage";
 
 export default function Settings(): JSX.Element {
@@ -38,7 +34,16 @@ export default function Settings(): JSX.Element {
         <Divider style={{ width: "100%" }} />
         <List.Item
           title="Name"
-          description={account.name.length === 0 ? " " : account.name}
+          description={account.name}
+          onPress={() => {
+            router.push({
+              pathname: "/accounts/[id]/edit",
+              params: {
+                id: accountId,
+                name: encodeURIComponent(account.name),
+              },
+            });
+          }}
           style={{ width: "100%" }}
         />
         <Divider style={{ width: "100%" }} />

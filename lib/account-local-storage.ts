@@ -27,3 +27,7 @@ export const loadAccountsFromLocal = async (): Promise<LocalAccount[]> => {
 
   return accounts;
 };
+
+export const storeAccountLocal = async (item: LocalAccount): Promise<void> => {
+  await storage.save({ key: "accounts", id: item.id, data: item });
+};

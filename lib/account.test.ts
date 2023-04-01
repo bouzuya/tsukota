@@ -5,6 +5,7 @@ import {
   createTransaction,
   deleteCategory,
   deleteTransaction,
+  updateAccount,
   updateCategory,
   updateTransaction,
 } from "./account";
@@ -362,6 +363,43 @@ describe("updateCategory", () => {
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
       const result = updateCategory(v2, selectedCategory.id, "");
+      expect(result.isErr()).toBe(true);
+    });
+  });
+});
+
+describe("updateAccount", () => {
+  describe("happy path", () => {
+    it("works", () => {
+      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+
+      const name = "account name 2";
+      const result = updateAccount(v1, name);
+      if (result.isErr()) throw new Error();
+      const [v2, event] = result.value;
+
+      expect(v2.categories).toStrictEqual(v1.categories);
+      expect(v2.events).not.toStrictEqual(v1.events);
+      expect(v2.id).toStrictEqual(v1.id);
+      expect(v2.name).not.toStrictEqual(v1.name);
+      expect(v2.transactions).toStrictEqual(v1.transactions);
+
+      expect(v2.name).toStrictEqual(name);
+
+      if (event.type !== "accountUpdated") throw new Error();
+      const accountUpdated = event;
+      expect(v2.events[v2.events.length - 1]).toStrictEqual(event);
+      expect(accountUpdated.accountId).toStrictEqual(v2.id);
+      expect(accountUpdated.at).not.toStrictEqual("");
+      expect(accountUpdated.id).not.toStrictEqual("");
+      expect(accountUpdated.name).toStrictEqual(name);
+    });
+  });
+
+  describe("when name is invalid", () => {
+    it("returns err", () => {
+      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const result = updateAccount(v1, "account name 1");
       expect(result.isErr()).toBe(true);
     });
   });
