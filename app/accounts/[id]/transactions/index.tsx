@@ -1,7 +1,7 @@
 import { usePathname, useRouter, useSearchParams } from "expo-router";
 import { useState } from "react";
 import { StyleSheet } from "react-native";
-import { FAB, Text } from "react-native-paper";
+import { ActivityIndicator, FAB, Text } from "react-native-paper";
 import { useAccount } from "../../../../components/AccountContext";
 import { DeleteTransactionDialog } from "../../../../components/DeleteTransactionDialog";
 import { Screen } from "../../../../components/Screen";
@@ -27,18 +27,21 @@ export default function Transactions(): JSX.Element {
   );
   const [transactionId, setTransactionId] = useState<string | null>(null);
   const [account, setAccount] = useAccount(accountId, [pathname]);
+
+  if (account === null)
+    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
   return (
     <Screen>
-      {(account?.transactions ?? []).length === 0 ? (
-        (account?.categories ?? []).length === 0 ? (
+      {(account.transactions ?? []).length === 0 ? (
+        (account.categories ?? []).length === 0 ? (
           <Text>Register a new category</Text>
         ) : (
           <Text>Register a new transaction</Text>
         )
       ) : (
         <TransactionList
-          categories={account === null ? [] : listCategory(account, true)}
-          transactions={account?.transactions ?? []}
+          categories={listCategory(account, true)}
+          transactions={account.transactions ?? []}
           onLongPressTransaction={(transaction: Transaction) => {
             setDate(transaction.date);
             setAmount(transaction.amount);
@@ -61,7 +64,7 @@ export default function Transactions(): JSX.Element {
           }}
         />
       )}
-      {(account?.categories ?? []).length === 0 ? null : (
+      {account.categories.length === 0 ? null : (
         <FAB
           accessibilityLabel="Add new transaction"
           icon="plus"
@@ -83,7 +86,7 @@ export default function Transactions(): JSX.Element {
         id={transactionId}
         onClickCancel={() => setDeleteModalVisible(false)}
         onClickOk={() => {
-          if (account === null || transactionId === null) return;
+          if (transactionId === null) return;
           // update local state
           const result = deleteTransaction(account, transactionId);
           // TODO: error handling

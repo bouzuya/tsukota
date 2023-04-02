@@ -2,7 +2,7 @@ import { useRouter, useSearchParams } from "expo-router";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { View } from "react-native";
-import { IconButton } from "react-native-paper";
+import { ActivityIndicator, IconButton } from "react-native-paper";
 import { useAccount } from "../../../components/AccountContext";
 import { Screen } from "../../../components/Screen";
 import { TextInput } from "../../../components/TextInput";
@@ -26,8 +26,10 @@ export default function CategoryEdit(): JSX.Element {
     },
   });
 
+  if (account === null)
+    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
+
   const onClickOk = ({ name }: Form) => {
-    if (account === null) return;
     const result = updateAccount(account, name);
     if (result.isErr()) return;
     const [newAccount, event] = result.value;

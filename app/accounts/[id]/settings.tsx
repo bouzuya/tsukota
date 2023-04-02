@@ -1,7 +1,7 @@
 import { usePathname, useRouter, useSearchParams } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
-import { Divider, List, Text } from "react-native-paper";
+import { ActivityIndicator, Divider, List, Text } from "react-native-paper";
 import { useAccount } from "../../../components/AccountContext";
 import { DeleteAccountDialog } from "../../../components/DeleteAccountDialog";
 import { Screen } from "../../../components/Screen";
@@ -16,7 +16,8 @@ export default function Settings(): JSX.Element {
   const [account, _setAccount] = useAccount(accountId, [pathname]);
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
 
-  if (account === null) return <Text>Loading...</Text>;
+  if (account === null)
+    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
   return (
     <Screen>
       <View

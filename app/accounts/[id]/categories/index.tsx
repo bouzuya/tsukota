@@ -1,7 +1,7 @@
 import { usePathname, useRouter, useSearchParams } from "expo-router";
 import { useState } from "react";
 import { StyleSheet } from "react-native";
-import { FAB, Text } from "react-native-paper";
+import { ActivityIndicator, FAB, Text } from "react-native-paper";
 import { useAccount } from "../../../../components/AccountContext";
 import { CategoryList } from "../../../../components/CategoryList";
 import { DeleteCategoryDialog } from "../../../../components/DeleteCategoryDialog";
@@ -23,7 +23,9 @@ export default function Categories(): JSX.Element {
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [deleteDialogVisible, setDeleteDialogVisible] =
     useState<boolean>(false);
-  const categories = account === null ? [] : listCategory(account, false);
+  if (account === null)
+    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
+  const categories = listCategory(account, false);
   return (
     <Screen>
       {categories.length === 0 ? (
@@ -70,7 +72,6 @@ export default function Categories(): JSX.Element {
           setDeleteDialogVisible(false);
         }}
         onClickOk={() => {
-          if (account === null) return;
           if (categoryId !== null) {
             // update local state
             const result = deleteCategory(account, categoryId);

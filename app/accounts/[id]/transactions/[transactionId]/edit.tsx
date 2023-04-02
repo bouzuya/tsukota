@@ -2,7 +2,7 @@ import { useRouter, useSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { View } from "react-native";
-import { IconButton } from "react-native-paper";
+import { ActivityIndicator, IconButton } from "react-native-paper";
 import { useAccount } from "../../../../../components/AccountContext";
 import { Screen } from "../../../../../components/Screen";
 import {
@@ -27,8 +27,10 @@ export default function TransactionEdit(): JSX.Element {
     },
   });
 
+  if (account === null)
+    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
+
   const onClickOk = ({ amount, categoryId, comment, date }: Form) => {
-    if (account === null) return;
     const result = updateTransaction(account, transactionId, {
       amount,
       categoryId,
@@ -60,7 +62,7 @@ export default function TransactionEdit(): JSX.Element {
       <View style={{ flex: 1, width: "100%" }}>
         <TransactionForm
           control={control}
-          categories={account?.categories ?? []}
+          categories={account.categories}
           getValues={getValues}
           setValue={setValue}
         />
