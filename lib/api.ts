@@ -1,10 +1,13 @@
 import {
   collection,
   getDocs,
-  CollectionReference,
   doc,
   runTransaction,
-  DocumentReference,
+  FirestoreDataConverter,
+  DocumentData,
+  QueryDocumentSnapshot,
+  SnapshotOptions,
+  WithFieldValue,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { AccountEvent } from "./account";
@@ -14,7 +17,37 @@ type AccountDocument = {
   lastEventId: string;
 };
 
+const accountDocumentConverter: FirestoreDataConverter<AccountDocument> = {
+  fromFirestore: function (
+    // 怪しい
+    snapshot: QueryDocumentSnapshot<AccountDocument>,
+    options?: SnapshotOptions | undefined
+  ): AccountDocument {
+    return snapshot.data(options);
+  },
+  toFirestore: function (
+    modelObject: WithFieldValue<AccountDocument>
+  ): DocumentData {
+    return modelObject;
+  },
+};
+
 type EventDocument = AccountEvent;
+
+const eventDocumentConverter: FirestoreDataConverter<EventDocument> = {
+  fromFirestore: function (
+    // 怪しい
+    snapshot: QueryDocumentSnapshot<EventDocument>,
+    options?: SnapshotOptions | undefined
+  ): EventDocument {
+    return snapshot.data(options);
+  },
+  toFirestore: function (
+    modelObject: WithFieldValue<EventDocument>
+  ): DocumentData {
+    return modelObject;
+  },
+};
 
 export const storeEvent = (
   lastEventId: string | null,
@@ -24,11 +57,9 @@ export const storeEvent = (
     db,
     async (transaction) => {
       // create or update account
-      const accountDocRef = doc(
-        db,
-        "accounts",
-        event.accountId
-      ) as DocumentReference<AccountDocument>;
+      const accountDocRef = doc(db, "accounts", event.accountId).withConverter(
+        accountDocumentConverter
+      );
       const accountDocSnapshot = await transaction.get(accountDocRef);
       if (lastEventId === null) {
         if (accountDocSnapshot.exists())
@@ -66,7 +97,7 @@ export const storeEvent = (
         event.accountId,
         "events",
         event.id
-      ) as DocumentReference<EventDocument>;
+      ).withConverter(eventDocumentConverter);
       transaction.set(eventDocRef, event);
     },
     { maxAttempts: 1 }
@@ -79,7 +110,7 @@ export const getEvents = async (accountId: string): Promise<AccountEvent[]> => {
     "accounts",
     accountId,
     "events"
-  ) as CollectionReference<AccountEvent>;
+  ).withConverter(eventDocumentConverter);
   const eventsSnapshot = await getDocs(eventsCollection);
   return eventsSnapshot.docs
     .map((doc) => doc.data())
