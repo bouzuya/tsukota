@@ -28,6 +28,9 @@
         "projectId": "01998b5a-773b-4c6c-b388-09dc620d9756"
       }
     },
-    "owner": "bouzuya"
+    "owner": "bouzuya",
+    "plugins": [
+      "expo-localization"
+    ]
   }
 }

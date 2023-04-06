@@ -12,8 +12,10 @@ import {
   deleteAccountFromLocal,
   loadAccountsFromLocal,
 } from "../lib/account-local-storage";
+import { useTranslation } from "../lib/i18n";
 
 export default function Index(): JSX.Element {
+  const { t } = useTranslation();
   const [accounts, setAccounts] = useState<AccountListItem[] | null>(null);
   const router = useRouter();
   const pathname = usePathname();
@@ -24,9 +26,9 @@ export default function Index(): JSX.Element {
     loadAccountsFromLocal().then((accounts) => setAccounts(accounts));
   }, [pathname]);
   return (
-    <Screen options={{ title: "Home" }}>
+    <Screen options={{ title: t("account.title") ?? "" }}>
       {(accounts ?? []).length === 0 ? (
-        <Text>Register a new account</Text>
+        <Text>{t("account.empty")}</Text>
       ) : (
         <AccountList
           data={accounts}
@@ -44,7 +46,7 @@ export default function Index(): JSX.Element {
         />
       )}
       <FAB
-        accessibilityLabel="Add new account"
+        accessibilityLabel={t("account.new") ?? ""}
         icon="plus"
         style={styles.fab}
         onPress={() => {
