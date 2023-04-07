@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { IconButton } from "react-native-paper";
 import { Item as AccountListItem } from "../../components/AccountList";
@@ -29,6 +30,7 @@ export default function AccountNew(): JSX.Element {
   });
   const [accounts, setAccounts] = useState<AccountListItem[] | null>(null);
   const router = useRouter();
+  const { t } = useTranslation();
 
   const onClickOk = ({ name }: Form) => {
     const result = createAccount(name);
@@ -51,10 +53,10 @@ export default function AccountNew(): JSX.Element {
   return (
     <Screen
       options={{
-        title: "Add Account",
+        title: t("title.account.new") ?? "",
         headerRight: () => (
           <IconButton
-            accessibilityLabel="Save"
+            accessibilityLabel={t("button.save") ?? ""}
             icon="check"
             onPress={handleSubmit(onClickOk)}
             size={28}
@@ -65,11 +67,11 @@ export default function AccountNew(): JSX.Element {
       <View style={{ flex: 1, width: "100%" }}>
         <TextInput
           control={control}
-          label="Name"
+          label={t("account.name")}
           name="name"
           rules={{
             required: {
-              message: "This is required.",
+              message: t("error.required"),
               value: true,
             },
           }}

@@ -26,7 +26,7 @@ export default function Index(): JSX.Element {
     loadAccountsFromLocal().then((accounts) => setAccounts(accounts));
   }, [pathname]);
   return (
-    <Screen options={{ title: t("account.title") ?? "" }}>
+    <Screen options={{ title: t("title.account.index") ?? "" }}>
       {(accounts ?? []).length === 0 ? (
         <Text>{t("account.empty")}</Text>
       ) : (

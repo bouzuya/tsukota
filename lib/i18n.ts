@@ -8,7 +8,19 @@ export const resources = {
       account: {
         empty: "Register a new account",
         new: "Add new account",
-        title: "Home",
+        name: "Name",
+      },
+      button: {
+        save: "Save",
+      },
+      error: {
+        required: "This is required.",
+      },
+      title: {
+        account: {
+          index: "Home",
+          new: "Add account",
+        },
       },
     },
   },
@@ -17,7 +29,18 @@ export const resources = {
       account: {
         empty: "アカウントを追加してください",
         new: "アカウントの追加",
-        title: "アカウント一覧",
+      },
+      button: {
+        save: "保存",
+      },
+      error: {
+        required: "必須です",
+      },
+      title: {
+        account: {
+          index: "アカウント一覧",
+          new: "アカウント追加",
+        },
       },
     },
   },
