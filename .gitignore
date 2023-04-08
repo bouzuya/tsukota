@@ -1,17 +1,15 @@
-node_modules/
-.expo/
-dist/
-npm-debug.*
 *.jks
-*.p8
-*.p12
 *.key
+*.log
 *.mobileprovision
 *.orig.*
-web-build/
-
-# macOS
+*.p12
+*.p8
 .DS_Store
-
-# Temporary files created by Metro to check the health of the file watcher
+.expo/
 .metro-health-check*
+dist/
+node_modules/
+npm-debug.*
+storage/
+web-build/
