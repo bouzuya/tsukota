@@ -8,8 +8,8 @@
 .DS_Store
 .expo/
 .metro-health-check*
+/docker/firebase/storage/
 dist/
 node_modules/
 npm-debug.*
-storage/
 web-build/

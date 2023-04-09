@@ -12,7 +12,31 @@ tsukota は使った金額を記録する Android アプリです。
 
 (Google Play ストアからダウンロードできるよう準備中)
 
-## Firebase Local Emulator Suite の使用
+## Docker Compose 経由での Firebase Local Emulaator Suite の使用
+
+```console
+$ docker compose up --build --detach
+
+$ docker compose exec firebase gcloud auth login --no-launch-browser
+
+$ # Cloud Firestore から Cloud Storage にエクスポート
+$ project_id=...
+$ docker compose exec firebase gcloud --project "${project_id}" firestore export "gs://${project_id}.appspot.com"
+
+$ # Cloud Storage からローカル (./docker/firebase/storage) にデータをコピー
+$ export_prefix='2023-04-09T06:45:39_12320'
+$ cd docker/firebase
+$ mkdir storage
+$ docker compose exec firebase gsutil -m cp -r "gs://${project_id}.appspot.com/${export_prefix}" storage
+$ cd -
+
+$ # コピーしたデータを使った Firebase Local Emulator を起動
+$ # ./docker/firebase を volume としてマウントしているため、そこからの相対パスを指定している
+$ docker compose exec firebase firebase --project "${project_id}" emulators:start --export-on-exit --import "storage/${export_prefix}"
+# View Emulator UI at http://localhost:4000/
+```
+
+## (旧) Firebase Local Emulator Suite の使用
 
 <https://firebase.google.com/docs/cli?hl=ja>
 <https://firebase.google.com/docs/emulator-suite/install_and_configure?hl=ja>
@@ -38,7 +62,7 @@ $ firebase emulators:start
 # ...
 ```
 
-## Cloud Firestore からのエクスポート
+## (旧) Cloud Firestore からのエクスポート
 
 <https://firebase.google.com/docs/firestore/manage-data/export-import?hl=ja>
 <https://cloud.google.com/sdk/docs/install-sdk?hl=ja>
