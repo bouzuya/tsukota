@@ -20,6 +20,16 @@ export const resources = {
         account: {
           index: "Home",
           new: "Add account",
+          show: "Account",
+        },
+        category: {
+          index: "Categories",
+        },
+        setting: {
+          index: "Settings",
+        },
+        transaction: {
+          index: "Transactions",
         },
       },
     },
@@ -41,6 +51,16 @@ export const resources = {
         account: {
           index: "アカウント一覧",
           new: "アカウント追加",
+          show: "アカウント",
+        },
+        category: {
+          index: "分類一覧",
+        },
+        setting: {
+          index: "設定",
+        },
+        transaction: {
+          index: "取引一覧",
         },
       },
     },

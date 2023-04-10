@@ -4,6 +4,7 @@ import { BottomNavigation } from "react-native-paper";
 import Categories from "./categories/index";
 import Transactions from "./transactions/index";
 import Settings from "./settings";
+import { useTranslation } from "react-i18next";
 
 export default function AccountRoot(): JSX.Element {
   // 本来は _layout.tsx で expo-router の Tabs を使うべきだが、
@@ -22,34 +23,35 @@ export default function AccountRoot(): JSX.Element {
   // おそらく問題の回避策はあるだろうが調査の手間を避けるのと、
   // react-native-paper の BottomNavigation の見た目の良さから、
   // こうしている。
+  const { t } = useTranslation();
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     {
-      key: "transactions",
-      title: "Transactions",
       focusedIcon: "cash-multiple",
+      key: "transactions",
+      title: t("title.transaction.index") ?? "",
     },
     {
-      key: "categories",
-      title: "Categories",
       focusedIcon: "shape",
+      key: "categories",
+      title: t("title.category.index") ?? "",
     },
     {
-      key: "settings",
-      title: "Settings",
       focusedIcon: "cogs",
+      key: "settings",
+      title: t("title.setting.index") ?? "",
     },
   ]);
 
   const renderScene = BottomNavigation.SceneMap({
     categories: Categories,
-    transactions: Transactions,
     settings: Settings,
+    transactions: Transactions,
   });
 
   return (
     <>
-      <Stack.Screen options={{ title: "Account" }} />
+      <Stack.Screen options={{ title: t("title.account.show") ?? "" }} />
       <BottomNavigation
         navigationState={{ index, routes }}
         onIndexChange={setIndex}
