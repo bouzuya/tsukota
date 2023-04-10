@@ -29,6 +29,7 @@ export const resources = {
       account: {
         empty: "アカウントを追加してください",
         new: "アカウントの追加",
+        name: "アカウント名",
       },
       button: {
         save: "保存",
