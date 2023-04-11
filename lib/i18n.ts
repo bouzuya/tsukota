@@ -18,6 +18,7 @@ export const resources = {
       },
       title: {
         account: {
+          edit: "Edit Account",
           index: "Home",
           new: "Add account",
           show: "Account",
@@ -49,6 +50,7 @@ export const resources = {
       },
       title: {
         account: {
+          edit: "アカウント編集",
           index: "アカウント一覧",
           new: "アカウント追加",
           show: "アカウント",

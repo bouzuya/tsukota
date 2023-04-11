@@ -9,6 +9,7 @@ import { TextInput } from "../../../components/TextInput";
 import { getLastEventId, updateAccount } from "../../../lib/account";
 import { storeAccountLocal } from "../../../lib/account-local-storage";
 import { storeEvent } from "../../../lib/api";
+import { useTranslation } from "../../../lib/i18n";
 
 type Form = {
   name: string;
@@ -25,6 +26,7 @@ export default function CategoryEdit(): JSX.Element {
       name: nameDefault,
     },
   });
+  const { t } = useTranslation();
 
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
@@ -43,10 +45,10 @@ export default function CategoryEdit(): JSX.Element {
   return (
     <Screen
       options={{
-        title: "Edit Account",
+        title: t("title.account.edit") ?? "",
         headerRight: () => (
           <IconButton
-            accessibilityLabel="Save"
+            accessibilityLabel={t("button.save") ?? ""}
             icon="check"
             onPress={handleSubmit(onClickOk)}
             size={28}
@@ -57,11 +59,11 @@ export default function CategoryEdit(): JSX.Element {
       <View style={{ flex: 1, width: "100%" }}>
         <TextInput
           control={control}
-          label="Name"
+          label={t("acount.name") ?? ""}
           name="name"
           rules={{
             required: {
-              message: "This is required.",
+              message: t("error.required") ?? "",
               value: true,
             },
           }}
