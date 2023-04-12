@@ -16,6 +16,13 @@ export const resources = {
       error: {
         required: "This is required.",
       },
+      settings: {
+        delete_account: "Delete account",
+        last_updated: "Last updated",
+        number_of_categories: "Number of categories",
+        number_of_events: "Number of events",
+        number_of_transactions: "Number of transactions",
+      },
       title: {
         account: {
           edit: "Edit Account",
@@ -39,6 +46,7 @@ export const resources = {
     translation: {
       account: {
         empty: "アカウントを追加してください",
+        id: "ID",
         new: "アカウントの追加",
         name: "アカウント名",
       },
@@ -48,9 +56,17 @@ export const resources = {
       error: {
         required: "必須です",
       },
+      settings: {
+        delete_account: "アカウントの削除",
+        last_updated: "最終更新日時",
+        number_of_categories: "分類数",
+        number_of_events: "イベント数",
+        number_of_transactions: "取引数",
+      },
       title: {
         account: {
           edit: "アカウント編集",
+          id: "ID",
           index: "アカウント一覧",
           new: "アカウント追加",
           show: "アカウント",

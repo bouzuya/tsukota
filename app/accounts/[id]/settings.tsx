@@ -7,6 +7,7 @@ import { DeleteAccountDialog } from "../../../components/DeleteAccountDialog";
 import { Screen } from "../../../components/Screen";
 import { getLastEvent, listCategory } from "../../../lib/account";
 import { deleteAccountFromLocal } from "../../../lib/account-local-storage";
+import { useTranslation } from "../../../lib/i18n";
 
 export default function Settings(): JSX.Element {
   const pathname = usePathname();
@@ -15,6 +16,7 @@ export default function Settings(): JSX.Element {
   const router = useRouter();
   const [account, _setAccount] = useAccount(accountId, [pathname]);
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
+  const { t } = useTranslation();
 
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
@@ -28,13 +30,13 @@ export default function Settings(): JSX.Element {
         }}
       >
         <List.Item
-          title="Id"
+          title={t("account.id")}
           description={account.id}
           style={{ width: "100%" }}
         />
         <Divider style={{ width: "100%" }} />
         <List.Item
-          title="Name"
+          title={t("account.name")}
           description={account.name}
           onPress={() => {
             router.push({
@@ -49,31 +51,31 @@ export default function Settings(): JSX.Element {
         />
         <Divider style={{ width: "100%" }} />
         <List.Item
-          title="Number of transactions"
+          title={t("settings.number_of_transactions")}
           description={`${account.transactions.length}`}
           style={{ width: "100%" }}
         />
         <Divider style={{ width: "100%" }} />
         <List.Item
-          title="Number of categories"
+          title={t("settings.number_of_categories")}
           description={`${listCategory(account, false).length}`}
           style={{ width: "100%" }}
         />
         <Divider style={{ width: "100%" }} />
         <List.Item
-          title="Number of events"
+          title={t("settings.number_of_events")}
           description={`${account.events.length}`}
           style={{ width: "100%" }}
         />
         <Divider style={{ width: "100%" }} />
         <List.Item
-          title="Last updated"
+          title={t("settings.last_updated")}
           description={`${getLastEvent(account).at}`}
           style={{ width: "100%" }}
         />
         <Divider style={{ width: "100%" }} />
         <List.Item
-          title="Delete this account"
+          title={t("settings.delete_account")}
           onPress={() => {
             setDeleteModalVisible(true);
           }}
