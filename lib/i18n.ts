@@ -38,6 +38,7 @@ export const resources = {
         },
         transaction: {
           index: "Transactions",
+          new: "Add Transaction",
         },
       },
     },

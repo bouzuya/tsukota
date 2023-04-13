@@ -1,5 +1,5 @@
 import { useRouter, useSearchParams } from "expo-router";
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { View } from "react-native";
 import { ActivityIndicator, IconButton } from "react-native-paper";
@@ -8,6 +8,7 @@ import { Screen } from "../../../../components/Screen";
 import { TransactionForm, Form } from "../../../../components/TransactionForm";
 import { createTransaction, getLastEventId } from "../../../../lib/account";
 import { storeEvent } from "../../../../lib/api";
+import { useTranslation } from "../../../../lib/i18n";
 
 export default function TransactionNew(): JSX.Element {
   const params = useSearchParams();
@@ -22,6 +23,7 @@ export default function TransactionNew(): JSX.Element {
       date: new Date().toISOString().substring(0, 10),
     },
   });
+  const { t } = useTranslation();
 
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
@@ -44,10 +46,10 @@ export default function TransactionNew(): JSX.Element {
   return (
     <Screen
       options={{
-        title: "Add Transaction",
+        title: t("title.transaction.new") ?? "",
         headerRight: () => (
           <IconButton
-            accessibilityLabel="Save"
+            accessibilityLabel={t("button.save") ?? ""}
             icon="check"
             onPress={handleSubmit(onClickOk)}
             size={28}
