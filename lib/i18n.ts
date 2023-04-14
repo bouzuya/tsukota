@@ -41,6 +41,9 @@ export const resources = {
           new: "Add Transaction",
         },
       },
+      transaction: {
+        new: "Add new transaction",
+      },
     },
   },
   ja: {

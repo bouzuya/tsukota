@@ -13,6 +13,7 @@ import {
   Transaction,
 } from "../../../../lib/account";
 import { storeEvent } from "../../../../lib/api";
+import { useTranslation } from "../../../../lib/i18n";
 
 export default function Transactions(): JSX.Element {
   const pathname = usePathname();
@@ -27,6 +28,7 @@ export default function Transactions(): JSX.Element {
   );
   const [transactionId, setTransactionId] = useState<string | null>(null);
   const [account, setAccount] = useAccount(accountId, [pathname]);
+  const { t } = useTranslation();
 
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
@@ -66,7 +68,7 @@ export default function Transactions(): JSX.Element {
       )}
       {account.categories.length === 0 ? null : (
         <FAB
-          accessibilityLabel="Add new transaction"
+          accessibilityLabel={t("transaction.new") ?? ""}
           icon="plus"
           style={styles.fab}
           onPress={() => {
