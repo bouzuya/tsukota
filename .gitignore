@@ -9,6 +9,7 @@
 .expo/
 .metro-health-check*
 /docker/firebase/storage/
+/storage
 dist/
 node_modules/
 npm-debug.*

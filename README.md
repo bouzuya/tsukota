@@ -19,19 +19,18 @@ $ docker compose up --build --detach
 
 $ docker compose exec firebase gcloud auth login --no-launch-browser
 
+$ docker compose exec firebase gcloud projects list
+
 $ # Cloud Firestore から Cloud Storage にエクスポート
 $ project_id=...
 $ docker compose exec firebase gcloud --project "${project_id}" firestore export "gs://${project_id}.appspot.com"
 
-$ # Cloud Storage からローカル (./docker/firebase/storage) にデータをコピー
+$ # Cloud Storage からローカル (./storage) にデータをコピー
 $ export_prefix='2023-04-09T06:45:39_12320'
-$ cd docker/firebase
 $ mkdir storage
 $ docker compose exec firebase gsutil -m cp -r "gs://${project_id}.appspot.com/${export_prefix}" storage
-$ cd -
 
 $ # コピーしたデータを使った Firebase Local Emulator を起動
-$ # ./docker/firebase を volume としてマウントしているため、そこからの相対パスを指定している
 $ docker compose exec firebase firebase --project "${project_id}" emulators:start --export-on-exit --import "storage/${export_prefix}"
 # View Emulator UI at http://localhost:4000/
 ```

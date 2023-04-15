@@ -10,5 +10,5 @@ services:
       - "9099:9099"
     tty: true
     volumes:
-      - ./docker/firebase:/home/cloudsdk
+      - .:/home/cloudsdk
 
