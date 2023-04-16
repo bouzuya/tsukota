@@ -9,5 +9,8 @@ service cloud.firestore {
         allow create
       }
     }
+    match /devices/{device_id} {
+      allow read, write: if false
+    }
   }
 }
