@@ -28,7 +28,13 @@
     "import"
   ],
   "rules": {
-    "import/no-unresolved": 0,
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "import/no-unresolved": "off",
     "indent": [
       "error",
       2
@@ -37,6 +43,7 @@
       "error",
       "always"
     ],
+    "operator-linebreak": "off",
     "quotes": [
       "error",
       "double"
