@@ -1,6 +1,8 @@
 import Constants from "expo-constants";
 import { FirebaseOptions, initializeApp } from "firebase/app";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
+import { getFunctions, httpsCallable } from "firebase/functions";
+import { browserLocalPersistence, initializeAuth } from "firebase/auth";
 
 const firebaseOptions: FirebaseOptions = {
   apiKey: "AIzaSyCOTgcpOQMwgLCEectXltDswYgHq2Av_P4",
@@ -12,7 +14,21 @@ const firebaseOptions: FirebaseOptions = {
 };
 
 const app = initializeApp(firebaseOptions);
+const auth = initializeAuth(app, {
+  persistence: browserLocalPersistence,
+  popupRedirectResolver: undefined,
+});
 const db = getFirestore(app);
+const functions = getFunctions(app, "asia-northeast2");
+
+export const createCustomToken = httpsCallable<
+  {
+    device_id: string;
+    device_secret: string;
+  },
+  { custom_token: string }
+>(functions, "createCustomToken");
+
 const firestoreEmulatorHost = `${
   Constants.expoConfig?.extra?.firestoreEmulatorHost ?? ""
 }`;
@@ -24,4 +40,4 @@ if (firestoreEmulatorHost.length > 0) {
   connectFirestoreEmulator(db, host, port);
 }
 
-export { db };
+export { auth, db, functions };
