@@ -11,6 +11,7 @@ import {
 } from "../../../../../components/TransactionForm";
 import { getLastEventId, updateTransaction } from "../../../../../lib/account";
 import { storeEvent } from "../../../../../lib/api";
+import { useTranslation } from "../../../../../lib/i18n";
 
 export default function TransactionEdit(): JSX.Element {
   const params = useSearchParams();
@@ -26,6 +27,7 @@ export default function TransactionEdit(): JSX.Element {
       date: `${params.date}`,
     },
   });
+  const { t } = useTranslation();
 
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
@@ -48,10 +50,10 @@ export default function TransactionEdit(): JSX.Element {
   return (
     <Screen
       options={{
-        title: "Edit Transaction",
+        title: t("title.transaction.edit") ?? "",
         headerRight: () => (
           <IconButton
-            accessibilityLabel="Save"
+            accessibilityLabel={t("button.save") ?? ""}
             icon="check"
             onPress={handleSubmit(onClickOk)}
             size={28}

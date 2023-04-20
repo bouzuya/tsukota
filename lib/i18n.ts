@@ -37,6 +37,7 @@ export const resources = {
           index: "Settings",
         },
         transaction: {
+          edit: "Edit Transaction",
           index: "Transactions",
           new: "Add Transaction",
         },
@@ -82,8 +83,13 @@ export const resources = {
           index: "設定",
         },
         transaction: {
+          edit: "取引編集",
           index: "取引一覧",
+          new: "取引追加",
         },
+      },
+      transaction: {
+        new: "新しい取引の追加",
       },
     },
   },
