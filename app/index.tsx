@@ -1,13 +1,14 @@
 import { SplashScreen, usePathname, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
-import { FAB, Text } from "react-native-paper";
 import {
+  FAB,
+  Text,
   AccountList,
-  Item as AccountListItem,
-} from "../components/AccountList";
-import { DeleteAccountDialog } from "../components/DeleteAccountDialog";
-import { Screen } from "../components/Screen";
+  AccountListItem,
+  DeleteAccountDialog,
+  Screen,
+} from "../components";
 import { useCredential } from "../hooks/use-credential";
 import {
   deleteAccountFromLocal,

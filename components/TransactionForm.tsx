@@ -9,17 +9,14 @@ import { useEffect } from "react";
 import { TextInput } from "./TextInput";
 import {
   Control,
-  Controller,
   useController,
-  FieldErrors,
-  FormState,
   UseFormGetValues,
   UseFormSetValue,
   useFormState,
 } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 
-export type Form = {
+export type TransactionFormValues = {
   amount: string;
   categoryId: string;
   comment: string;
@@ -27,10 +24,10 @@ export type Form = {
 };
 
 type Props = {
-  control: Control<Form>;
+  control: Control<TransactionFormValues>;
   categories: Category[];
-  getValues: UseFormGetValues<Form>;
-  setValue: UseFormSetValue<Form>;
+  getValues: UseFormGetValues<TransactionFormValues>;
+  setValue: UseFormSetValue<TransactionFormValues>;
 };
 
 export function TransactionForm({

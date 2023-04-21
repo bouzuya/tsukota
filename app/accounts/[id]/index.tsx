@@ -1,10 +1,10 @@
 import { Stack } from "expo-router";
 import { useState } from "react";
-import { BottomNavigation } from "react-native-paper";
 import Categories from "./categories/index";
 import Transactions from "./transactions/index";
 import Settings from "./settings";
 import { useTranslation } from "react-i18next";
+import { BottomNavigation } from "../../../components";
 
 export default function AccountRoot(): JSX.Element {
   // 本来は _layout.tsx で expo-router の Tabs を使うべきだが、

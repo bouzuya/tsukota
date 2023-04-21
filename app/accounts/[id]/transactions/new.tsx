@@ -1,11 +1,15 @@
 import { useRouter, useSearchParams } from "expo-router";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { View } from "react-native";
-import { ActivityIndicator, IconButton } from "react-native-paper";
-import { useAccount } from "../../../../components/AccountContext";
-import { Screen } from "../../../../components/Screen";
-import { TransactionForm, Form } from "../../../../components/TransactionForm";
+import {
+  ActivityIndicator,
+  IconButton,
+  Screen,
+  TransactionForm,
+  View,
+  useAccount,
+} from "../../../../components";
+import { TransactionFormValues } from "../../../../components/TransactionForm";
 import { createTransaction, getLastEventId } from "../../../../lib/account";
 import { storeEvent } from "../../../../lib/api";
 import { useTranslation } from "../../../../lib/i18n";
@@ -15,20 +19,26 @@ export default function TransactionNew(): JSX.Element {
   const accountId = `${params.id}`;
   const [account, setAccount] = useAccount(accountId, []);
   const router = useRouter();
-  const { control, getValues, handleSubmit, setValue } = useForm<Form>({
-    defaultValues: {
-      amount: "",
-      categoryId: "",
-      comment: "",
-      date: new Date().toISOString().substring(0, 10),
-    },
-  });
+  const { control, getValues, handleSubmit, setValue } =
+    useForm<TransactionFormValues>({
+      defaultValues: {
+        amount: "",
+        categoryId: "",
+        comment: "",
+        date: new Date().toISOString().substring(0, 10),
+      },
+    });
   const { t } = useTranslation();
 
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
 
-  const onClickOk = ({ amount, categoryId, comment, date }: Form) => {
+  const onClickOk = ({
+    amount,
+    categoryId,
+    comment,
+    date,
+  }: TransactionFormValues) => {
     const result = createTransaction(account, {
       amount,
       categoryId,

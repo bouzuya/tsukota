@@ -1,11 +1,14 @@
 import { useRouter, useSearchParams } from "expo-router";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { View } from "react-native";
-import { ActivityIndicator, IconButton } from "react-native-paper";
-import { useAccount } from "../../../../components/AccountContext";
-import { Screen } from "../../../../components/Screen";
-import { TextInput } from "../../../../components/TextInput";
+import {
+  ActivityIndicator,
+  IconButton,
+  Screen,
+  TextInput,
+  View,
+  useAccount,
+} from "../../../../components";
 import { createCategory, getLastEventId } from "../../../../lib/account";
 import { storeEvent } from "../../../../lib/api";
 

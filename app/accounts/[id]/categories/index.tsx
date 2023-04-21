@@ -1,11 +1,15 @@
 import { usePathname, useRouter, useSearchParams } from "expo-router";
 import { useState } from "react";
 import { StyleSheet } from "react-native";
-import { ActivityIndicator, FAB, Text } from "react-native-paper";
-import { useAccount } from "../../../../components/AccountContext";
-import { CategoryList } from "../../../../components/CategoryList";
-import { DeleteCategoryDialog } from "../../../../components/DeleteCategoryDialog";
-import { Screen } from "../../../../components/Screen";
+import {
+  ActivityIndicator,
+  CategoryList,
+  DeleteCategoryDialog,
+  FAB,
+  Screen,
+  Text,
+  useAccount,
+} from "../../../../components";
 import {
   deleteCategory,
   getLastEventId,

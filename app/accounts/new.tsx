@@ -2,11 +2,13 @@ import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
-import { IconButton } from "react-native-paper";
-import { Item as AccountListItem } from "../../components/AccountList";
-import { Screen } from "../../components/Screen";
-import { TextInput } from "../../components/TextInput";
+import {
+  AccountListItem,
+  IconButton,
+  Screen,
+  TextInput,
+  View,
+} from "../../components";
 import { Account, AccountEvent, createAccount } from "../../lib/account";
 import { storeAccountLocal } from "../../lib/account-local-storage";
 import { storeEvent } from "../../lib/api";

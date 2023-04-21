@@ -1,14 +1,15 @@
 import { useRouter, useSearchParams } from "expo-router";
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { View } from "react-native";
-import { ActivityIndicator, IconButton } from "react-native-paper";
-import { useAccount } from "../../../../../components/AccountContext";
-import { Screen } from "../../../../../components/Screen";
 import {
-  Form,
+  ActivityIndicator,
+  IconButton,
+  Screen,
   TransactionForm,
-} from "../../../../../components/TransactionForm";
+  TransactionFormValues,
+  useAccount,
+} from "../../../../../components";
 import { getLastEventId, updateTransaction } from "../../../../../lib/account";
 import { storeEvent } from "../../../../../lib/api";
 import { useTranslation } from "../../../../../lib/i18n";
@@ -19,20 +20,26 @@ export default function TransactionEdit(): JSX.Element {
   const transactionId = `${params.transactionId}`;
   const [account, setAccount] = useAccount(accountId, []);
   const router = useRouter();
-  const { control, getValues, handleSubmit, setValue } = useForm<Form>({
-    defaultValues: {
-      amount: `${params.amount}`,
-      categoryId: `${params.categoryId}`,
-      comment: decodeURIComponent(`${params.comment}`),
-      date: `${params.date}`,
-    },
-  });
+  const { control, getValues, handleSubmit, setValue } =
+    useForm<TransactionFormValues>({
+      defaultValues: {
+        amount: `${params.amount}`,
+        categoryId: `${params.categoryId}`,
+        comment: decodeURIComponent(`${params.comment}`),
+        date: `${params.date}`,
+      },
+    });
   const { t } = useTranslation();
 
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
 
-  const onClickOk = ({ amount, categoryId, comment, date }: Form) => {
+  const onClickOk = ({
+    amount,
+    categoryId,
+    comment,
+    date,
+  }: TransactionFormValues) => {
     const result = updateTransaction(account, transactionId, {
       amount,
       categoryId,

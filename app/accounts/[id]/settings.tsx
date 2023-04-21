@@ -1,10 +1,14 @@
 import { usePathname, useRouter, useSearchParams } from "expo-router";
 import { useState } from "react";
-import { View } from "react-native";
-import { ActivityIndicator, Divider, List, Text } from "react-native-paper";
-import { useAccount } from "../../../components/AccountContext";
-import { DeleteAccountDialog } from "../../../components/DeleteAccountDialog";
-import { Screen } from "../../../components/Screen";
+import {
+  ActivityIndicator,
+  DeleteAccountDialog,
+  Divider,
+  List,
+  Screen,
+  View,
+  useAccount,
+} from "../../../components";
 import { getLastEvent, listCategory } from "../../../lib/account";
 import { deleteAccountFromLocal } from "../../../lib/account-local-storage";
 import { useTranslation } from "../../../lib/i18n";

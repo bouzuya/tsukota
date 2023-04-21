@@ -1,5 +1,4 @@
 import { Stack } from "expo-router/stack";
-import { AccountContextProvider } from "../components/AccountContext";
 import {
   Provider as PaperProvider,
   MD3DarkTheme,
@@ -7,6 +6,7 @@ import {
   MD3Theme,
 } from "react-native-paper";
 import { useColorScheme } from "react-native";
+import { AccountContextProvider } from "../components";
 
 export default function Layout(): JSX.Element {
   const colorScheme = useColorScheme();
