@@ -32,6 +32,7 @@ export const resources = {
         },
         category: {
           index: "Categories",
+          select: "Select Category",
         },
         setting: {
           index: "Settings",
@@ -78,6 +79,7 @@ export const resources = {
         },
         category: {
           index: "分類一覧",
+          select: "分類の選択",
         },
         setting: {
           index: "設定",
