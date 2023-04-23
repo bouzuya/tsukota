@@ -7,14 +7,15 @@ export const resources = {
     translation: {
       account: {
         empty: "Register a new account",
-        new: "Add new account",
         name: "Name",
+        new: "Add new account",
       },
       button: {
         save: "Save",
       },
       category: {
         empty: "Register a new category",
+        name: "Name",
         new: "Add new category",
       },
       error: {
@@ -35,6 +36,7 @@ export const resources = {
           show: "Account",
         },
         category: {
+          edit: "Edit Category",
           index: "Categories",
           new: "Add Category",
           select: "Select Category",
@@ -58,14 +60,15 @@ export const resources = {
       account: {
         empty: "アカウントを追加してください",
         id: "ID",
-        new: "アカウントの追加",
         name: "アカウント名",
+        new: "アカウントの追加",
       },
       button: {
         save: "保存",
       },
       category: {
         empty: "分類を追加してください",
+        name: "分類名",
         new: "分類の追加",
       },
       error: {
@@ -81,12 +84,12 @@ export const resources = {
       title: {
         account: {
           edit: "アカウント編集",
-          id: "ID",
           index: "アカウント一覧",
           new: "アカウント追加",
           show: "アカウント",
         },
         category: {
+          edit: "分類編集",
           index: "分類一覧",
           new: "分類追加",
           select: "分類の選択",

@@ -1,6 +1,7 @@
 import { useRouter, useSearchParams } from "expo-router";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   IconButton,
@@ -28,6 +29,7 @@ export default function CategoryEdit(): JSX.Element {
       name: nameDefault,
     },
   });
+  const { t } = useTranslation();
 
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
@@ -45,10 +47,10 @@ export default function CategoryEdit(): JSX.Element {
   return (
     <Screen
       options={{
-        title: "Edit Category",
+        title: t("title.category.edit") ?? "",
         headerRight: () => (
           <IconButton
-            accessibilityLabel="Save"
+            accessibilityLabel={t("button.save") ?? ""}
             icon="check"
             onPress={handleSubmit(onClickOk)}
             size={28}
@@ -59,11 +61,11 @@ export default function CategoryEdit(): JSX.Element {
       <View style={{ flex: 1, width: "100%" }}>
         <TextInput
           control={control}
-          label="Name"
+          label={t("category.name")}
           name="name"
           rules={{
             required: {
-              message: "This is required.",
+              message: t("error.required"),
               value: true,
             },
           }}
