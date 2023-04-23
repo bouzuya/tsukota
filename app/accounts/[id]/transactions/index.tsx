@@ -40,9 +40,9 @@ export default function Transactions(): JSX.Element {
     <Screen>
       {(account.transactions ?? []).length === 0 ? (
         (account.categories ?? []).length === 0 ? (
-          <Text>Register a new category</Text>
+          <Text>{t("category.empty")}</Text>
         ) : (
-          <Text>Register a new transaction</Text>
+          <Text>{t("transaction.empty")}</Text>
         )
       ) : (
         <TransactionList

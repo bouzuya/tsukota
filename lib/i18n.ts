@@ -11,15 +11,24 @@ export const resources = {
         new: "Add new account",
       },
       button: {
+        cancel: "Cancel",
+        ok: "OK",
         save: "Save",
       },
       category: {
+        deleted: "(deleted)",
         empty: "Register a new category",
         name: "Name",
         new: "Add new category",
       },
       error: {
+        date_format: "This must be in YYYY-MM-DD format.",
         required: "This is required.",
+      },
+      message: {
+        confirm_account_deletion: "Delete account?",
+        confirm_category_deletion: "Delete category?",
+        confirm_transaction_deletion: "Delete transaction?",
       },
       settings: {
         delete_account: "Delete account",
@@ -30,12 +39,14 @@ export const resources = {
       },
       title: {
         account: {
+          delete: "Delete Account",
           edit: "Edit Account",
           index: "Home",
-          new: "Add account",
+          new: "Add Account",
           show: "Account",
         },
         category: {
+          delete: "Delete Category",
           edit: "Edit Category",
           index: "Categories",
           new: "Add Category",
@@ -45,12 +56,19 @@ export const resources = {
           index: "Settings",
         },
         transaction: {
+          delete: "Delete Transaction",
           edit: "Edit Transaction",
           index: "Transactions",
           new: "Add Transaction",
         },
       },
       transaction: {
+        amount: "Amount",
+        category: "Category",
+        comment: "Comment",
+        date: "Date",
+        deleted: "(deleted)",
+        empty: "Register a new transaction",
         new: "Add new transaction",
       },
     },
@@ -64,15 +82,24 @@ export const resources = {
         new: "アカウントの追加",
       },
       button: {
+        cancel: "キャンセル",
+        ok: "OK",
         save: "保存",
       },
       category: {
+        deleted: "(削除済み)",
         empty: "分類を追加してください",
         name: "分類名",
         new: "分類の追加",
       },
       error: {
+        date_format: "日付は YYYY-MM-DD の形式です",
         required: "必須です",
+      },
+      message: {
+        confirm_account_deletion: "アカウントを削除しますか？",
+        confirm_category_deletion: "分類を削除しますか？",
+        confirm_transaction_deletion: "取引を削除しますか？",
       },
       settings: {
         delete_account: "アカウントの削除",
@@ -83,12 +110,14 @@ export const resources = {
       },
       title: {
         account: {
+          delete: "アカウント削除",
           edit: "アカウント編集",
           index: "アカウント一覧",
           new: "アカウント追加",
           show: "アカウント",
         },
         category: {
+          delete: "分類削除",
           edit: "分類編集",
           index: "分類一覧",
           new: "分類追加",
@@ -98,12 +127,19 @@ export const resources = {
           index: "設定",
         },
         transaction: {
+          delete: "取引削除",
           edit: "取引編集",
           index: "取引一覧",
           new: "取引追加",
         },
       },
       transaction: {
+        amount: "金額",
+        category: "分類",
+        comment: "コメント",
+        date: "日付",
+        deleted: "(削除済み)",
+        empty: "取引を追加してください",
         new: "新しい取引の追加",
       },
     },

@@ -48,7 +48,7 @@ export default function CategoryNew(): JSX.Element {
         title: t("title.category.new") ?? "",
         headerRight: () => (
           <IconButton
-            accessibilityLabel="Save"
+            accessibilityLabel={t("button.save") ?? ""}
             icon="check"
             onPress={handleSubmit(onClickOk)}
             size={28}
@@ -59,11 +59,11 @@ export default function CategoryNew(): JSX.Element {
       <View style={{ flex: 1, width: "100%" }}>
         <TextInput
           control={control}
-          label="Name"
+          label={t("category.name") ?? ""}
           name="name"
           rules={{
             required: {
-              message: "This is required.",
+              message: t("error.required"),
               value: true,
             },
           }}

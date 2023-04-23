@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { FlatList, FlatListProps, View } from "react-native";
 import { List, Text } from "react-native-paper";
 import { Category, Transaction } from "../lib/account";
@@ -19,10 +20,11 @@ export function TransactionList({
   transactions,
   ...props
 }: Props): JSX.Element {
+  const { t } = useTranslation();
   const categoryNames = Object.fromEntries(
     categories.map(({ id, name, deletedAt }) => [
       id,
-      name + (deletedAt === null ? "" : "(deleted)"),
+      name + (deletedAt === null ? "" : t("transaction.deleted") ?? ""),
     ])
   );
   return (

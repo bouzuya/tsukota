@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Button, Dialog, Text } from "react-native-paper";
 
 type Props = {
@@ -15,16 +16,19 @@ export function DeleteAccountDialog({
   onClickOk,
   visible,
 }: Props): JSX.Element | null {
+  const { t } = useTranslation();
   return id === null ? null : (
     <Dialog visible={visible}>
-      <Dialog.Title>Delete Account</Dialog.Title>
+      <Dialog.Title>{t("title.account.delete") ?? ""}</Dialog.Title>
       <Dialog.Content>
-        <Text>Delete the Account?</Text>
-        <Text>Name: {name}</Text>
+        <Text>{t("message.confirm_account_deletion") ?? ""}</Text>
+        <Text>
+          {t("account.name")}: {name}
+        </Text>
       </Dialog.Content>
       <Dialog.Actions>
-        <Button onPress={onClickCancel}>Cancel</Button>
-        <Button onPress={onClickOk}>OK</Button>
+        <Button onPress={onClickCancel}>{t("button.cancel") ?? ""}</Button>
+        <Button onPress={onClickOk}>{t("button.ok") ?? ""}</Button>
       </Dialog.Actions>
     </Dialog>
   );

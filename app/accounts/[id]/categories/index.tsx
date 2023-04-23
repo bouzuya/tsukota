@@ -36,7 +36,7 @@ export default function Categories(): JSX.Element {
   return (
     <Screen>
       {categories.length === 0 ? (
-        <Text>{t("category.new")}</Text>
+        <Text>{t("category.empty")}</Text>
       ) : (
         <CategoryList
           data={categories}

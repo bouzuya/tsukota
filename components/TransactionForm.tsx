@@ -15,6 +15,7 @@ import {
   useFormState,
 } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
+import { useTranslation } from "react-i18next";
 
 export type TransactionFormValues = {
   amount: string;
@@ -40,13 +41,14 @@ export function TransactionForm({
   const params = useSearchParams();
   const accountId = `${params.id}`;
   const router = useRouter();
+  const { t } = useTranslation();
 
   useController({
     control,
     name: "categoryId",
     rules: {
       required: {
-        message: "This is required.",
+        message: t("error.required"),
         value: true,
       },
     },
@@ -69,15 +71,15 @@ export function TransactionForm({
     <View>
       <TextInput
         control={control}
-        label="Date"
+        label={t("transaction.date") ?? ""}
         name="date"
         rules={{
           pattern: {
-            message: "This must be in YYYY-MM-DD format.",
+            message: t("error.date_format"),
             value: /^[0-9]{4}-[01][0-9]-[0-3][0-9]$/,
           },
           required: {
-            message: "This is required.",
+            message: t("error.required"),
             value: true,
           },
         }}
@@ -85,7 +87,7 @@ export function TransactionForm({
       <TextInput
         control={control}
         keyboardType="numeric"
-        label="Amount"
+        label={t("transaction.amount") ?? ""}
         name="amount"
         rules={{
           pattern: {
@@ -93,7 +95,7 @@ export function TransactionForm({
             value: /^[-+]?[0-9]+$/,
           },
           required: {
-            message: "This is required.",
+            message: t("error.required"),
             value: true,
           },
         }}
@@ -102,7 +104,7 @@ export function TransactionForm({
         <ReactNativePaperTextInput
           editable={false}
           error={errors["categoryId"] !== undefined}
-          label="Category"
+          label={t("transaction.category") ?? ""}
           mode="outlined"
           onChangeText={() => {}}
           right={
@@ -130,7 +132,12 @@ export function TransactionForm({
         </HelperText>
       </View>
 
-      <TextInput control={control} label="Comment" name="comment" rules={{}} />
+      <TextInput
+        control={control}
+        label={t("transaction.comment")}
+        name="comment"
+        rules={{}}
+      />
     </View>
   );
 }
