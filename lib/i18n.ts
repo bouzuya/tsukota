@@ -13,6 +13,10 @@ export const resources = {
       button: {
         save: "Save",
       },
+      category: {
+        empty: "Register a new category",
+        new: "Add new category",
+      },
       error: {
         required: "This is required.",
       },
@@ -59,6 +63,10 @@ export const resources = {
       },
       button: {
         save: "保存",
+      },
+      category: {
+        empty: "分類を追加してください",
+        new: "分類の追加",
       },
       error: {
         required: "必須です",

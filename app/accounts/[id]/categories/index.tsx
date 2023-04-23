@@ -1,5 +1,6 @@
 import { usePathname, useRouter, useSearchParams } from "expo-router";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native";
 import {
   ActivityIndicator,
@@ -27,13 +28,15 @@ export default function Categories(): JSX.Element {
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [deleteDialogVisible, setDeleteDialogVisible] =
     useState<boolean>(false);
+  const { t } = useTranslation();
+
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
   const categories = listCategory(account, false);
   return (
     <Screen>
       {categories.length === 0 ? (
-        <Text>Register a new category</Text>
+        <Text>{t("category.new")}</Text>
       ) : (
         <CategoryList
           data={categories}
@@ -55,7 +58,7 @@ export default function Categories(): JSX.Element {
         />
       )}
       <FAB
-        accessibilityLabel="Add new category"
+        accessibilityLabel={t("category.new") ?? ""}
         icon="plus"
         style={styles.fab}
         onPress={() => {
