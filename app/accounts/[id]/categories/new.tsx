@@ -11,6 +11,7 @@ import {
 } from "../../../../components";
 import { createCategory, getLastEventId } from "../../../../lib/account";
 import { storeEvent } from "../../../../lib/api";
+import { useTranslation } from "../../../../lib/i18n";
 
 type Form = {
   name: string;
@@ -26,6 +27,7 @@ export default function CategoryNew(): JSX.Element {
       name: "",
     },
   });
+  const { t } = useTranslation();
 
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
@@ -43,7 +45,7 @@ export default function CategoryNew(): JSX.Element {
   return (
     <Screen
       options={{
-        title: "Add Category",
+        title: t("title.category.new") ?? "",
         headerRight: () => (
           <IconButton
             accessibilityLabel="Save"
