@@ -1,31 +1,24 @@
 import { signInWithCustomToken, UserCredential } from "firebase/auth";
-import { useEffect, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { auth, createCustomToken } from "../lib/firebase";
 import { storage } from "../lib/storage";
 import { generate as generateUuidV4 } from "../lib/uuid";
 
-const ensureDevice = async (): Promise<{
-  deviceId: string;
-  deviceSecret: string;
-}> => {
-  try {
-    const { deviceId, deviceSecret } = await storage.load({
-      key: "device",
-    });
-    return { deviceId, deviceSecret };
-  } catch (_) {
-    const deviceId = generateUuidV4();
-    const deviceSecret = generateUuidV4();
-    // throw error if failed to save
-    await storage.save({
-      key: "device",
-      data: { deviceId, deviceSecret },
-    });
-    return { deviceId, deviceSecret };
-  }
-};
+const CredentialContext = createContext<{ credential: UserCredential | null }>({
+  credential: null,
+});
 
-export function useCredential(): UserCredential | null {
+export function CredentialProvider({
+  children,
+}: {
+  children: ReactNode;
+}): JSX.Element {
   const [processing, setProcessing] = useState<boolean>(false);
   const [userCredential, setUserCredential] = useState<UserCredential | null>(
     null
@@ -55,5 +48,35 @@ export function useCredential(): UserCredential | null {
     })();
   }, []);
 
-  return userCredential;
+  return (
+    <CredentialContext.Provider value={{ credential: userCredential }}>
+      {children}
+    </CredentialContext.Provider>
+  );
+}
+
+export function useCredential(): UserCredential | null {
+  const { credential } = useContext(CredentialContext);
+  return credential;
+}
+
+async function ensureDevice(): Promise<{
+  deviceId: string;
+  deviceSecret: string;
+}> {
+  try {
+    const { deviceId, deviceSecret } = await storage.load({
+      key: "device",
+    });
+    return { deviceId, deviceSecret };
+  } catch (_) {
+    const deviceId = generateUuidV4();
+    const deviceSecret = generateUuidV4();
+    // throw error if failed to save
+    await storage.save({
+      key: "device",
+      data: { deviceId, deviceSecret },
+    });
+    return { deviceId, deviceSecret };
+  }
 }

@@ -7,6 +7,7 @@ import {
 } from "react-native-paper";
 import { useColorScheme } from "react-native";
 import { AccountContextProvider } from "../components";
+import { CredentialProvider } from "../hooks/use-credential";
 
 export default function Layout(): JSX.Element {
   const colorScheme = useColorScheme();
@@ -15,14 +16,16 @@ export default function Layout(): JSX.Element {
   return (
     <PaperProvider theme={theme}>
       <AccountContextProvider>
-        <Stack
-          screenOptions={{
-            headerStyle: {
-              backgroundColor: theme.colors.surface,
-            },
-            headerTintColor: theme.colors.onSurface,
-          }}
-        />
+        <CredentialProvider>
+          <Stack
+            screenOptions={{
+              headerStyle: {
+                backgroundColor: theme.colors.surface,
+              },
+              headerTintColor: theme.colors.onSurface,
+            }}
+          />
+        </CredentialProvider>
       </AccountContextProvider>
     </PaperProvider>
   );
