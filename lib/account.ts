@@ -41,10 +41,12 @@ export type Account = {
   events: AccountEvent[];
   id: string;
   name: string;
+  owners: string[];
   transactions: Transaction[];
 };
 
 export const createAccount = (
+  uid: string,
   name: string
 ): Result<[Account, AccountEvent], string> => {
   if (name.length === 0) return err("name is empty");
@@ -53,6 +55,7 @@ export const createAccount = (
     at: new Date().toISOString(),
     id: generateUuidV4(),
     name,
+    owners: [uid],
     type: "accountCreated",
   };
   return ok([applyEvent(null, event), event]);
@@ -257,12 +260,13 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
   if (self === null) {
     if (event.type !== "accountCreated")
       throw new Error("Account is not created");
-    const { accountId, name } = event;
+    const { accountId, name, owners } = event;
     return {
       categories: [],
       events: [event],
       id: accountId,
       name,
+      owners,
       transactions: [],
     };
   }

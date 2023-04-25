@@ -35,7 +35,7 @@ export default function AccountNew(): JSX.Element {
   const { t } = useTranslation();
 
   const onClickOk = ({ name }: Form) => {
-    const result = createAccount(name);
+    const result = createAccount("FIXME", name);
     if (result.isErr()) return;
     const [account, event] = result.value;
 

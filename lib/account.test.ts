@@ -9,12 +9,14 @@ import {
   updateCategory,
   updateTransaction,
 } from "./account";
+import { generate as generateUuidV4 } from "./uuid";
 
 describe("createAccount", () => {
   describe("happy path", () => {
     it("works", () => {
+      const uid = generateUuidV4();
       const name = "account name 1";
-      const result = createAccount(name);
+      const result = createAccount(uid, name);
       if (result.isErr()) throw new Error();
       const [account, event] = result.value;
       expect(account.categories).toStrictEqual([]);
@@ -31,8 +33,9 @@ describe("createAccount", () => {
 
   describe("when name is empty", () => {
     it("returns err", () => {
+      const uid = generateUuidV4();
       const name = "";
-      const result = createAccount(name);
+      const result = createAccount(uid, name);
       expect(result.isErr()).toBe(true);
     });
   });
@@ -41,7 +44,8 @@ describe("createAccount", () => {
 describe("createCategory", () => {
   describe("happy path", () => {
     it("works", () => {
-      const before = createAccount("account name 1")._unsafeUnwrap()[0];
+      const uid = generateUuidV4();
+      const before = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
       const name = "category name 1";
       const result = createCategory(before, name);
       if (result.isErr()) throw new Error();
@@ -64,7 +68,8 @@ describe("createCategory", () => {
 
   describe("when name is empty", () => {
     it("returns err", () => {
-      const before = createAccount("account name 1")._unsafeUnwrap()[0];
+      const uid = generateUuidV4();
+      const before = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
       const name = "";
       const result = createCategory(before, name);
       expect(result.isErr()).toBe(true);
@@ -75,7 +80,8 @@ describe("createCategory", () => {
 describe("createTransaction", () => {
   describe("happy path", () => {
     it("works", () => {
-      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
       const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
       const category = v2.categories[0];
       if (category === undefined) throw new Error();
@@ -125,7 +131,8 @@ describe("createTransaction", () => {
 
   describe("when amount is invalid", () => {
     const f = (amount: string) => {
-      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
       const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
       const category = v2.categories[0];
       if (category === undefined) throw new Error();
@@ -149,7 +156,8 @@ describe("createTransaction", () => {
 
   describe("when categoryId is invalid", () => {
     it("returns err", () => {
-      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
       const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
       const category = v2.categories[0];
       if (category === undefined) throw new Error();
@@ -169,7 +177,8 @@ describe("createTransaction", () => {
 
   describe("when date is invalid", () => {
     const f = (date: string) => {
-      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
       const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
       const category = v2.categories[0];
       if (category === undefined) throw new Error();
@@ -196,7 +205,8 @@ describe("createTransaction", () => {
 describe("deleteCategory", () => {
   describe("happy path", () => {
     it("works", () => {
-      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
       const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
@@ -230,7 +240,8 @@ describe("deleteCategory", () => {
 
   describe("when categoryId is invalid", () => {
     it("returns err", () => {
-      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
       const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
       const category = v2.categories[0];
       if (category === undefined) throw new Error();
@@ -244,7 +255,8 @@ describe("deleteCategory", () => {
 describe("deleteTransaction", () => {
   describe("happy path", () => {
     it("works", () => {
-      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
       const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
@@ -281,7 +293,8 @@ describe("deleteTransaction", () => {
 
   describe("when transactionId is invalid", () => {
     it("returns err", () => {
-      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
       const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
@@ -308,7 +321,8 @@ describe("deleteTransaction", () => {
 describe("updateCategory", () => {
   describe("happy path", () => {
     it("works", () => {
-      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
       const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
@@ -346,7 +360,8 @@ describe("updateCategory", () => {
 
   describe("when categoryId is invalid", () => {
     it("returns err", () => {
-      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
       const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
@@ -358,7 +373,8 @@ describe("updateCategory", () => {
 
   describe("when name is invalid", () => {
     it("returns err", () => {
-      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
       const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
@@ -371,7 +387,8 @@ describe("updateCategory", () => {
 describe("updateAccount", () => {
   describe("happy path", () => {
     it("works", () => {
-      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
 
       const name = "account name 2";
       const result = updateAccount(v1, name);
@@ -398,7 +415,8 @@ describe("updateAccount", () => {
 
   describe("when name is invalid", () => {
     it("returns err", () => {
-      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
       const result = updateAccount(v1, "account name 1");
       expect(result.isErr()).toBe(true);
     });
@@ -408,7 +426,8 @@ describe("updateAccount", () => {
 describe("updateTransaction", () => {
   describe("happy path", () => {
     it("works", () => {
-      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
       const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
@@ -467,7 +486,8 @@ describe("updateTransaction", () => {
 
   describe("when amount is invalid", () => {
     it("returns err", () => {
-      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
       const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
@@ -496,7 +516,8 @@ describe("updateTransaction", () => {
 
   describe("when categoryId is invalid", () => {
     it("returns err", () => {
-      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
       const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
@@ -525,7 +546,8 @@ describe("updateTransaction", () => {
 
   describe("when date is invalid", () => {
     it("returns err", () => {
-      const v1 = createAccount("account name 1")._unsafeUnwrap()[0];
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
       const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();

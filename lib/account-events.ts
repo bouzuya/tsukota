@@ -2,6 +2,7 @@ export type AccountCreated = {
   type: "accountCreated";
   accountId: string;
   name: string;
+  owners: string[];
   at: string;
   id: string;
 };
