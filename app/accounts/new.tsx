@@ -9,6 +9,7 @@ import {
   TextInput,
   View,
 } from "../../components";
+import { useCredential } from "../../hooks/use-credential";
 import { Account, AccountEvent, createAccount } from "../../lib/account";
 import { storeAccountLocal } from "../../lib/account-local-storage";
 import { storeEvent } from "../../lib/api";
@@ -33,9 +34,12 @@ export default function AccountNew(): JSX.Element {
   const [accounts, setAccounts] = useState<AccountListItem[] | null>(null);
   const router = useRouter();
   const { t } = useTranslation();
+  const credential = useCredential();
+
+  if (credential === null) return <></>;
 
   const onClickOk = ({ name }: Form) => {
-    const result = createAccount("FIXME", name);
+    const result = createAccount(credential.user.uid, name);
     if (result.isErr()) return;
     const [account, event] = result.value;
 
