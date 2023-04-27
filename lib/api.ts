@@ -15,6 +15,7 @@ import { AccountEvent } from "./account";
 type AccountDocument = {
   id: string;
   lastEventId: string;
+  owners: string[];
 };
 
 const accountDocumentConverter: FirestoreDataConverter<AccountDocument> = {
@@ -73,6 +74,7 @@ export const storeEvent = (
         transaction.set(accountDocRef, {
           id: event.accountId,
           lastEventId: event.id,
+          owners: event.owners,
         });
       } else {
         if (!accountDocSnapshot.exists())
