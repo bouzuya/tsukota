@@ -62,7 +62,7 @@ export default function CategoryEdit(): JSX.Element {
       <View style={{ flex: 1, width: "100%" }}>
         <TextInput
           control={control}
-          label={t("acount.name") ?? ""}
+          label={t("account.name") ?? ""}
           name="name"
           rules={{
             required: {
