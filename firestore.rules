@@ -1,16 +1,23 @@
 rules_version = '2';
 service cloud.firestore {
+  function isOwnedAccount() {
+    return request.auth.uid in resource.data.owners;
+  }
+
   match /databases/{database}/documents {
     match /accounts/{id} {
-    	allow get
-      allow create, update
+      allow create: if request.auth.uid in request.resource.data.owners;
+      allow get: if isOwnedAccount();
+      allow update: if isOwnedAccount();
       match /events/{id} {
-      	allow read
-        allow create
+        allow list;
+        allow create;
+        allow get;
       }
     }
+
     match /devices/{device_id} {
-      allow read, write: if false
+      allow read, write: if false;
     }
   }
 }
