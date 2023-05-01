@@ -17,6 +17,7 @@ import {
   Transaction,
 } from "../../../../lib/account";
 import { storeEvent } from "../../../../lib/api";
+import { db } from "../../../../lib/firebase";
 import { useTranslation } from "../../../../lib/i18n";
 
 export default function Transactions(): JSX.Element {
@@ -101,7 +102,7 @@ export default function Transactions(): JSX.Element {
 
           // update remote state
           setAccount(newAccount);
-          storeEvent(getLastEventId(account), newEvent).catch((_) => {
+          storeEvent(db, getLastEventId(account), newEvent).catch((_) => {
             setAccount(account);
           });
 

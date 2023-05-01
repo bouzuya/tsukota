@@ -12,6 +12,7 @@ import {
 } from "../../../../../components";
 import { getLastEventId, updateCategory } from "../../../../../lib/account";
 import { storeEvent } from "../../../../../lib/api";
+import { db } from "../../../../../lib/firebase";
 
 type Form = {
   name: string;
@@ -38,7 +39,7 @@ export default function CategoryEdit(): JSX.Element {
     const result = updateCategory(account, categoryId, name);
     if (result.isErr()) return;
     const [newAccount, event] = result.value;
-    storeEvent(getLastEventId(account), event).then((_) => {
+    storeEvent(db, getLastEventId(account), event).then((_) => {
       setAccount(newAccount);
       router.back();
     });

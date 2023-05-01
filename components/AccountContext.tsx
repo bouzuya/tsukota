@@ -10,6 +10,7 @@ import {
 } from "react";
 import { Account, restoreAccount } from "../lib/account";
 import { getEvents } from "../lib/api";
+import { db } from "../lib/firebase";
 
 type ContextValue = {
   accounts: { [accountId: string]: Account };
@@ -45,7 +46,7 @@ export function useAccount(
   useEffect(() => {
     const cachedAccount = accounts[accountId];
     if (cachedAccount === undefined) {
-      getEvents(accountId)
+      getEvents(db, accountId)
         .then((events) => restoreAccount(events))
         .then((account) => setAccount(account));
     }

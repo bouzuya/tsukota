@@ -17,6 +17,7 @@ import {
   listCategory,
 } from "../../../../lib/account";
 import { storeEvent } from "../../../../lib/api";
+import { db } from "../../../../lib/firebase";
 
 export default function Categories(): JSX.Element {
   const pathname = usePathname();
@@ -88,7 +89,7 @@ export default function Categories(): JSX.Element {
 
             // update remote state
             setAccount(newAccount);
-            storeEvent(getLastEventId(account), newEvent).catch((_) => {
+            storeEvent(db, getLastEventId(account), newEvent).catch((_) => {
               setAccount(account);
             });
           }

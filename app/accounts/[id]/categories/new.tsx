@@ -11,6 +11,7 @@ import {
 } from "../../../../components";
 import { createCategory, getLastEventId } from "../../../../lib/account";
 import { storeEvent } from "../../../../lib/api";
+import { db } from "../../../../lib/firebase";
 import { useTranslation } from "../../../../lib/i18n";
 
 type Form = {
@@ -36,7 +37,7 @@ export default function CategoryNew(): JSX.Element {
     const result = createCategory(account, name);
     if (result.isErr()) return;
     const [newAccount, event] = result.value;
-    storeEvent(getLastEventId(account), event).then((_) => {
+    storeEvent(db, getLastEventId(account), event).then((_) => {
       setAccount(newAccount);
       router.back();
     });

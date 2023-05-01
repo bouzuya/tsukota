@@ -12,6 +12,7 @@ import {
 import { TransactionFormValues } from "../../../../components/TransactionForm";
 import { createTransaction, getLastEventId } from "../../../../lib/account";
 import { storeEvent } from "../../../../lib/api";
+import { db } from "../../../../lib/firebase";
 import { useTranslation } from "../../../../lib/i18n";
 
 export default function TransactionNew(): JSX.Element {
@@ -47,7 +48,7 @@ export default function TransactionNew(): JSX.Element {
     });
     if (result.isErr()) return;
     const [newAccount, event] = result.value;
-    storeEvent(getLastEventId(account), event).then((_) => {
+    storeEvent(db, getLastEventId(account), event).then((_) => {
       setAccount(newAccount);
       router.back();
     });

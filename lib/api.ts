@@ -8,8 +8,8 @@ import {
   QueryDocumentSnapshot,
   SnapshotOptions,
   WithFieldValue,
+  Firestore,
 } from "firebase/firestore";
-import { db } from "./firebase";
 import { AccountEvent } from "./account";
 
 type AccountDocument = {
@@ -51,6 +51,7 @@ const eventDocumentConverter: FirestoreDataConverter<EventDocument> = {
 };
 
 export const storeEvent = (
+  db: Firestore,
   lastEventId: string | null,
   event: AccountEvent
 ): Promise<void> => {
@@ -106,7 +107,10 @@ export const storeEvent = (
   );
 };
 
-export const getEvents = async (accountId: string): Promise<AccountEvent[]> => {
+export const getEvents = async (
+  db: Firestore,
+  accountId: string
+): Promise<AccountEvent[]> => {
   const eventsCollection = collection(
     db,
     "accounts",
