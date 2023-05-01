@@ -8,6 +8,8 @@ const bucketNameParams = defineString("BUCKET_NAME");
 
 const region = "asia-northeast2";
 
+exports.createAccount = buildCreateAccount(region);
+
 exports.createCustomToken = buildCreateCustomToken(region);
 
 exports.scheduledFirestoreExport = buildScheduledFirestoreExport(

@@ -3,9 +3,7 @@ import { Firestore, getFirestore } from "firebase-admin/firestore";
 import * as functions from "firebase-functions";
 import { AccountEvent, createAccount } from "../../../lib/account";
 
-export function buildCreateCustomToken(
-  region: string
-): functions.HttpsFunction {
+export function buildCreateAccount(region: string): functions.HttpsFunction {
   const app = initializeApp(functions.config().firebase);
   const db = getFirestore(app);
 
