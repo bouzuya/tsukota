@@ -29,6 +29,14 @@ export const createCustomToken = httpsCallable<
   { custom_token: string }
 >(functions, "createCustomToken");
 
+export const createAccount = httpsCallable<
+  {
+    name: string;
+    uid: string;
+  },
+  { id: string }
+>(functions, "createAccount");
+
 const firestoreEmulatorHost = `${
   Constants.expoConfig?.extra?.firestoreEmulatorHost ?? ""
 }`;
