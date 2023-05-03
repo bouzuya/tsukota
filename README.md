@@ -35,6 +35,55 @@ $ docker compose exec firebase firebase --project "${project_id}" emulators:star
 # View Emulator UI at http://localhost:4000/
 ```
 
+## メモ
+
+### SignUp
+
+```mermaid
+sequenceDiagram
+  participant LocalStorage
+  participant App
+  participant Functions
+  participant Firestore
+  participant Authentication
+
+  App ->> LocalStorage : load device
+  LocalStorage -->> App : (not found)
+  App ->> App : create device (id, secret)
+  App ->> LocalStorage : save device
+  App ->> Functions : call "createCustomToken" (id, secret)
+  Functions ->> Firestore : get device
+  Firestore -->> Functions : (not found)
+  Functions ->> Functions : create uid
+  Functions ->> Authentication : call "createCustomToken" (uid)
+  Authentication -->> Functions : customToken
+  Functions ->> Firestore : set device (id, uid, encryptedSecret)
+  Functions -->> App : customToken
+  App ->> Authentication : call "signInWithCustomToken" (customToken)
+```
+
+### SignIn
+
+```mermaid
+sequenceDiagram
+  participant LocalStorage
+  participant App
+  participant Functions
+  participant Firestore
+  participant Authentication
+
+  App ->> LocalStorage : load device
+  LocalStorage -->> App : id, secret
+  App ->> Functions : call "createCustomToken" (id, secret)
+  Functions ->> Firestore : get device
+  Firestore -->> Functions : id, uid, encryptedSecret
+  Functions ->> Functions : check secret
+  Functions ->> Authentication : call "createCustomToken" (uid)
+  Authentication -->> Functions : customToken
+  Functions -->> App : customToken
+  App ->> Authentication : call "signInWithCustomToken" (customToken)
+```
+
 ## (旧) Firebase Local Emulator Suite の使用
 
 <https://firebase.google.com/docs/cli?hl=ja>
