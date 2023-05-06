@@ -37,6 +37,14 @@ export const createAccount = httpsCallable<
   { id: string }
 >(functions, "createAccount");
 
+export const storeAccountEvent = httpsCallable<
+  {
+    last_event_id: string | null;
+    event: Record<string, unknown>;
+  },
+  {}
+>(functions, "storeAccountEvent");
+
 const firestoreEmulatorHost = `${
   Constants.expoConfig?.extra?.firestoreEmulatorHost ?? ""
 }`;

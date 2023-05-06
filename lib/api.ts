@@ -11,6 +11,7 @@ import {
   Firestore,
 } from "firebase/firestore";
 import { AccountEvent } from "./account";
+import { storeAccountEvent as firebaseStoreAccountEvent } from "./firebase";
 
 type AccountDocument = {
   id: string;
@@ -50,61 +51,16 @@ const eventDocumentConverter: FirestoreDataConverter<EventDocument> = {
   },
 };
 
-export const storeAccountEvent = (
-  db: Firestore,
+export const storeAccountEvent = async (
+  _db: Firestore,
   lastEventId: string | null,
   event: AccountEvent
 ): Promise<void> => {
-  return runTransaction(
-    db,
-    async (transaction) => {
-      // create or update account
-      const accountDocRef = doc(db, "accounts", event.accountId).withConverter(
-        accountDocumentConverter
-      );
-      const accountDocSnapshot = await transaction.get(accountDocRef);
-      if (lastEventId === null) {
-        if (accountDocSnapshot.exists())
-          return Promise.reject(
-            `account already exist (accountId: ${event.accountId})`
-          );
-        if (event.type !== "accountCreated")
-          return Promise.reject(
-            `event type is not accountCreated (accountId: ${event.accountId})`
-          );
-        transaction.set(accountDocRef, {
-          id: event.accountId,
-          lastEventId: event.id,
-          owners: event.owners,
-        });
-      } else {
-        if (!accountDocSnapshot.exists())
-          return Promise.reject(
-            `account does not exist (accountId: ${event.accountId})`
-          );
-        const docData = accountDocSnapshot.data();
-        if (docData.lastEventId !== lastEventId)
-          return Promise.reject(
-            `account already updated (accountId: ${event.accountId}, expected: ${lastEventId}, actual: ${docData.lastEventId})`
-          );
-        transaction.update(accountDocRef, {
-          ...docData,
-          lastEventId: event.id,
-        });
-      }
-
-      // create event
-      const eventDocRef = doc(
-        db,
-        "accounts",
-        event.accountId,
-        "events",
-        event.id
-      ).withConverter(eventDocumentConverter);
-      transaction.set(eventDocRef, event);
-    },
-    { maxAttempts: 1 }
-  );
+  await firebaseStoreAccountEvent({
+    last_event_id: lastEventId,
+    event,
+  });
+  return Promise.resolve();
 };
 
 export const getEvents = async (
