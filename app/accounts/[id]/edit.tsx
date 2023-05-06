@@ -11,7 +11,7 @@ import {
 } from "../../../components";
 import { getLastEventId, updateAccount } from "../../../lib/account";
 import { storeAccountLocal } from "../../../lib/account-local-storage";
-import { storeEvent } from "../../../lib/api";
+import { storeAccountEvent } from "../../../lib/api";
 import { db } from "../../../lib/firebase";
 import { useTranslation } from "../../../lib/i18n";
 
@@ -39,7 +39,7 @@ export default function CategoryEdit(): JSX.Element {
     const result = updateAccount(account, name);
     if (result.isErr()) return;
     const [newAccount, event] = result.value;
-    storeEvent(db, getLastEventId(account), event).then((_) => {
+    storeAccountEvent(db, getLastEventId(account), event).then((_) => {
       setAccount(newAccount);
       storeAccountLocal({ id: newAccount.id, name: newAccount.name });
       router.back();

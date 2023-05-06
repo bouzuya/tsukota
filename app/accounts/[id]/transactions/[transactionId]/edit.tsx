@@ -11,7 +11,7 @@ import {
   useAccount,
 } from "../../../../../components";
 import { getLastEventId, updateTransaction } from "../../../../../lib/account";
-import { storeEvent } from "../../../../../lib/api";
+import { storeAccountEvent } from "../../../../../lib/api";
 import { db } from "../../../../../lib/firebase";
 import { useTranslation } from "../../../../../lib/i18n";
 
@@ -49,7 +49,7 @@ export default function TransactionEdit(): JSX.Element {
     });
     if (result.isErr()) return;
     const [newAccount, event] = result.value;
-    storeEvent(db, getLastEventId(account), event).then((_) => {
+    storeAccountEvent(db, getLastEventId(account), event).then((_) => {
       setAccount(newAccount);
       router.back();
     });

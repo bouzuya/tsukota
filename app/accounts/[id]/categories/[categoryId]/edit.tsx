@@ -11,7 +11,7 @@ import {
   useAccount,
 } from "../../../../../components";
 import { getLastEventId, updateCategory } from "../../../../../lib/account";
-import { storeEvent } from "../../../../../lib/api";
+import { storeAccountEvent } from "../../../../../lib/api";
 import { db } from "../../../../../lib/firebase";
 
 type Form = {
@@ -39,7 +39,7 @@ export default function CategoryEdit(): JSX.Element {
     const result = updateCategory(account, categoryId, name);
     if (result.isErr()) return;
     const [newAccount, event] = result.value;
-    storeEvent(db, getLastEventId(account), event).then((_) => {
+    storeAccountEvent(db, getLastEventId(account), event).then((_) => {
       setAccount(newAccount);
       router.back();
     });

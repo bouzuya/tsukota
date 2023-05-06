@@ -16,7 +16,7 @@ import {
   listCategory,
   Transaction,
 } from "../../../../lib/account";
-import { storeEvent } from "../../../../lib/api";
+import { storeAccountEvent } from "../../../../lib/api";
 import { db } from "../../../../lib/firebase";
 import { useTranslation } from "../../../../lib/i18n";
 
@@ -102,9 +102,11 @@ export default function Transactions(): JSX.Element {
 
           // update remote state
           setAccount(newAccount);
-          storeEvent(db, getLastEventId(account), newEvent).catch((_) => {
-            setAccount(account);
-          });
+          storeAccountEvent(db, getLastEventId(account), newEvent).catch(
+            (_) => {
+              setAccount(account);
+            }
+          );
 
           setDeleteModalVisible(false);
         }}

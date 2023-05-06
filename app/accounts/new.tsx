@@ -12,13 +12,13 @@ import {
 import { useCredential } from "../../hooks/use-credential";
 import { Account, AccountEvent, createAccount } from "../../lib/account";
 import { storeAccountLocal } from "../../lib/account-local-storage";
-import { storeEvent } from "../../lib/api";
+import { storeAccountEvent } from "../../lib/api";
 
 const storeRemote = async (
   _account: Account,
   event: AccountEvent
 ): Promise<void> => {
-  await storeEvent(null, event);
+  await storeAccountEvent(null, event);
 };
 
 type Form = {

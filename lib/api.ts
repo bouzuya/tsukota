@@ -50,7 +50,7 @@ const eventDocumentConverter: FirestoreDataConverter<EventDocument> = {
   },
 };
 
-export const storeEvent = (
+export const storeAccountEvent = (
   db: Firestore,
   lastEventId: string | null,
   event: AccountEvent
