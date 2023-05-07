@@ -1,4 +1,4 @@
-import { compare, hash } from "bcrypt";
+import { compare, hash } from "bcryptjs";
 import { initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import {
