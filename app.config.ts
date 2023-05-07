@@ -11,10 +11,14 @@ const expoConfig: ExpoConfig = {
   },
   assetBundlePatterns: ["**/*"],
   extra: {
+    apiKey: process.env.API_KEY,
+    authEmulatorHost: process.env.FIREBASE_AUTH_EMULATOR_HOST,
     eas: {
       projectId: "01998b5a-773b-4c6c-b388-09dc620d9756",
     },
     firestoreEmulatorHost: process.env.FIRESTORE_EMULATOR_HOST,
+    functionsEmulatorHost: process.env.FUNCTIONS_EMULATOR_HOST,
+    projectId: process.env.PROJECT_ID,
   },
   icon: "./assets/icon-v2.png",
   name: "tsukota",

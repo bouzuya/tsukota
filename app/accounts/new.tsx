@@ -1,4 +1,5 @@
 import { useRouter } from "expo-router";
+import { getFunctions } from "firebase/functions";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -13,12 +14,13 @@ import { useCredential } from "../../hooks/use-credential";
 import { Account, AccountEvent, createAccount } from "../../lib/account";
 import { storeAccountLocal } from "../../lib/account-local-storage";
 import { storeAccountEvent } from "../../lib/api";
+import { db } from "../../lib/firebase";
 
 const storeRemote = async (
   _account: Account,
   event: AccountEvent
 ): Promise<void> => {
-  await storeAccountEvent(null, event);
+  await storeAccountEvent(db, null, event);
 };
 
 type Form = {
