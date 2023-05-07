@@ -48,7 +48,7 @@
   "scripts": {
     "build": "npx eas-cli build --local --output=dist/tsukota.aab --platform=android",
     "build-and-submit": "npm run build && npm run submit",
-    "start": "expo start --android",
+    "start": "expo start",
     "submit": "npx eas-cli submit --path=dist/tsukota.aab --platform=android --profile=preview",
     "test": "jest"
   }
