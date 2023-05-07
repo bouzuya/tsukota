@@ -14,13 +14,12 @@ import { useCredential } from "../../hooks/use-credential";
 import { Account, AccountEvent, createAccount } from "../../lib/account";
 import { storeAccountLocal } from "../../lib/account-local-storage";
 import { storeAccountEvent } from "../../lib/api";
-import { db } from "../../lib/firebase";
 
 const storeRemote = async (
   _account: Account,
   event: AccountEvent
 ): Promise<void> => {
-  await storeAccountEvent(db, null, event);
+  await storeAccountEvent(null, event);
 };
 
 type Form = {
