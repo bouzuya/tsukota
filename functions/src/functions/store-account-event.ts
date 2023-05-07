@@ -1,4 +1,4 @@
-import { AccountEvent } from "account-events";
+import { AccountEvent } from "@bouzuya/tsukota-account-events";
 import { initializeApp } from "firebase-admin/app";
 import {
   DocumentData,

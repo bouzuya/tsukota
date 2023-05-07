@@ -11,7 +11,7 @@ import {
   TransactionDeleted,
   TransactionProps,
   TransactionUpdated,
-} from "account-events";
+} from "@bouzuya/tsukota-account-events";
 import { Result, err, ok } from "neverthrow";
 import { generate as generateUuidV4 } from "./uuid";
 

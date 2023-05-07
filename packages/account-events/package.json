@@ -1,7 +1,7 @@
 {
-  "name": "account-events",
+  "name": "@bouzuya/tsukota-account-events",
   "description": "",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "email": "m@bouzuya.net",
     "name": "bouzuya",
@@ -14,8 +14,15 @@
   "keywords": [],
   "license": "MIT",
   "main": "lib/index.js",
-  "private": true,
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bouzuya/tsukota.git"
+  },
   "scripts": {
+    "prepare": "tsc",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
