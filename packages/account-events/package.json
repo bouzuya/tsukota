@@ -1,0 +1,23 @@
+{
+  "name": "account-events",
+  "description": "",
+  "version": "1.0.0",
+  "author": {
+    "email": "m@bouzuya.net",
+    "name": "bouzuya",
+    "url": "https://bouzuya.net/"
+  },
+  "devDependencies": {
+    "@tsconfig/strictest": "^2.0.1",
+    "typescript": "^5.0.4"
+  },
+  "keywords": [],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module"
+}

@@ -1,3 +1,4 @@
+import { AccountEvent } from "account-events";
 import { initializeApp } from "firebase-admin/app";
 import {
   DocumentData,
@@ -8,7 +9,6 @@ import {
   WithFieldValue,
 } from "firebase-admin/firestore";
 import * as functions from "firebase-functions";
-import { AccountEvent } from "../../../lib/account";
 
 export function buildStoreAccountEvent(
   region: string

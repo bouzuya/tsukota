@@ -1,6 +1,5 @@
 // Account Aggregate
 
-import { Result, err, ok } from "neverthrow";
 import {
   AccountCreated,
   AccountEvent,
@@ -12,7 +11,8 @@ import {
   TransactionDeleted,
   TransactionProps,
   TransactionUpdated,
-} from "./account-events";
+} from "account-events";
+import { Result, err, ok } from "neverthrow";
 import { generate as generateUuidV4 } from "./uuid";
 
 // re-export
