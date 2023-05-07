@@ -1,5 +1,5 @@
 import { compare, hash } from "bcryptjs";
-import { initializeApp } from "firebase-admin/app";
+import { App } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import {
   DocumentData,
@@ -10,10 +10,9 @@ import * as functions from "firebase-functions";
 import { v4 as uuidv4 } from "uuid";
 
 export function buildCreateCustomToken(
+  app: App,
   region: string
 ): functions.HttpsFunction {
-  const app = initializeApp(functions.config().firebase);
-
   return functions.region(region).https.onCall(async (data, _context) => {
     if (typeof data !== "object" || data === null) {
       throw new functions.https.HttpsError(

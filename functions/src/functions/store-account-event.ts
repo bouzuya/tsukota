@@ -1,5 +1,5 @@
 import { AccountEvent } from "@bouzuya/tsukota-account-events";
-import { initializeApp } from "firebase-admin/app";
+import { App } from "firebase-admin/app";
 import {
   DocumentData,
   Firestore,
@@ -11,9 +11,9 @@ import {
 import * as functions from "firebase-functions";
 
 export function buildStoreAccountEvent(
+  app: App,
   region: string
 ): functions.HttpsFunction {
-  const app = initializeApp(functions.config().firebase);
   const db = getFirestore(app);
 
   return functions.region(region).https.onCall(async (data, context) => {
