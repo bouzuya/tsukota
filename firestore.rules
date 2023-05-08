@@ -1,23 +1,38 @@
 rules_version = '2';
 service cloud.firestore {
-  function isOwnedAccount() {
-    return request.auth.uid in resource.data.owners;
-  }
 
   match /databases/{database}/documents {
-    match /accounts/{id} {
-      allow create: if request.auth.uid in request.resource.data.owners;
-      allow get: if isOwnedAccount();
-      allow update: if isOwnedAccount();
-      match /events/{id} {
+
+    match /accounts/{account_id} {
+      allow list: if false;
+      allow create: if false;
+      allow get: if request.auth != null && request.auth.uid in resource.data.owners;
+      allow update: if false;
+      allow delete: if false;
+
+      match /events/{event_id} {
         allow list;
-        allow create;
+        allow create: if false;
         allow get;
+        allow update: if false;
+        allow delete: if false;
       }
     }
 
     match /devices/{device_id} {
-      allow read, write: if false;
+      allow list: if false;
+      allow create: if false;
+      allow get: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    match /users/{uid} {
+      allow list: if false;
+      allow create: if false;
+      allow get: if request.auth != null && request.auth.uid == uid;
+      allow update: if false;
+      allow delete: if false;
     }
   }
 }

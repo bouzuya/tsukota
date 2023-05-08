@@ -2,6 +2,7 @@ import { AccountEvent } from "@bouzuya/tsukota-account-events";
 import { App } from "firebase-admin/app";
 import {
   DocumentData,
+  FieldValue,
   Firestore,
   FirestoreDataConverter,
   getFirestore,
@@ -72,6 +73,25 @@ const eventDocumentConverter: FirestoreDataConverter<EventDocument> = {
   },
 };
 
+type UserDocument = {
+  id: string;
+  account_ids: string[];
+};
+
+const userDocumentConverter: FirestoreDataConverter<UserDocument> = {
+  fromFirestore: function (
+    snapshot: QueryDocumentSnapshot
+    // 怪しい
+  ): UserDocument {
+    return snapshot.data() as UserDocument;
+  },
+  toFirestore: function (
+    modelObject: WithFieldValue<UserDocument>
+  ): DocumentData {
+    return modelObject;
+  },
+};
+
 function storeAccountEvent(
   db: Firestore,
   uid: string,
@@ -94,7 +114,7 @@ function storeAccountEvent(
           return Promise.reject(
             `event type is not accountCreated (accountId: ${event.accountId})`
           );
-        transaction.set(accountDocRef, {
+        transaction.create(accountDocRef, {
           id: event.accountId,
           lastEventId: event.id,
           owners: event.owners,
@@ -113,17 +133,32 @@ function storeAccountEvent(
           return Promise.reject(
             `account already updated (accountId: ${event.accountId}, expected: ${lastEventId}, actual: ${docData.lastEventId})`
           );
-        transaction.update(accountDocRef, {
-          ...docData,
-          lastEventId: event.id,
-        });
+        transaction.update(
+          accountDocRef,
+          {
+            ...docData,
+            lastEventId: event.id,
+          },
+          { lastUpdateTime: accountDocSnapshot.updateTime }
+        );
       }
 
       // create event
       const eventDocRef = db
         .doc(`accounts/${event.accountId}/events/${event.id}`)
         .withConverter(eventDocumentConverter);
-      transaction.set(eventDocRef, event);
+      transaction.create(eventDocRef, event);
+
+      // update the `accounts` field of the `users/{uid}`
+      if (event.type === "accountCreated") {
+        const userRef = db
+          .collection("users")
+          .doc(uid)
+          .withConverter(userDocumentConverter);
+        transaction.update(userRef, {
+          account_ids: FieldValue.arrayUnion(event.accountId),
+        });
+      }
     },
     { maxAttempts: 1 }
   );

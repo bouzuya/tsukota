@@ -34,7 +34,8 @@ export function buildCreateCustomToken(
       id: string;
       uid: string;
     };
-    const deviceSnapshot = await getFirestore(app)
+    const db = getFirestore(app);
+    const deviceSnapshot = await db
       .collection("devices")
       .doc(deviceId)
       .withConverter({
@@ -59,6 +60,28 @@ export function buildCreateCustomToken(
       encryptedSecret: await hash(deviceSecret, 10),
       uid,
     });
+
+    // create user document
+    type UserDocument = {
+      id: string;
+      account_ids: string[];
+    };
+    const userSnapshot = await db
+      .collection("users")
+      .doc(uid)
+      .withConverter({
+        fromFirestore: (snapshot: QueryDocumentSnapshot): UserDocument => {
+          return snapshot.data() as UserDocument;
+        },
+        toFirestore: (user: UserDocument): DocumentData => {
+          return user;
+        },
+      })
+      .get();
+    if (!userSnapshot.exists) {
+      await userSnapshot.ref.create({ account_ids: [], id: uid });
+    }
+
     return {
       custom_token: customToken,
     };
