@@ -15,6 +15,25 @@ import {
   loadAccountsFromLocal,
 } from "../lib/account-local-storage";
 import { useTranslation } from "../lib/i18n";
+import { db } from "../lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { UserCredential } from "firebase/auth";
+
+const loadAccountsFromRemote = async (
+  credential: UserCredential
+): Promise<
+  {
+    id: string;
+    name: string;
+  }[]
+> => {
+  const uid = credential.user.uid;
+  const userSnapshot = await getDoc(doc(db, `users/${uid}`));
+  const data = userSnapshot.data();
+  if (data === undefined) return [];
+  // TODO: name
+  return data.account_ids.map((id: string) => ({ id, name: id }));
+};
 
 export default function Index(): JSX.Element {
   const { t } = useTranslation();
@@ -26,8 +45,12 @@ export default function Index(): JSX.Element {
   const [accountId, setAccountId] = useState<string | null>(null);
   const credential = useCredential();
   useEffect(() => {
-    loadAccountsFromLocal().then((accounts) => setAccounts(accounts));
-  }, [pathname]);
+    // loadAccountsFromLocal().then((accounts) => setAccounts(accounts));
+    if (credential === null) return;
+    loadAccountsFromRemote(credential).then((accounts) =>
+      setAccounts(accounts)
+    );
+  }, [credential, pathname]);
   if (credential === null) return <SplashScreen />;
   return (
     <Screen options={{ title: t("title.account.index") ?? "" }}>
