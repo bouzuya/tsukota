@@ -16,7 +16,13 @@ import {
 } from "../lib/account-local-storage";
 import { useTranslation } from "../lib/i18n";
 import { db } from "../lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  DocumentData,
+  DocumentReference,
+  DocumentSnapshot,
+  getDoc,
+} from "firebase/firestore";
 import { UserCredential } from "firebase/auth";
 
 const loadAccountsFromRemote = async (
@@ -31,8 +37,20 @@ const loadAccountsFromRemote = async (
   const userSnapshot = await getDoc(doc(db, `users/${uid}`));
   const data = userSnapshot.data();
   if (data === undefined) return [];
-  // TODO: name
-  return data.account_ids.map((id: string) => ({ id, name: id }));
+  const names = (
+    await Promise.all(
+      data.account_ids.map(
+        (accountId: string): Promise<DocumentSnapshot<DocumentData>> =>
+          getDoc(doc(db, `accounts/${accountId}`))
+      )
+    )
+  ).map((snapshot) => {
+    return snapshot.data()?.name ?? "";
+  });
+  return data.account_ids.map((id: string, index: number) => ({
+    id,
+    name: names[index],
+  }));
 };
 
 export default function Index(): JSX.Element {

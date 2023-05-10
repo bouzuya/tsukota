@@ -40,6 +40,9 @@ export function buildStoreAccountEvent(
 type AccountDocument = {
   id: string;
   lastEventId: string;
+  // for query
+  name: string;
+  // for query
   owners: string[];
 };
 
@@ -117,18 +120,24 @@ function storeAccountEvent(
         transaction.create(accountDocRef, {
           id: event.accountId,
           lastEventId: event.id,
+          // for query
+          name: event.name,
+          // for query
           owners: event.owners,
         });
       } else {
         const docData = accountDocSnapshot.data();
+        // not found
         if (docData === undefined)
           return Promise.reject(
             `account does not exist (accountId: ${event.accountId})`
           );
+        // forbidden
         if (docData.owners.indexOf(uid) === -1)
           return Promise.reject(
             `account is not owned by the user (accountId: ${event.accountId}, uid: ${uid})`
           );
+        // conflict
         if (docData.lastEventId !== lastEventId)
           return Promise.reject(
             `account already updated (accountId: ${event.accountId}, expected: ${lastEventId}, actual: ${docData.lastEventId})`
@@ -138,6 +147,8 @@ function storeAccountEvent(
           {
             ...docData,
             lastEventId: event.id,
+            // for query
+            ...(event.type === "accountUpdated" ? { name: event.name } : {}),
           },
           { lastUpdateTime: accountDocSnapshot.updateTime }
         );
@@ -156,6 +167,7 @@ function storeAccountEvent(
           .doc(uid)
           .withConverter(userDocumentConverter);
         transaction.update(userRef, {
+          id: uid,
           account_ids: FieldValue.arrayUnion(event.accountId),
         });
       }
