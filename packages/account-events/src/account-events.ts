@@ -11,6 +11,10 @@ export type AccountCreated = {
   owners: string[];
 } & AccountEventCommonProps;
 
+export type AccountDeleted = {
+  type: "accountDeleted";
+} & AccountEventCommonProps;
+
 export type AccountUpdated = {
   type: "accountUpdated";
   name: string;
@@ -59,6 +63,7 @@ export type TransactionProps = {
 
 export type AccountEvent =
   | AccountCreated
+  | AccountDeleted
   | AccountUpdated
   | CategoryAdded
   | CategoryDeleted
