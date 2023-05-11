@@ -2,7 +2,7 @@ export type AccountEventCommonProps = {
   accountId: string;
   at: string;
   id: string;
-  protocolVersion: string;
+  protocolVersion: number;
 };
 
 export type AccountCreated = {
