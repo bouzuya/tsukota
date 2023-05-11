@@ -40,6 +40,7 @@ export function buildStoreAccountEvent(
 type AccountDocument = {
   id: string;
   lastEventId: string;
+  protocolVersion: number;
   // for query
   name: string;
   // for query
@@ -120,6 +121,7 @@ function storeAccountEvent(
         transaction.create(accountDocRef, {
           id: event.accountId,
           lastEventId: event.id,
+          protocolVersion: event.protocolVersion,
           // for query
           name: event.name,
           // for query
@@ -142,11 +144,17 @@ function storeAccountEvent(
           return Promise.reject(
             `account already updated (accountId: ${event.accountId}, expected: ${lastEventId}, actual: ${docData.lastEventId})`
           );
+        // bad request (invalid protocol version)
+        if (event.protocolVersion >= docData.protocolVersion)
+          return Promise.reject(
+            `invalid protocol version (accountId: ${event.accountId}, expected: ${docData.protocolVersion}, actual: ${event.protocolVersion})`
+          );
         transaction.update(
           accountDocRef,
           {
             ...docData,
             lastEventId: event.id,
+            protocolVersion: event.protocolVersion,
             // for query
             ...(event.type === "accountUpdated" ? { name: event.name } : {}),
           },
