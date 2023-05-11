@@ -15,6 +15,8 @@ import {
 import { Result, err, ok } from "neverthrow";
 import { generate as generateUuidV4 } from "./uuid";
 
+export const protocolVersion = 1;
+
 // re-export
 export { AccountEvent };
 
@@ -56,6 +58,7 @@ export const createAccount = (
     id: generateUuidV4(),
     name,
     owners: [uid],
+    protocolVersion,
     type: "accountCreated",
   };
   return ok([applyEvent(null, event), event]);
@@ -72,6 +75,7 @@ export const createCategory = (
     categoryId: generateUuidV4(),
     id: generateUuidV4(),
     name,
+    protocolVersion,
     type: "categoryAdded",
   };
   return ok([applyEvent(self, event), event]);
@@ -107,6 +111,7 @@ export const createTransaction = (
     comment,
     date,
     id: generateUuidV4(),
+    protocolVersion,
     transactionId: generateUuidV4(),
     type: "transactionAdded",
   };
@@ -124,6 +129,7 @@ export const deleteCategory = (
     at: new Date().toISOString(),
     categoryId,
     id: generateUuidV4(),
+    protocolVersion,
     type: "categoryDeleted",
   };
   return ok([applyEvent(self, event), event]);
@@ -140,6 +146,7 @@ export const deleteTransaction = (
     at: new Date().toISOString(),
     id: generateUuidV4(),
     transactionId,
+    protocolVersion,
     type: "transactionDeleted",
   };
   return ok([applyEvent(self, event), event]);
@@ -193,6 +200,7 @@ export const updateAccount = (
     at: new Date().toISOString(),
     id: generateUuidV4(),
     name,
+    protocolVersion,
     type: "accountUpdated",
   };
   return ok([applyEvent(self, event), event]);
@@ -212,6 +220,7 @@ export const updateCategory = (
     categoryId,
     id: generateUuidV4(),
     name,
+    protocolVersion,
     type: "categoryUpdated",
   };
   return ok([applyEvent(self, event), event]);
@@ -250,6 +259,7 @@ export const updateTransaction = (
     comment,
     date,
     id: generateUuidV4(),
+    protocolVersion,
     transactionId,
     type: "transactionUpdated",
   };
