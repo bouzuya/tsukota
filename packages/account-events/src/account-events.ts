@@ -1,69 +1,54 @@
-export type AccountCreated = {
-  type: "accountCreated";
+export type AccountEventCommonProps = {
   accountId: string;
-  name: string;
-  owners: string[];
   at: string;
   id: string;
+  protocolVersion: string;
 };
+
+export type AccountCreated = {
+  type: "accountCreated";
+  name: string;
+  owners: string[];
+} & AccountEventCommonProps;
 
 export type AccountUpdated = {
   type: "accountUpdated";
-  accountId: string;
   name: string;
-  at: string;
-  id: string;
-};
+} & AccountEventCommonProps;
 
 export type CategoryAdded = {
   type: "categoryAdded";
   categoryId: string;
-  accountId: string;
   name: string;
-  at: string;
-  id: string;
-};
+} & AccountEventCommonProps;
 
 export type CategoryDeleted = {
   type: "categoryDeleted";
   categoryId: string;
-  accountId: string;
-  at: string;
-  id: string;
-};
+} & AccountEventCommonProps;
 
 export type CategoryUpdated = {
   type: "categoryUpdated";
   categoryId: string;
-  accountId: string;
   name: string;
-  at: string;
-  id: string;
-};
+} & AccountEventCommonProps;
 
 export type TransactionAdded = {
   type: "transactionAdded";
   transactionId: string;
-  accountId: string;
-  at: string;
-  id: string;
-} & TransactionProps;
+} & AccountEventCommonProps &
+  TransactionProps;
 
 export type TransactionDeleted = {
   type: "transactionDeleted";
   transactionId: string;
-  accountId: string;
-  at: string;
-  id: string;
-};
+} & AccountEventCommonProps;
 
 export type TransactionUpdated = {
   type: "transactionUpdated";
   transactionId: string;
-  accountId: string;
-  at: string;
-  id: string;
-} & TransactionProps;
+} & AccountEventCommonProps &
+  TransactionProps;
 
 export type TransactionProps = {
   amount: string;
