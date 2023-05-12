@@ -1,4 +1,11 @@
 import { SplashScreen, usePathname, useRouter } from "expo-router";
+import { UserCredential } from "firebase/auth";
+import {
+  doc,
+  DocumentData,
+  DocumentSnapshot,
+  getDoc,
+} from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import {
@@ -10,20 +17,10 @@ import {
   Screen,
 } from "../components";
 import { useCredential } from "../hooks/use-credential";
-import {
-  deleteAccountFromLocal,
-  loadAccountsFromLocal,
-} from "../lib/account-local-storage";
-import { useTranslation } from "../lib/i18n";
+import { deleteAccount, getLastEventId, restoreAccount } from "../lib/account";
+import { getEvents, storeAccountEvent } from "../lib/api";
 import { db } from "../lib/firebase";
-import {
-  doc,
-  DocumentData,
-  DocumentReference,
-  DocumentSnapshot,
-  getDoc,
-} from "firebase/firestore";
-import { UserCredential } from "firebase/auth";
+import { useTranslation } from "../lib/i18n";
 
 const loadAccountsFromRemote = async (
   credential: UserCredential
@@ -37,19 +34,22 @@ const loadAccountsFromRemote = async (
   const userSnapshot = await getDoc(doc(db, `users/${uid}`));
   const data = userSnapshot.data();
   if (data === undefined) return [];
-  const names = (
+  const props = (
     await Promise.all(
       data.account_ids.map(
+        // TODO: AccountDocument
         (accountId: string): Promise<DocumentSnapshot<DocumentData>> =>
           getDoc(doc(db, `accounts/${accountId}`))
       )
     )
   ).map((snapshot) => {
-    return snapshot.data()?.name ?? "";
+    const data = snapshot.data();
+    return { name: data?.name ?? "", deletedAt: data?.deletedAt ?? null };
   });
   return data.account_ids.map((id: string, index: number) => ({
     id,
-    name: names[index],
+    name: props[index]?.name ?? "",
+    deleted: props[index]?.deletedAt !== null,
   }));
 };
 
@@ -63,12 +63,11 @@ export default function Index(): JSX.Element {
   const [accountId, setAccountId] = useState<string | null>(null);
   const credential = useCredential();
   useEffect(() => {
-    // loadAccountsFromLocal().then((accounts) => setAccounts(accounts));
-    if (credential === null) return;
+    if (credential === null || accounts !== null) return;
     loadAccountsFromRemote(credential).then((accounts) =>
       setAccounts(accounts)
     );
-  }, [credential, pathname]);
+  }, [credential, accounts, pathname]);
   if (credential === null) return <SplashScreen />;
   return (
     <Screen options={{ title: t("title.account.index") ?? "" }}>
@@ -107,10 +106,18 @@ export default function Index(): JSX.Element {
         onClickCancel={() => setDeleteModalVisible(false)}
         onClickOk={() => {
           if (accountId === null) return;
-          deleteAccountFromLocal(accountId).then(() =>
-            loadAccountsFromLocal().then((accounts) => setAccounts(accounts))
-          );
-          setDeleteModalVisible(false);
+          getEvents(db, accountId)
+            .then((events) => restoreAccount(events))
+            .then((account) => {
+              const result = deleteAccount(account);
+              if (result.isErr()) throw new Error(result.error);
+              const [_newAccount, event] = result.value;
+              return storeAccountEvent(getLastEventId(account), event);
+            })
+            .then(() => {
+              setDeleteModalVisible(false);
+              setAccounts(null);
+            });
         }}
         visible={deleteModalVisible}
       />
