@@ -38,6 +38,8 @@ export function buildStoreAccountEvent(
 }
 
 type AccountDocument = {
+  // for query
+  deletedAt: string | null;
   id: string;
   lastEventId: string;
   protocolVersion: number;
@@ -119,6 +121,8 @@ function storeAccountEvent(
             `event type is not accountCreated (accountId: ${event.accountId})`
           );
         transaction.create(accountDocRef, {
+          // for query
+          deletedAt: null,
           id: event.accountId,
           lastEventId: event.id,
           protocolVersion: event.protocolVersion,
@@ -145,7 +149,7 @@ function storeAccountEvent(
             `account already updated (accountId: ${event.accountId}, expected: ${lastEventId}, actual: ${docData.lastEventId})`
           );
         // bad request (invalid protocol version)
-        if (event.protocolVersion >= docData.protocolVersion)
+        if (event.protocolVersion < docData.protocolVersion)
           return Promise.reject(
             `invalid protocol version (accountId: ${event.accountId}, expected: ${docData.protocolVersion}, actual: ${event.protocolVersion})`
           );
@@ -155,6 +159,8 @@ function storeAccountEvent(
             ...docData,
             lastEventId: event.id,
             protocolVersion: event.protocolVersion,
+            // for query
+            ...(event.type === "accountDeleted" ? { deletedAt: event.at } : {}),
             // for query
             ...(event.type === "accountUpdated" ? { name: event.name } : {}),
           },
