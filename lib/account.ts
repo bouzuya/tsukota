@@ -2,6 +2,7 @@
 
 import {
   AccountCreated,
+  AccountDeleted,
   AccountEvent,
   AccountUpdated,
   CategoryAdded,
@@ -15,7 +16,7 @@ import {
 import { Result, err, ok } from "neverthrow";
 import { generate as generateUuidV4 } from "./uuid";
 
-export const protocolVersion = 1;
+export const protocolVersion = 2;
 
 // re-export
 export { AccountEvent };
@@ -40,6 +41,7 @@ export type Transaction = {
 
 export type Account = {
   categories: Category[];
+  deletedAt: string | null;
   events: AccountEvent[];
   id: string;
   name: string;
@@ -68,6 +70,7 @@ export const createCategory = (
   self: Account,
   name: string
 ): Result<[Account, AccountEvent], string> => {
+  if (self.deletedAt !== null) return err("account is deleted");
   if (name.length === 0) return err("name is empty");
   const event: CategoryAdded = {
     accountId: self.id,
@@ -85,6 +88,7 @@ export const createTransaction = (
   self: Account,
   { amount, categoryId, comment, date }: TransactionProps
 ): Result<[Account, AccountEvent], string> => {
+  if (self.deletedAt !== null) return err("account is deleted");
   if (amount.length === 0) return err("amount is empty");
   if (categoryId.length === 0) return err("categoryId is empty");
   if (date.length === 0) return err("date is empty");
@@ -118,10 +122,25 @@ export const createTransaction = (
   return ok([applyEvent(self, event), event]);
 };
 
+export const deleteAccount = (
+  self: Account
+): Result<[Account, AccountEvent], string> => {
+  if (self.deletedAt !== null) return err("account is deleted");
+  const event: AccountDeleted = {
+    accountId: self.id,
+    at: new Date().toISOString(),
+    id: generateUuidV4(),
+    protocolVersion,
+    type: "accountDeleted",
+  };
+  return ok([applyEvent(self, event), event]);
+};
+
 export const deleteCategory = (
   self: Account,
   categoryId: string
 ): Result<[Account, AccountEvent], string> => {
+  if (self.deletedAt !== null) return err("account is deleted");
   if (!self.categories.some((category) => category.id === categoryId))
     return err("categoryId not found");
   const event: CategoryDeleted = {
@@ -139,6 +158,7 @@ export const deleteTransaction = (
   self: Account,
   transactionId: string
 ): Result<[Account, AccountEvent], string> => {
+  if (self.deletedAt !== null) return err("account is deleted");
   if (!self.transactions.some(({ id }) => id === transactionId))
     return err("transactionId not found");
   const event: TransactionDeleted = {
@@ -194,6 +214,7 @@ export const updateAccount = (
   self: Account,
   name: string
 ): Result<[Account, AccountEvent], string> => {
+  if (self.deletedAt !== null) return err("account is deleted");
   if (name.length === 0) return err("name is empty");
   const event: AccountUpdated = {
     accountId: self.id,
@@ -211,6 +232,7 @@ export const updateCategory = (
   categoryId: string,
   name: string
 ): Result<[Account, AccountEvent], string> => {
+  if (self.deletedAt !== null) return err("account is deleted");
   if (!self.categories.some((category) => category.id === categoryId))
     return err("categoryId not found");
   if (name.length === 0) return err("name is empty");
@@ -231,6 +253,7 @@ export const updateTransaction = (
   transactionId: string,
   { amount, categoryId, comment, date }: TransactionProps
 ): Result<[Account, AccountEvent], string> => {
+  if (self.deletedAt !== null) return err("account is deleted");
   if (!self.transactions.some(({ id }) => id === transactionId))
     return err("transactionId not found");
   if (amount.length === 0) return err("amount is empty");
@@ -273,6 +296,7 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
     const { accountId, name, owners } = event;
     return {
       categories: [],
+      deletedAt: null,
       events: [event],
       id: accountId,
       name,
@@ -283,6 +307,14 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
   switch (event.type) {
     case "accountCreated":
       throw new Error("applyEvent can't handle AccountCreated event");
+    case "accountDeleted": {
+      const { at: deletedAt } = event;
+      return {
+        ...self,
+        deletedAt,
+        events: self.events.concat([event]),
+      };
+    }
     case "accountUpdated": {
       const { name } = event;
       return {

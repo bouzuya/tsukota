@@ -3,6 +3,7 @@ import {
   createAccount,
   createCategory,
   createTransaction,
+  deleteAccount,
   deleteCategory,
   deleteTransaction,
   updateAccount,
@@ -198,6 +199,44 @@ describe("createTransaction", () => {
       f("99999-01-02");
       f("2023-13-02");
       f("2023-01-32");
+    });
+  });
+});
+
+describe("deleteAccount", () => {
+  describe("happy path", () => {
+    it("works", () => {
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const result = deleteAccount(v2);
+      if (result.isErr()) throw new Error();
+      const [v3, event] = result.value;
+
+      expect(v3.categories).toStrictEqual(v2.categories);
+      expect(v3.deletedAt).not.toStrictEqual(v2.deletedAt);
+      expect(v3.events).not.toStrictEqual(v2.events);
+      expect(v3.id).toStrictEqual(v2.id);
+      expect(v3.name).toStrictEqual(v2.name);
+      expect(v3.transactions).toStrictEqual(v2.transactions);
+
+      if (event.type !== "accountDeleted") throw new Error();
+      const accountDeleted = event;
+      expect(v3.events[v3.events.length - 1]).toStrictEqual(event);
+      expect(accountDeleted.accountId).toStrictEqual(v3.id);
+      expect(accountDeleted.at).not.toStrictEqual("");
+      expect(accountDeleted.id).not.toStrictEqual("");
+    });
+  });
+
+  describe("when account is deleted", () => {
+    it("returns err", () => {
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const v3 = deleteAccount(v2)._unsafeUnwrap()[0];
+      const result = deleteAccount(v3);
+      expect(result.isErr()).toBe(true);
     });
   });
 });
@@ -417,7 +456,7 @@ describe("updateAccount", () => {
     it("returns err", () => {
       const uid = generateUuidV4();
       const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
-      const result = updateAccount(v1, "account name 1");
+      const result = updateAccount(v1, "");
       expect(result.isErr()).toBe(true);
     });
   });
