@@ -1,18 +1,11 @@
 import { useRouter } from "expo-router";
-import { getFunctions } from "firebase/functions";
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import {
-  AccountListItem,
-  IconButton,
-  Screen,
-  TextInput,
-  View,
-} from "../../components";
+import { IconButton, Screen, TextInput, View } from "../../components";
+import { useAccounts } from "../../components/AccountContext";
 import { useCredential } from "../../hooks/use-credential";
 import { Account, AccountEvent, createAccount } from "../../lib/account";
-import { storeAccountLocal } from "../../lib/account-local-storage";
 import { storeAccountEvent } from "../../lib/api";
 
 const storeRemote = async (
@@ -32,7 +25,7 @@ export default function AccountNew(): JSX.Element {
       name: "",
     },
   });
-  const [accounts, setAccounts] = useState<AccountListItem[] | null>(null);
+  const [_accounts, setAccount] = useAccounts();
   const router = useRouter();
   const { t } = useTranslation();
   const credential = useCredential();
@@ -44,16 +37,10 @@ export default function AccountNew(): JSX.Element {
     if (result.isErr()) return;
     const [account, event] = result.value;
 
-    const item = {
-      id: account.id,
-      name: account.name,
-    };
-    setAccounts(accounts?.concat([item]) ?? []);
+    setAccount(account.id, account);
     storeRemote(account, event).catch((_) => {
-      setAccounts(accounts);
+      setAccount(account.id, null);
     });
-
-    storeAccountLocal(item);
 
     router.back();
   };

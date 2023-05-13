@@ -1,81 +1,61 @@
-import { SplashScreen, usePathname, useRouter } from "expo-router";
+import { SplashScreen, useFocusEffect, useRouter } from "expo-router";
 import { UserCredential } from "firebase/auth";
-import {
-  doc,
-  DocumentData,
-  DocumentSnapshot,
-  getDoc,
-} from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
 import {
   FAB,
   Text,
   AccountList,
-  AccountListItem,
   DeleteAccountDialog,
   Screen,
 } from "../components";
+import { useAccounts } from "../components/AccountContext";
 import { useCredential } from "../hooks/use-credential";
-import { deleteAccount, getLastEventId, restoreAccount } from "../lib/account";
-import { getEvents, storeAccountEvent } from "../lib/api";
+import { deleteAccount, getLastEventId } from "../lib/account";
+import { storeAccountEvent } from "../lib/api";
 import { db } from "../lib/firebase";
 import { useTranslation } from "../lib/i18n";
 
-const loadAccountsFromRemote = async (
+const loadAccountIdsFromRemote = async (
   credential: UserCredential
-): Promise<
-  {
-    id: string;
-    name: string;
-  }[]
-> => {
+): Promise<string[]> => {
   const uid = credential.user.uid;
   const userSnapshot = await getDoc(doc(db, `users/${uid}`));
   const data = userSnapshot.data();
   if (data === undefined) return [];
-  const props = (
-    await Promise.all(
-      data.account_ids.map(
-        // TODO: AccountDocument
-        (accountId: string): Promise<DocumentSnapshot<DocumentData>> =>
-          getDoc(doc(db, `accounts/${accountId}`))
-      )
-    )
-  ).map((snapshot) => {
-    const data = snapshot.data();
-    return { name: data?.name ?? "", deletedAt: data?.deletedAt ?? null };
-  });
-  return data.account_ids.map((id: string, index: number) => ({
-    id,
-    name: props[index]?.name ?? "",
-    deleted: props[index]?.deletedAt !== null,
-  }));
+  return data.account_ids;
 };
 
 export default function Index(): JSX.Element {
   const { t } = useTranslation();
-  const [accounts, setAccounts] = useState<AccountListItem[] | null>(null);
   const router = useRouter();
-  const pathname = usePathname();
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const [accountName, setAccountName] = useState<string | null>(null);
   const [accountId, setAccountId] = useState<string | null>(null);
   const credential = useCredential();
-  useEffect(() => {
-    if (credential === null || accounts !== null) return;
-    loadAccountsFromRemote(credential).then((accounts) =>
-      setAccounts(accounts)
-    );
-  }, [credential, accounts, pathname]);
+  const [accounts, setAccount, fetchAccounts] = useAccounts();
+  useFocusEffect(
+    useCallback(() => {
+      if (credential === null) return;
+      loadAccountIdsFromRemote(credential).then((accountIds) =>
+        fetchAccounts.apply(null, accountIds)
+      );
+    }, [credential])
+  );
   if (credential === null) return <SplashScreen />;
   return (
     <Screen options={{ title: t("title.account.index") ?? "" }}>
-      {(accounts ?? []).length === 0 ? (
+      {Object.keys(accounts).length === 0 ? (
         <Text>{t("account.empty")}</Text>
       ) : (
         <AccountList
-          data={accounts}
+          data={Object.entries(accounts)
+            .filter(([_, { deletedAt }]) => deletedAt === null)
+            .map(([id, account]) => ({
+              id,
+              name: account.name,
+            }))}
           onLongPressAccount={(account) => {
             setAccountName(account.name);
             setAccountId(account.id);
@@ -105,19 +85,17 @@ export default function Index(): JSX.Element {
         name={accountName ?? ""}
         onClickCancel={() => setDeleteModalVisible(false)}
         onClickOk={() => {
-          if (accountId === null) return;
-          getEvents(db, accountId)
-            .then((events) => restoreAccount(events))
-            .then((account) => {
-              const result = deleteAccount(account);
-              if (result.isErr()) throw new Error(result.error);
-              const [_newAccount, event] = result.value;
-              return storeAccountEvent(getLastEventId(account), event);
-            })
-            .then(() => {
-              setDeleteModalVisible(false);
-              setAccounts(null);
-            });
+          if (accountId === null || accounts === null) return;
+          const oldAccount = accounts[accountId];
+          if (oldAccount === undefined) return;
+          const result = deleteAccount(oldAccount);
+          if (result.isErr()) throw new Error(result.error);
+          const [newAccount, event] = result.value;
+          setAccount(accountId, newAccount);
+          storeAccountEvent(getLastEventId(oldAccount), event).catch((_) =>
+            setAccount(accountId, oldAccount)
+          );
+          setDeleteModalVisible(false);
         }}
         visible={deleteModalVisible}
       />
