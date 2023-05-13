@@ -5,15 +5,8 @@ import { useTranslation } from "react-i18next";
 import { IconButton, Screen, TextInput, View } from "../../components";
 import { useAccounts } from "../../components/AccountContext";
 import { useCredential } from "../../hooks/use-credential";
-import { Account, AccountEvent, createAccount } from "../../lib/account";
+import { createAccount } from "../../lib/account";
 import { storeAccountEvent } from "../../lib/api";
-
-const storeRemote = async (
-  _account: Account,
-  event: AccountEvent
-): Promise<void> => {
-  await storeAccountEvent(null, event);
-};
 
 type Form = {
   name: string;
@@ -35,11 +28,10 @@ export default function AccountNew(): JSX.Element {
   const onClickOk = ({ name }: Form) => {
     const result = createAccount(credential.user.uid, name);
     if (result.isErr()) return;
-    const [account, event] = result.value;
-
-    setAccount(account.id, account);
-    storeRemote(account, event).catch((_) => {
-      setAccount(account.id, null);
+    const [newAccount, event] = result.value;
+    setAccount(newAccount.id, newAccount);
+    storeAccountEvent(null, event).catch((_) => {
+      setAccount(newAccount.id, null);
     });
 
     router.back();

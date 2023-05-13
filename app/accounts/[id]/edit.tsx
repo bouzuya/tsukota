@@ -10,7 +10,6 @@ import {
   ActivityIndicator,
 } from "../../../components";
 import { getLastEventId, updateAccount } from "../../../lib/account";
-import { storeAccountLocal } from "../../../lib/account-local-storage";
 import { storeAccountEvent } from "../../../lib/api";
 import { useTranslation } from "../../../lib/i18n";
 
@@ -40,7 +39,7 @@ export default function CategoryEdit(): JSX.Element {
     const [newAccount, event] = result.value;
     storeAccountEvent(getLastEventId(account), event).then((_) => {
       setAccount(newAccount);
-      storeAccountLocal({ id: newAccount.id, name: newAccount.name });
+
       router.back();
     });
   };
