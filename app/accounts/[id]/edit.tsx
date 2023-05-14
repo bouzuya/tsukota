@@ -1,4 +1,5 @@
 import { useRouter, useSearchParams } from "expo-router";
+import { err } from "neverthrow";
 import React from "react";
 import { useForm } from "react-hook-form";
 import {
@@ -9,8 +10,7 @@ import {
   useAccount,
   ActivityIndicator,
 } from "../../../components";
-import { getLastEventId, updateAccount } from "../../../lib/account";
-import { storeAccountEvent } from "../../../lib/api";
+import { updateAccount } from "../../../lib/account";
 import { useTranslation } from "../../../lib/i18n";
 
 type Form = {
@@ -21,7 +21,7 @@ export default function CategoryEdit(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
   const nameDefault = decodeURIComponent(`${params.name}`);
-  const [account, setAccount] = useAccount(accountId, []);
+  const [account, handleAccountCommand] = useAccount(accountId, []);
   const router = useRouter();
   const { control, handleSubmit } = useForm<Form>({
     defaultValues: {
@@ -34,14 +34,11 @@ export default function CategoryEdit(): JSX.Element {
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
 
   const onClickOk = ({ name }: Form) => {
-    const result = updateAccount(account, name);
-    if (result.isErr()) return;
-    const [newAccount, event] = result.value;
-    storeAccountEvent(getLastEventId(account), event).then((_) => {
-      setAccount(newAccount);
-
-      router.back();
-    });
+    handleAccountCommand(account.id, (oldAccount) =>
+      oldAccount === null
+        ? err("account not found")
+        : updateAccount(oldAccount, name)
+    ).then((_) => router.back());
   };
 
   return (

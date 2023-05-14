@@ -1,4 +1,5 @@
 import { usePathname, useRouter, useSearchParams } from "expo-router";
+import { err } from "neverthrow";
 import { useState } from "react";
 import { StyleSheet } from "react-native";
 import {
@@ -12,11 +13,9 @@ import {
 } from "../../../../components";
 import {
   deleteTransaction,
-  getLastEventId,
   listCategory,
   Transaction,
 } from "../../../../lib/account";
-import { storeAccountEvent } from "../../../../lib/api";
 import { useTranslation } from "../../../../lib/i18n";
 
 export default function Transactions(): JSX.Element {
@@ -31,7 +30,7 @@ export default function Transactions(): JSX.Element {
     new Date().toISOString().substring(0, 10)
   );
   const [transactionId, setTransactionId] = useState<string | null>(null);
-  const [account, setAccount] = useAccount(accountId, [pathname]);
+  const [account, handleAccountCommand] = useAccount(accountId, [pathname]);
   const { t } = useTranslation();
 
   if (account === null)
@@ -93,17 +92,13 @@ export default function Transactions(): JSX.Element {
         onClickCancel={() => setDeleteModalVisible(false)}
         onClickOk={() => {
           if (transactionId === null) return;
-          // update local state
-          const result = deleteTransaction(account, transactionId);
-          // TODO: error handling
-          if (result.isErr()) return;
-          const [newAccount, newEvent] = result.value;
 
-          // update remote state
-          setAccount(newAccount);
-          storeAccountEvent(getLastEventId(account), newEvent).catch((_) => {
-            setAccount(account);
-          });
+          // TODO: error handling
+          handleAccountCommand(account.id, (oldAccount) =>
+            oldAccount === null
+              ? err("account not found")
+              : deleteTransaction(oldAccount, transactionId)
+          );
 
           setDeleteModalVisible(false);
         }}

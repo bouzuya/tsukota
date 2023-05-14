@@ -1,4 +1,5 @@
 import { useRouter, useSearchParams } from "expo-router";
+import { err } from "neverthrow";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { View } from "react-native";
@@ -10,15 +11,14 @@ import {
   TransactionFormValues,
   useAccount,
 } from "../../../../../components";
-import { getLastEventId, updateTransaction } from "../../../../../lib/account";
-import { storeAccountEvent } from "../../../../../lib/api";
+import { updateTransaction } from "../../../../../lib/account";
 import { useTranslation } from "../../../../../lib/i18n";
 
 export default function TransactionEdit(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
   const transactionId = `${params.transactionId}`;
-  const [account, setAccount] = useAccount(accountId, []);
+  const [account, handleAccountCommand] = useAccount(accountId, []);
   const router = useRouter();
   const { control, getValues, handleSubmit, setValue } =
     useForm<TransactionFormValues>({
@@ -40,18 +40,16 @@ export default function TransactionEdit(): JSX.Element {
     comment,
     date,
   }: TransactionFormValues) => {
-    const result = updateTransaction(account, transactionId, {
-      amount,
-      categoryId,
-      comment,
-      date,
-    });
-    if (result.isErr()) return;
-    const [newAccount, event] = result.value;
-    storeAccountEvent(getLastEventId(account), event).then((_) => {
-      setAccount(newAccount);
-      router.back();
-    });
+    handleAccountCommand(account.id, (oldAccount) =>
+      oldAccount === null
+        ? err("account not found")
+        : updateTransaction(oldAccount, transactionId, {
+            amount,
+            categoryId,
+            comment,
+            date,
+          })
+    ).then(() => router.back());
   };
 
   return (

@@ -28,16 +28,15 @@ const eventDocumentConverter: FirestoreDataConverter<EventDocument> = {
   },
 };
 
-export const storeAccountEvent = async (
+export async function storeAccountEvent(
   lastEventId: string | null,
   event: AccountEvent
-): Promise<void> => {
+): Promise<void> {
   await firebaseStoreAccountEvent({
     last_event_id: lastEventId,
     event,
   });
-  return Promise.resolve();
-};
+}
 
 export const getEvents = async (
   db: Firestore,

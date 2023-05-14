@@ -1,4 +1,5 @@
 import { useRouter } from "expo-router";
+import { err } from "neverthrow";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -6,7 +7,6 @@ import { IconButton, Screen, TextInput, View } from "../../components";
 import { useAccounts } from "../../components/AccountContext";
 import { useCredential } from "../../hooks/use-credential";
 import { createAccount } from "../../lib/account";
-import { storeAccountEvent } from "../../lib/api";
 
 type Form = {
   name: string;
@@ -18,22 +18,19 @@ export default function AccountNew(): JSX.Element {
       name: "",
     },
   });
-  const [_accounts, setAccount] = useAccounts();
+  const { handleAccountCommand } = useAccounts();
   const router = useRouter();
   const { t } = useTranslation();
   const credential = useCredential();
 
   if (credential === null) return <></>;
 
-  const onClickOk = ({ name }: Form) => {
-    const result = createAccount(credential.user.uid, name);
-    if (result.isErr()) return;
-    const [newAccount, event] = result.value;
-    setAccount(newAccount.id, newAccount);
-    storeAccountEvent(null, event).catch((_) => {
-      setAccount(newAccount.id, null);
-    });
-
+  const onClickOk = async ({ name }: Form): Promise<void> => {
+    await handleAccountCommand(null, (oldAccount) =>
+      oldAccount !== null
+        ? err("account already exists")
+        : createAccount(credential.user.uid, name)
+    );
     router.back();
   };
   return (

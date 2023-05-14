@@ -1,4 +1,5 @@
 import { usePathname, useRouter, useSearchParams } from "expo-router";
+import { err } from "neverthrow";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native";
@@ -11,19 +12,14 @@ import {
   Text,
   useAccount,
 } from "../../../../components";
-import {
-  deleteCategory,
-  getLastEventId,
-  listCategory,
-} from "../../../../lib/account";
-import { storeAccountEvent } from "../../../../lib/api";
+import { deleteCategory, listCategory } from "../../../../lib/account";
 
 export default function Categories(): JSX.Element {
   const pathname = usePathname();
   const params = useSearchParams();
   const router = useRouter();
   const accountId = `${params.id}`;
-  const [account, setAccount] = useAccount(accountId, [pathname]);
+  const [account, handleAccountCommand] = useAccount(accountId, [pathname]);
   const [name, setName] = useState<string>("");
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [deleteDialogVisible, setDeleteDialogVisible] =
@@ -79,20 +75,13 @@ export default function Categories(): JSX.Element {
           setDeleteDialogVisible(false);
         }}
         onClickOk={() => {
-          if (categoryId !== null) {
-            // update local state
-            const result = deleteCategory(account, categoryId);
-            // TODO: error handling
-            if (result.isErr()) return;
-            const [newAccount, newEvent] = result.value;
-
-            // update remote state
-            setAccount(newAccount);
-            storeAccountEvent(getLastEventId(account), newEvent).catch((_) => {
-              setAccount(account);
-            });
-          }
-
+          if (categoryId === null) return;
+          // TODO: error handling
+          handleAccountCommand(account.id, (oldAccount) =>
+            oldAccount === null
+              ? err("account not found")
+              : deleteCategory(oldAccount, categoryId)
+          );
           setName("");
           setCategoryId(null);
           setDeleteDialogVisible(false);

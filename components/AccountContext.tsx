@@ -1,3 +1,4 @@
+import { Result } from "neverthrow";
 import {
   createContext,
   DependencyList,
@@ -8,8 +9,13 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Account, restoreAccount } from "../lib/account";
-import { getEvents } from "../lib/api";
+import {
+  Account,
+  AccountEvent,
+  getLastEventId,
+  restoreAccount,
+} from "../lib/account";
+import { getEvents, storeAccountEvent } from "../lib/api";
 import { db } from "../lib/firebase";
 
 type Accounts = { [accountId: string]: Account };
@@ -18,6 +24,14 @@ type ContextValue = {
   accounts: Accounts;
   setAccounts: Dispatch<SetStateAction<Accounts>>;
 };
+
+type HandleAccountCommandCallback<T> = (
+  account: T
+) => Result<[Account, AccountEvent], string>;
+type HandleAccountCommand = (
+  accountId: string | null,
+  callback: HandleAccountCommandCallback<Account | null>
+) => Promise<void>;
 
 const AccountContext = createContext<ContextValue>({
   accounts: {},
@@ -55,6 +69,43 @@ function fetchAccountsWithCache(
   };
 }
 
+function buildSetAccount(
+  setAccounts: Dispatch<SetStateAction<Accounts>>
+): (accountId: string, account: Account | null) => void {
+  return (accountId: string, account: Account | null): void => {
+    setAccounts((accounts) =>
+      account === null
+        ? Object.fromEntries(
+            Object.entries(accounts).filter(([id, _]) => id !== accountId)
+          )
+        : { ...accounts, [accountId]: account }
+    );
+  };
+}
+
+function buildHandleAccountCommand(
+  context: ContextValue
+): HandleAccountCommand {
+  const { accounts, setAccounts } = context;
+  const setAccount = buildSetAccount(setAccounts);
+  return async (
+    accountId: string | null,
+    callback: HandleAccountCommandCallback<Account | null>
+  ): Promise<void> => {
+    const oldAccount = accountId === null ? null : accounts[accountId] ?? null;
+    const result = callback(oldAccount);
+    if (result.isErr()) throw new Error(result.error);
+    const [newAccount, event] = result.value;
+    setAccount(newAccount.id, newAccount);
+    await storeAccountEvent(
+      oldAccount === null ? null : getLastEventId(oldAccount),
+      event
+    ).catch((_) => {
+      setAccount(newAccount.id, oldAccount);
+    });
+  };
+}
+
 type Props = {
   children: ReactNode;
 };
@@ -71,24 +122,22 @@ export function AccountContextProvider({ children }: Props): JSX.Element {
 export function useAccount(
   accountId: string,
   deps: DependencyList
-): [Account | null, (account: Account) => void] {
+): [Account | null, HandleAccountCommand] {
   const context = useContext(AccountContext);
-  const { accounts, setAccounts } = context;
-  const setAccount = (account: Account) => {
-    setAccounts((accounts) => ({ ...accounts, [accountId]: account }));
-  };
+  const { accounts } = context;
   useEffect(() => {
     // no await
     fetchAccountsWithCache(context)(accountId);
   }, deps);
-  return [accounts[accountId] ?? null, setAccount];
+  return [accounts[accountId] ?? null, buildHandleAccountCommand(context)];
 }
 
-export function useAccounts(): [
-  Accounts,
-  (accountId: string, account: Account | null) => void,
-  (...accountIds: string[]) => Promise<void>
-] {
+export function useAccounts(): {
+  accounts: Accounts;
+  setAccount: (accountId: string, account: Account | null) => void;
+  fetchAccounts: (...accountIds: string[]) => Promise<void>;
+  handleAccountCommand: HandleAccountCommand;
+} {
   const context = useContext(AccountContext);
   const { accounts, setAccounts } = context;
   const setAccount = (accountId: string, account: Account | null) => {
@@ -100,5 +149,10 @@ export function useAccounts(): [
         : { ...accounts, [accountId]: account }
     );
   };
-  return [accounts, setAccount, fetchAccountsWithCache(context)];
+  return {
+    accounts,
+    setAccount,
+    fetchAccounts: fetchAccountsWithCache(context),
+    handleAccountCommand: buildHandleAccountCommand(context),
+  };
 }

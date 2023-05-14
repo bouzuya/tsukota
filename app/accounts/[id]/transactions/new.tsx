@@ -1,4 +1,5 @@
 import { useRouter, useSearchParams } from "expo-router";
+import { err } from "neverthrow";
 import React from "react";
 import { useForm } from "react-hook-form";
 import {
@@ -10,14 +11,13 @@ import {
   useAccount,
 } from "../../../../components";
 import { TransactionFormValues } from "../../../../components/TransactionForm";
-import { createTransaction, getLastEventId } from "../../../../lib/account";
-import { storeAccountEvent } from "../../../../lib/api";
+import { createTransaction } from "../../../../lib/account";
 import { useTranslation } from "../../../../lib/i18n";
 
 export default function TransactionNew(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
-  const [account, setAccount] = useAccount(accountId, []);
+  const [account, handleAccountCommand] = useAccount(accountId, []);
   const router = useRouter();
   const { control, getValues, handleSubmit, setValue } =
     useForm<TransactionFormValues>({
@@ -33,24 +33,23 @@ export default function TransactionNew(): JSX.Element {
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
 
-  const onClickOk = ({
+  const onClickOk = async ({
     amount,
     categoryId,
     comment,
     date,
-  }: TransactionFormValues) => {
-    const result = createTransaction(account, {
-      amount,
-      categoryId,
-      comment,
-      date,
-    });
-    if (result.isErr()) return;
-    const [newAccount, event] = result.value;
-    storeAccountEvent(getLastEventId(account), event).then((_) => {
-      setAccount(newAccount);
-      router.back();
-    });
+  }: TransactionFormValues): Promise<void> => {
+    await handleAccountCommand(account.id, (oldAccount) =>
+      oldAccount === null
+        ? err("account not found")
+        : createTransaction(oldAccount, {
+            amount,
+            categoryId,
+            comment,
+            date,
+          })
+    );
+    router.back();
   };
 
   return (

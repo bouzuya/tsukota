@@ -86,7 +86,7 @@ export const storeAccountEvent = httpsCallable<
     last_event_id: string | null;
     event: Record<string, unknown>;
   },
-  {}
+  Record<string, unknown>
 >(functions, "storeAccountEvent");
 
 export { auth, db, functions };

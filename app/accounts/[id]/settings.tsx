@@ -1,4 +1,5 @@
 import { usePathname, useRouter, useSearchParams } from "expo-router";
+import { err } from "neverthrow";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -12,10 +13,8 @@ import {
 import {
   deleteAccount,
   getLastEvent,
-  getLastEventId,
   listCategory,
 } from "../../../lib/account";
-import { storeAccountEvent } from "../../../lib/api";
 import { useTranslation } from "../../../lib/i18n";
 
 export default function Settings(): JSX.Element {
@@ -23,7 +22,7 @@ export default function Settings(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
   const router = useRouter();
-  const [account, setAccount] = useAccount(accountId, [pathname]);
+  const [account, handleAccountCommand] = useAccount(accountId, [pathname]);
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const { t } = useTranslation();
 
@@ -95,15 +94,12 @@ export default function Settings(): JSX.Element {
           name={account.name}
           onClickCancel={() => setDeleteModalVisible(false)}
           onClickOk={() => {
-            if (accountId === null || account === undefined) return;
-            const result = deleteAccount(account);
-            if (result.isErr()) throw new Error(result.error);
-            const [newAccount, event] = result.value;
-            setAccount(newAccount);
-            storeAccountEvent(getLastEventId(account), event).catch((_) =>
-              setAccount(account)
-            );
-            router.back();
+            if (accountId === null) return;
+            handleAccountCommand(accountId, (oldAccount) =>
+              oldAccount === null
+                ? err("account not found")
+                : deleteAccount(oldAccount)
+            ).then(() => router.back());
           }}
           visible={deleteModalVisible}
         />

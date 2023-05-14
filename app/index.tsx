@@ -1,6 +1,7 @@
 import { SplashScreen, useFocusEffect, useRouter } from "expo-router";
 import { UserCredential } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
+import { err } from "neverthrow";
 import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
 import {
@@ -12,8 +13,7 @@ import {
 } from "../components";
 import { useAccounts } from "../components/AccountContext";
 import { useCredential } from "../hooks/use-credential";
-import { deleteAccount, getLastEventId } from "../lib/account";
-import { storeAccountEvent } from "../lib/api";
+import { deleteAccount } from "../lib/account";
 import { db } from "../lib/firebase";
 import { useTranslation } from "../lib/i18n";
 
@@ -34,7 +34,7 @@ export default function Index(): JSX.Element {
   const [accountName, setAccountName] = useState<string | null>(null);
   const [accountId, setAccountId] = useState<string | null>(null);
   const credential = useCredential();
-  const [accounts, setAccount, fetchAccounts] = useAccounts();
+  const { accounts, fetchAccounts, handleAccountCommand } = useAccounts();
   useFocusEffect(
     useCallback(() => {
       if (credential === null) return;
@@ -85,15 +85,12 @@ export default function Index(): JSX.Element {
         name={accountName ?? ""}
         onClickCancel={() => setDeleteModalVisible(false)}
         onClickOk={() => {
-          if (accountId === null || accounts === null) return;
-          const oldAccount = accounts[accountId];
-          if (oldAccount === undefined) return;
-          const result = deleteAccount(oldAccount);
-          if (result.isErr()) throw new Error(result.error);
-          const [newAccount, event] = result.value;
-          setAccount(accountId, newAccount);
-          storeAccountEvent(getLastEventId(oldAccount), event).catch((_) =>
-            setAccount(accountId, oldAccount)
+          if (accountId === null) return;
+          // no await
+          handleAccountCommand(accountId, (oldAccount) =>
+            oldAccount === null
+              ? err("account not found")
+              : deleteAccount(oldAccount)
           );
           setDeleteModalVisible(false);
         }}

@@ -14,7 +14,7 @@ export default function CategoriesSelect(): JSX.Element {
   const params = useSearchParams();
   const router = useRouter();
   const accountId = `${params.id}`;
-  const [account, _setAccount] = useAccount(accountId, []);
+  const [account, _handleAccountCommand] = useAccount(accountId, []);
   const { t } = useTranslation();
 
   if (account === null)
