@@ -42,11 +42,12 @@ type AccountDocument = {
   deletedAt: string | null;
   id: string;
   lastEventId: string;
-  protocolVersion: number;
   // for query
   name: string;
   // for query
   owners: string[];
+  protocolVersion: number;
+  updatedAt: string;
 };
 
 const accountDocumentConverter: FirestoreDataConverter<AccountDocument> = {
@@ -125,11 +126,12 @@ function storeAccountEvent(
           deletedAt: null,
           id: event.accountId,
           lastEventId: event.id,
-          protocolVersion: event.protocolVersion,
           // for query
           name: event.name,
           // for query
           owners: event.owners,
+          protocolVersion: event.protocolVersion,
+          updatedAt: event.at,
         });
       } else {
         const docData = accountDocSnapshot.data();
@@ -153,16 +155,22 @@ function storeAccountEvent(
           return Promise.reject(
             `invalid protocol version (accountId: ${event.accountId}, expected: ${docData.protocolVersion}, actual: ${event.protocolVersion})`
           );
+        // bad request (invalid event timestamp)
+        if (event.at <= docData.updatedAt)
+          return Promise.reject(
+            `invalid event timestamp (accountId: ${event.accountId}, expected: ${docData.updatedAt}, actual: ${event.at})`
+          );
         transaction.update(
           accountDocRef,
           {
             ...docData,
             lastEventId: event.id,
-            protocolVersion: event.protocolVersion,
             // for query
             ...(event.type === "accountDeleted" ? { deletedAt: event.at } : {}),
             // for query
             ...(event.type === "accountUpdated" ? { name: event.name } : {}),
+            protocolVersion: event.protocolVersion,
+            updatedAt: event.at,
           },
           { lastUpdateTime: accountDocSnapshot.updateTime }
         );
