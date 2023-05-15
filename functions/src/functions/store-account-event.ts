@@ -1,15 +1,14 @@
 import { AccountEvent } from "@bouzuya/tsukota-account-events";
 import { App } from "firebase-admin/app";
-import {
-  DocumentData,
-  FieldValue,
-  Firestore,
-  FirestoreDataConverter,
-  getFirestore,
-  QueryDocumentSnapshot,
-  WithFieldValue,
-} from "firebase-admin/firestore";
+import { FieldValue, Firestore, getFirestore } from "firebase-admin/firestore";
 import * as functions from "firebase-functions";
+import {
+  accountDocumentForQueryConverter,
+  accountEventDocumentConverter,
+  accountEventDocumentForQueryConverter,
+  accountEventStreamDocumentConverter,
+  userDocumentConverter,
+} from "../schema";
 
 export function buildStoreAccountEvent(
   app: App,
@@ -37,68 +36,6 @@ export function buildStoreAccountEvent(
   });
 }
 
-type AccountDocument = {
-  // for query
-  deletedAt: string | null;
-  id: string;
-  lastEventId: string;
-  // for query
-  name: string;
-  // for query
-  owners: string[];
-  protocolVersion: number;
-  updatedAt: string;
-};
-
-const accountDocumentConverter: FirestoreDataConverter<AccountDocument> = {
-  fromFirestore: function fromFirestore(
-    snapshot: QueryDocumentSnapshot
-  ): AccountDocument {
-    // 怪しい
-    return snapshot.data() as AccountDocument;
-  },
-  toFirestore: function (
-    modelObject: WithFieldValue<AccountDocument>
-  ): DocumentData {
-    return modelObject;
-  },
-};
-
-type EventDocument = AccountEvent;
-
-const eventDocumentConverter: FirestoreDataConverter<EventDocument> = {
-  fromFirestore: function (
-    snapshot: QueryDocumentSnapshot
-    // 怪しい
-  ): EventDocument {
-    return snapshot.data() as EventDocument;
-  },
-  toFirestore: function (
-    modelObject: WithFieldValue<EventDocument>
-  ): DocumentData {
-    return modelObject;
-  },
-};
-
-type UserDocument = {
-  id: string;
-  account_ids: string[];
-};
-
-const userDocumentConverter: FirestoreDataConverter<UserDocument> = {
-  fromFirestore: function (
-    snapshot: QueryDocumentSnapshot
-    // 怪しい
-  ): UserDocument {
-    return snapshot.data() as UserDocument;
-  },
-  toFirestore: function (
-    modelObject: WithFieldValue<UserDocument>
-  ): DocumentData {
-    return modelObject;
-  },
-};
-
 function storeAccountEvent(
   db: Firestore,
   uid: string,
@@ -107,13 +44,29 @@ function storeAccountEvent(
 ): Promise<void> {
   return db.runTransaction(
     async (transaction) => {
+      const eventStreamDocRef = db
+        .collection("aggregates")
+        .doc("account")
+        .collection("event_streams")
+        .doc(event.accountId)
+        .withConverter(accountEventStreamDocumentConverter);
+      const eventDocRef = eventStreamDocRef
+        .collection("events")
+        .doc(event.id)
+        .withConverter(accountEventDocumentConverter);
+      const accountForQueryDocRef = db
+        .collection("accounts")
+        .doc(event.accountId)
+        .withConverter(accountDocumentForQueryConverter);
+      const accountEventForQueryDocRef = accountForQueryDocRef
+        .collection("events")
+        .doc(event.id)
+        .withConverter(accountEventDocumentForQueryConverter);
+
       // create or update account
-      const accountDocRef = db
-        .doc(`accounts/${event.accountId}`)
-        .withConverter(accountDocumentConverter);
-      const accountDocSnapshot = await transaction.get(accountDocRef);
+      const esDocSnapshot = await transaction.get(eventStreamDocRef);
       if (lastEventId === null) {
-        if (accountDocSnapshot.exists)
+        if (esDocSnapshot.exists)
           return Promise.reject(
             `account already exist (accountId: ${event.accountId})`
           );
@@ -121,66 +74,67 @@ function storeAccountEvent(
           return Promise.reject(
             `event type is not accountCreated (accountId: ${event.accountId})`
           );
-        transaction.create(accountDocRef, {
-          // for query
-          deletedAt: null,
+        transaction.create(eventStreamDocRef, {
           id: event.accountId,
           lastEventId: event.id,
-          // for query
-          name: event.name,
-          // for query
           owners: event.owners,
           protocolVersion: event.protocolVersion,
           updatedAt: event.at,
         });
+        transaction.create(accountForQueryDocRef, {
+          deletedAt: null,
+          id: event.accountId,
+          name: event.name,
+          owners: event.owners,
+        });
       } else {
-        const docData = accountDocSnapshot.data();
+        const data = esDocSnapshot.data();
         // not found
-        if (docData === undefined)
+        if (data === undefined)
           return Promise.reject(
             `account does not exist (accountId: ${event.accountId})`
           );
         // forbidden
-        if (docData.owners.indexOf(uid) === -1)
+        if (data.owners.indexOf(uid) === -1)
           return Promise.reject(
             `account is not owned by the user (accountId: ${event.accountId}, uid: ${uid})`
           );
         // conflict
-        if (docData.lastEventId !== lastEventId)
+        if (data.lastEventId !== lastEventId)
           return Promise.reject(
-            `account already updated (accountId: ${event.accountId}, expected: ${lastEventId}, actual: ${docData.lastEventId})`
+            `account already updated (accountId: ${event.accountId}, expected: ${lastEventId}, actual: ${data.lastEventId})`
           );
         // bad request (invalid protocol version)
-        if (event.protocolVersion < docData.protocolVersion)
+        if (event.protocolVersion < data.protocolVersion)
           return Promise.reject(
-            `invalid protocol version (accountId: ${event.accountId}, expected: ${docData.protocolVersion}, actual: ${event.protocolVersion})`
+            `invalid protocol version (accountId: ${event.accountId}, expected: ${data.protocolVersion}, actual: ${event.protocolVersion})`
           );
         // bad request (invalid event timestamp)
-        if (event.at <= docData.updatedAt)
+        if (event.at <= data.updatedAt)
           return Promise.reject(
-            `invalid event timestamp (accountId: ${event.accountId}, expected: ${docData.updatedAt}, actual: ${event.at})`
+            `invalid event timestamp (accountId: ${event.accountId}, expected: ${data.updatedAt}, actual: ${event.at})`
           );
         transaction.update(
-          accountDocRef,
+          eventStreamDocRef,
           {
-            ...docData,
             lastEventId: event.id,
-            // for query
-            ...(event.type === "accountDeleted" ? { deletedAt: event.at } : {}),
-            // for query
             ...(event.type === "accountUpdated" ? { name: event.name } : {}),
             protocolVersion: event.protocolVersion,
             updatedAt: event.at,
           },
-          { lastUpdateTime: accountDocSnapshot.updateTime }
+          { lastUpdateTime: esDocSnapshot.updateTime }
         );
+        transaction.update(accountForQueryDocRef, {
+          id: event.accountId,
+          ...(event.type === "accountDeleted" ? { deletedAt: event.at } : {}),
+          ...(event.type === "accountUpdated" ? { name: event.name } : {}),
+          ...(event.type === "accountCreated" ? { owners: event.owners } : {}),
+        });
       }
 
       // create event
-      const eventDocRef = db
-        .doc(`accounts/${event.accountId}/events/${event.id}`)
-        .withConverter(eventDocumentConverter);
       transaction.create(eventDocRef, event);
+      transaction.create(accountEventForQueryDocRef, event);
 
       // update the `accounts` field of the `users/{uid}`
       if (event.type === "accountCreated") {
