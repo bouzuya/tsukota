@@ -22,7 +22,11 @@ export default function CategoryNew(): JSX.Element {
   const accountId = `${params.id}`;
   const [account, handleAccountCommand] = useAccount(accountId, []);
   const router = useRouter();
-  const { control, handleSubmit } = useForm<Form>({
+  const {
+    control,
+    formState: { isSubmitSuccessful, isSubmitting },
+    handleSubmit,
+  } = useForm<Form>({
     defaultValues: {
       name: "",
     },
@@ -45,14 +49,18 @@ export default function CategoryNew(): JSX.Element {
     <Screen
       options={{
         title: t("title.category.new") ?? "",
-        headerRight: () => (
-          <IconButton
-            accessibilityLabel={t("button.save") ?? ""}
-            icon="check"
-            onPress={handleSubmit(onClickOk)}
-            size={28}
-          />
-        ),
+        headerRight: () =>
+          isSubmitting ? (
+            <ActivityIndicator size={24} style={{ marginHorizontal: 16 }} />
+          ) : (
+            <IconButton
+              accessibilityLabel={t("button.save") ?? ""}
+              disabled={isSubmitSuccessful}
+              icon="check"
+              onPress={handleSubmit(onClickOk)}
+              size={28}
+            />
+          ),
       }}
     >
       <View style={{ flex: 1, width: "100%" }}>

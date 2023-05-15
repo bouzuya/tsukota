@@ -24,7 +24,11 @@ export default function CategoryEdit(): JSX.Element {
   const categoryId = `${params.categoryId}`;
   const [account, handleAccountCommand] = useAccount(accountId, []);
   const router = useRouter();
-  const { control, handleSubmit } = useForm<Form>({
+  const {
+    control,
+    formState: { isSubmitSuccessful, isSubmitting },
+    handleSubmit,
+  } = useForm<Form>({
     defaultValues: {
       name: nameDefault,
     },
@@ -47,14 +51,18 @@ export default function CategoryEdit(): JSX.Element {
     <Screen
       options={{
         title: t("title.category.edit") ?? "",
-        headerRight: () => (
-          <IconButton
-            accessibilityLabel={t("button.save") ?? ""}
-            icon="check"
-            onPress={handleSubmit(onClickOk)}
-            size={28}
-          />
-        ),
+        headerRight: () =>
+          isSubmitting ? (
+            <ActivityIndicator size={24} style={{ marginHorizontal: 16 }} />
+          ) : (
+            <IconButton
+              accessibilityLabel={t("button.save") ?? ""}
+              disabled={isSubmitSuccessful}
+              icon="check"
+              onPress={handleSubmit(onClickOk)}
+              size={28}
+            />
+          ),
       }}
     >
       <View style={{ flex: 1, width: "100%" }}>

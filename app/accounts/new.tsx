@@ -3,7 +3,13 @@ import { err } from "neverthrow";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { IconButton, Screen, TextInput, View } from "../../components";
+import {
+  ActivityIndicator,
+  IconButton,
+  Screen,
+  TextInput,
+  View,
+} from "../../components";
 import { useAccounts } from "../../components/AccountContext";
 import { useCredential } from "../../hooks/use-credential";
 import { createAccount } from "../../lib/account";
@@ -13,7 +19,11 @@ type Form = {
 };
 
 export default function AccountNew(): JSX.Element {
-  const { control, handleSubmit } = useForm<Form>({
+  const {
+    control,
+    formState: { isSubmitSuccessful, isSubmitting },
+    handleSubmit,
+  } = useForm<Form>({
     defaultValues: {
       name: "",
     },
@@ -31,20 +41,24 @@ export default function AccountNew(): JSX.Element {
         ? err("account already exists")
         : createAccount(credential.user.uid, name)
     );
-    router.back();
+    return router.back();
   };
   return (
     <Screen
       options={{
         title: t("title.account.new") ?? "",
-        headerRight: () => (
-          <IconButton
-            accessibilityLabel={t("button.save") ?? ""}
-            icon="check"
-            onPress={handleSubmit(onClickOk)}
-            size={28}
-          />
-        ),
+        headerRight: () =>
+          isSubmitting ? (
+            <ActivityIndicator size={24} style={{ marginHorizontal: 16 }} />
+          ) : (
+            <IconButton
+              accessibilityLabel={t("button.save") ?? ""}
+              disabled={isSubmitSuccessful}
+              icon="check"
+              onPress={handleSubmit(onClickOk)}
+              size={28}
+            />
+          ),
       }}
     >
       <View style={{ flex: 1, width: "100%" }}>

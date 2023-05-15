@@ -20,27 +20,32 @@ export default function TransactionEdit(): JSX.Element {
   const transactionId = `${params.transactionId}`;
   const [account, handleAccountCommand] = useAccount(accountId, []);
   const router = useRouter();
-  const { control, getValues, handleSubmit, setValue } =
-    useForm<TransactionFormValues>({
-      defaultValues: {
-        amount: `${params.amount}`,
-        categoryId: `${params.categoryId}`,
-        comment: decodeURIComponent(`${params.comment}`),
-        date: `${params.date}`,
-      },
-    });
+  const {
+    control,
+    formState: { isSubmitSuccessful, isSubmitting },
+    getValues,
+    handleSubmit,
+    setValue,
+  } = useForm<TransactionFormValues>({
+    defaultValues: {
+      amount: `${params.amount}`,
+      categoryId: `${params.categoryId}`,
+      comment: decodeURIComponent(`${params.comment}`),
+      date: `${params.date}`,
+    },
+  });
   const { t } = useTranslation();
 
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
 
-  const onClickOk = ({
+  const onClickOk = async ({
     amount,
     categoryId,
     comment,
     date,
-  }: TransactionFormValues) => {
-    handleAccountCommand(account.id, (oldAccount) =>
+  }: TransactionFormValues): Promise<void> => {
+    await handleAccountCommand(account.id, (oldAccount) =>
       oldAccount === null
         ? err("account not found")
         : updateTransaction(oldAccount, transactionId, {
@@ -49,21 +54,26 @@ export default function TransactionEdit(): JSX.Element {
             comment,
             date,
           })
-    ).then(() => router.back());
+    );
+    router.back();
   };
 
   return (
     <Screen
       options={{
         title: t("title.transaction.edit") ?? "",
-        headerRight: () => (
-          <IconButton
-            accessibilityLabel={t("button.save") ?? ""}
-            icon="check"
-            onPress={handleSubmit(onClickOk)}
-            size={28}
-          />
-        ),
+        headerRight: () =>
+          isSubmitting ? (
+            <ActivityIndicator size={24} style={{ marginHorizontal: 16 }} />
+          ) : (
+            <IconButton
+              accessibilityLabel={t("button.save") ?? ""}
+              disabled={isSubmitSuccessful}
+              icon="check"
+              onPress={handleSubmit(onClickOk)}
+              size={28}
+            />
+          ),
       }}
     >
       <View style={{ flex: 1, width: "100%" }}>

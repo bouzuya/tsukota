@@ -23,7 +23,11 @@ export default function CategoryEdit(): JSX.Element {
   const nameDefault = decodeURIComponent(`${params.name}`);
   const [account, handleAccountCommand] = useAccount(accountId, []);
   const router = useRouter();
-  const { control, handleSubmit } = useForm<Form>({
+  const {
+    control,
+    formState: { isSubmitSuccessful, isSubmitting },
+    handleSubmit,
+  } = useForm<Form>({
     defaultValues: {
       name: nameDefault,
     },
@@ -33,26 +37,31 @@ export default function CategoryEdit(): JSX.Element {
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
 
-  const onClickOk = ({ name }: Form) => {
-    handleAccountCommand(account.id, (oldAccount) =>
+  const onClickOk = async ({ name }: Form): Promise<void> => {
+    await handleAccountCommand(account.id, (oldAccount) =>
       oldAccount === null
         ? err("account not found")
         : updateAccount(oldAccount, name)
-    ).then((_) => router.back());
+    );
+    return router.back();
   };
 
   return (
     <Screen
       options={{
         title: t("title.account.edit") ?? "",
-        headerRight: () => (
-          <IconButton
-            accessibilityLabel={t("button.save") ?? ""}
-            icon="check"
-            onPress={handleSubmit(onClickOk)}
-            size={28}
-          />
-        ),
+        headerRight: () =>
+          isSubmitting ? (
+            <ActivityIndicator size={24} style={{ marginHorizontal: 16 }} />
+          ) : (
+            <IconButton
+              accessibilityLabel={t("button.save") ?? ""}
+              disabled={isSubmitSuccessful}
+              icon="check"
+              onPress={handleSubmit(onClickOk)}
+              size={28}
+            />
+          ),
       }}
     >
       <View style={{ flex: 1, width: "100%" }}>
