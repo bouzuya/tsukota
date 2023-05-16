@@ -37,6 +37,9 @@ export const resources = {
         number_of_events: "Number of events",
         number_of_transactions: "Number of transactions",
       },
+      system: {
+        update: "Please update to the latest version of the app",
+      },
       title: {
         account: {
           delete: "Delete Account",
@@ -107,6 +110,9 @@ export const resources = {
         number_of_categories: "分類数",
         number_of_events: "イベント数",
         number_of_transactions: "取引数",
+      },
+      system: {
+        update: "最新のアプリにアップデートしてください",
       },
       title: {
         account: {

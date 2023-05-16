@@ -1,12 +1,14 @@
 import {
-  collection,
-  getDocs,
-  FirestoreDataConverter,
   DocumentData,
+  Firestore,
+  FirestoreDataConverter,
   QueryDocumentSnapshot,
   SnapshotOptions,
   WithFieldValue,
-  Firestore,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
 } from "firebase/firestore";
 import { AccountEvent } from "./account";
 import { storeAccountEvent as firebaseStoreAccountEvent } from "./firebase";
@@ -27,6 +29,25 @@ const eventDocumentConverter: FirestoreDataConverter<EventDocument> = {
     return modelObject;
   },
 };
+
+type SystemStatusDocument = {
+  minAppVersion: string | null;
+};
+
+const systemStatusDocumentConverter: FirestoreDataConverter<SystemStatusDocument> =
+  {
+    fromFirestore: function (
+      snapshot: QueryDocumentSnapshot<SystemStatusDocument>,
+      options?: SnapshotOptions | undefined
+    ): SystemStatusDocument {
+      return snapshot.data(options);
+    },
+    toFirestore: function (
+      modelObject: WithFieldValue<SystemStatusDocument>
+    ): DocumentData {
+      return modelObject;
+    },
+  };
 
 export async function storeAccountEvent(
   lastEventId: string | null,
@@ -54,4 +75,12 @@ export const getEvents = async (
     .sort((a, b) => {
       return a.at < b.at ? -1 : a.at > b.at ? 1 : 0;
     });
+};
+
+export const getMinAppVersion = async (db: Firestore): Promise<string> => {
+  const systemStatusDocRef = doc(db, "system", "status").withConverter(
+    systemStatusDocumentConverter
+  );
+  const systemStatusDocSnapshot = await getDoc(systemStatusDocRef);
+  return systemStatusDocSnapshot.data()?.minAppVersion ?? "0.0.0";
 };
