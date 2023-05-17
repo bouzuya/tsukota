@@ -1,6 +1,5 @@
 import Constants from "expo-constants";
 import { SplashScreen, useFocusEffect, useRouter } from "expo-router";
-import { UserCredential } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { err } from "neverthrow";
 import React, { useCallback, useEffect, useState } from "react";
@@ -14,16 +13,16 @@ import {
   Screen,
 } from "../components";
 import { useAccounts } from "../components/AccountContext";
-import { useCredential } from "../hooks/use-credential";
+import { useCurrentUserId } from "../hooks/use-credential";
 import { deleteAccount } from "../lib/account";
 import { getMinAppVersion } from "../lib/api";
 import { db } from "../lib/firebase";
 import { useTranslation } from "../lib/i18n";
 
 const loadAccountIdsFromRemote = async (
-  credential: UserCredential
+  currentUserId: string
 ): Promise<string[]> => {
-  const uid = credential.user.uid;
+  const uid = currentUserId;
   const userSnapshot = await getDoc(doc(db, `users/${uid}`));
   const data = userSnapshot.data();
   if (data === undefined) return [];
@@ -47,20 +46,20 @@ export default function Index(): JSX.Element {
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const [accountName, setAccountName] = useState<string | null>(null);
   const [accountId, setAccountId] = useState<string | null>(null);
-  const credential = useCredential();
+  const currentUserId = useCurrentUserId();
   const { accounts, fetchAccounts, handleAccountCommand } = useAccounts();
   useFocusEffect(
     useCallback(() => {
-      if (credential === null) return;
-      loadAccountIdsFromRemote(credential).then((accountIds) =>
+      if (currentUserId === null) return;
+      loadAccountIdsFromRemote(currentUserId).then((accountIds) =>
         fetchAccounts.apply(null, accountIds)
       );
-    }, [credential])
+    }, [currentUserId])
   );
 
   const minAppVersion = useMinAppVersion();
 
-  if (credential === null || minAppVersion === null) return <SplashScreen />;
+  if (currentUserId === null || minAppVersion === null) return <SplashScreen />;
 
   const version = Constants.expoConfig?.version ?? "1.0.0";
   if (semver.lt(version, minAppVersion)) {

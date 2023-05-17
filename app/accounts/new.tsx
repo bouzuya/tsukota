@@ -11,7 +11,7 @@ import {
   View,
 } from "../../components";
 import { useAccounts } from "../../components/AccountContext";
-import { useCredential } from "../../hooks/use-credential";
+import { useCurrentUserId } from "../../hooks/use-credential";
 import { createAccount } from "../../lib/account";
 
 type Form = {
@@ -31,15 +31,15 @@ export default function AccountNew(): JSX.Element {
   const { handleAccountCommand } = useAccounts();
   const router = useRouter();
   const { t } = useTranslation();
-  const credential = useCredential();
+  const currentUserId = useCurrentUserId();
 
-  if (credential === null) return <></>;
+  if (currentUserId === null) return <></>;
 
   const onClickOk = async ({ name }: Form): Promise<void> => {
     await handleAccountCommand(null, (oldAccount) =>
       oldAccount !== null
         ? err("account already exists")
-        : createAccount(credential.user.uid, name)
+        : createAccount(currentUserId, name)
     );
     return router.back();
   };
