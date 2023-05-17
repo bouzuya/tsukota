@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import { FirebaseOptions, initializeApp } from "firebase/app";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
@@ -7,10 +8,10 @@ import {
   httpsCallable,
 } from "firebase/functions";
 import {
-  browserLocalPersistence,
   connectAuthEmulator,
+  getReactNativePersistence,
   initializeAuth,
-} from "firebase/auth";
+} from "firebase/auth/react-native";
 
 const initializeFirebaseInstances = () => {
   const apiKey = `${Constants.expoConfig?.extra?.apiKey ?? ""}`;
@@ -26,7 +27,7 @@ const initializeFirebaseInstances = () => {
 
   const app = initializeApp(firebaseOptions);
   const auth = initializeAuth(app, {
-    persistence: browserLocalPersistence,
+    persistence: getReactNativePersistence(AsyncStorage),
     popupRedirectResolver: undefined,
   });
   const db = getFirestore(app);
