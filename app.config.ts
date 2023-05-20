@@ -16,6 +16,7 @@ const expoConfig: ExpoConfig = {
     eas: {
       projectId: "01998b5a-773b-4c6c-b388-09dc620d9756",
     },
+    enableDebugLogging: process.env.ENABLE_DEBUG_LOGGING,
     firestoreEmulatorHost: process.env.FIRESTORE_EMULATOR_HOST,
     functionsEmulatorHost: process.env.FUNCTIONS_EMULATOR_HOST,
     projectId: process.env.PROJECT_ID,

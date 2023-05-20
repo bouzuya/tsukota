@@ -6,6 +6,7 @@ import {
   readAsStringAsync,
   writeAsStringAsync,
 } from "expo-file-system";
+import { timeSpan } from "./time-span";
 
 async function ensureAccountEventsDir(): Promise<string> {
   if (documentDirectory === null) throw new Error("document directory is null");
@@ -18,14 +19,16 @@ async function ensureAccountEventsDir(): Promise<string> {
 export async function loadEventsFromLocal(
   accountId: string
 ): Promise<AccountEvent[]> {
-  const accountEventsDir = await ensureAccountEventsDir();
-  const accountEventFile = accountEventsDir + accountId + ".json";
-  if (!(await getInfoAsync(accountEventFile)).exists) return [];
-  const data = await readAsStringAsync(accountEventFile, {
-    encoding: "utf8",
+  return await timeSpan(`loadEventsFromLocal  ${accountId}`, async () => {
+    const accountEventsDir = await ensureAccountEventsDir();
+    const accountEventFile = accountEventsDir + accountId + ".json";
+    if (!(await getInfoAsync(accountEventFile)).exists) return [];
+    const data = await readAsStringAsync(accountEventFile, {
+      encoding: "utf8",
+    });
+    const accountEvents = JSON.parse(data);
+    return accountEvents;
   });
-  const accountEvents = JSON.parse(data);
-  return accountEvents;
 }
 
 export async function storeEventsToLocal(

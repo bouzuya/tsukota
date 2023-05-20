@@ -9,9 +9,13 @@ import {
   doc,
   getDoc,
   getDocs,
+  orderBy,
+  query,
+  where,
 } from "firebase/firestore";
 import { AccountEvent } from "./account";
-import { storeAccountEvent as firebaseStoreAccountEvent } from "./firebase";
+import { db, storeAccountEvent as firebaseStoreAccountEvent } from "./firebase";
+import { timeSpan } from "./time-span";
 
 type EventDocument = AccountEvent;
 
@@ -59,23 +63,30 @@ export async function storeAccountEvent(
   });
 }
 
-export const getEvents = async (
-  db: Firestore,
-  accountId: string
-): Promise<AccountEvent[]> => {
-  const eventsCollection = collection(
-    db,
-    "accounts",
-    accountId,
-    "events"
-  ).withConverter(eventDocumentConverter);
-  const eventsSnapshot = await getDocs(eventsCollection);
-  return eventsSnapshot.docs
-    .map((doc) => doc.data())
-    .sort((a, b) => {
-      return a.at < b.at ? -1 : a.at > b.at ? 1 : 0;
-    });
-};
+export async function loadEventsFromRemote(
+  accountId: string,
+  since: string | null
+): Promise<AccountEvent[]> {
+  return await timeSpan(`loadEventsFromRemote ${accountId}`, async () => {
+    const eventsCollection = collection(
+      db,
+      "accounts",
+      accountId,
+      "events"
+    ).withConverter(eventDocumentConverter);
+    const q = query(
+      eventsCollection,
+      where("at", ">", since !== null ? since : "1970-01-01T00:00:00Z"),
+      orderBy("at")
+    );
+    const eventsSnapshot = await getDocs(q);
+    return eventsSnapshot.docs
+      .map((doc) => doc.data())
+      .sort((a, b) => {
+        return a.at < b.at ? -1 : a.at > b.at ? 1 : 0;
+      });
+  });
+}
 
 export const getMinAppVersion = async (db: Firestore): Promise<string> => {
   const systemStatusDocRef = doc(db, "system", "status").withConverter(

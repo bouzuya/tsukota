@@ -15,8 +15,7 @@ import {
   getLastEventId,
   restoreAccount,
 } from "../lib/account";
-import { getEvents, storeAccountEvent } from "../lib/api";
-import { db } from "../lib/firebase";
+import { loadEventsFromRemote, storeAccountEvent } from "../lib/api";
 import {
   loadEventsFromLocal,
   storeEventsToLocal,
@@ -44,8 +43,10 @@ const AccountContext = createContext<ContextValue>({
 
 async function fetchAccount(accountId: string): Promise<Account> {
   const localEvents = await loadEventsFromLocal(accountId);
-  // TODO: Get only the difference
-  const remoteEvents = await getEvents(db, accountId);
+  const remoteEvents = await loadEventsFromRemote(
+    accountId,
+    localEvents.at(localEvents.length - 1)?.at ?? null
+  );
 
   // remove duplicates and sort
   const map = new Map<string, AccountEvent>();
