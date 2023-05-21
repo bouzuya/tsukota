@@ -90,4 +90,4 @@ export const storeAccountEvent = httpsCallable<
   Record<string, unknown>
 >(functions, "storeAccountEvent");
 
-export { auth, db, functions };
+export { auth, db };

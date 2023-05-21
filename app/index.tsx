@@ -1,6 +1,5 @@
 import Constants from "expo-constants";
 import { SplashScreen, useFocusEffect, useRouter } from "expo-router";
-import { doc, getDoc } from "firebase/firestore";
 import { err } from "neverthrow";
 import React, { useCallback, useEffect, useState } from "react";
 import { Linking, StyleSheet } from "react-native";
@@ -15,25 +14,14 @@ import {
 import { useAccounts } from "../components/AccountContext";
 import { useCurrentUserId } from "../hooks/use-credential";
 import { deleteAccount } from "../lib/account";
-import { getMinAppVersion } from "../lib/api";
-import { db } from "../lib/firebase";
+import { getMinAppVersion, loadAccountIds } from "../lib/api";
 import { useTranslation } from "../lib/i18n";
-
-const loadAccountIdsFromRemote = async (
-  currentUserId: string
-): Promise<string[]> => {
-  const uid = currentUserId;
-  const userSnapshot = await getDoc(doc(db, `users/${uid}`));
-  const data = userSnapshot.data();
-  if (data === undefined) return [];
-  return data.account_ids;
-};
 
 const useMinAppVersion = (): string | null => {
   const [minAppVersion, setMinAppVersion] = useState<string | null>(null);
   useEffect(() => {
     (async () => {
-      const version = await getMinAppVersion(db);
+      const version = await getMinAppVersion();
       setMinAppVersion(version);
     })();
   }, []);
@@ -51,7 +39,7 @@ export default function Index(): JSX.Element {
   useFocusEffect(
     useCallback(() => {
       if (currentUserId === null) return;
-      loadAccountIdsFromRemote(currentUserId).then((accountIds) =>
+      loadAccountIds(currentUserId).then((accountIds) =>
         fetchAccounts.apply(null, accountIds)
       );
     }, [currentUserId])

@@ -1,6 +1,5 @@
 import {
   DocumentData,
-  Firestore,
   FirestoreDataConverter,
   QueryDocumentSnapshot,
   SnapshotOptions,
@@ -63,6 +62,14 @@ export async function storeAccountEvent(
   });
 }
 
+export async function loadAccountIds(currentUserId: string): Promise<string[]> {
+  const uid = currentUserId;
+  const userSnapshot = await getDoc(doc(db, `users/${uid}`));
+  const data = userSnapshot.data();
+  if (data === undefined) return [];
+  return data.account_ids;
+}
+
 export async function loadEventsFromRemote(
   accountId: string,
   since: string | null
@@ -88,7 +95,7 @@ export async function loadEventsFromRemote(
   });
 }
 
-export const getMinAppVersion = async (db: Firestore): Promise<string> => {
+export const getMinAppVersion = async (): Promise<string> => {
   const systemStatusDocRef = doc(db, "system", "status").withConverter(
     systemStatusDocumentConverter
   );
