@@ -30,6 +30,7 @@ export type AccountError =
   | "date is empty"
   | "date is invalid"
   | "name is empty"
+  | "protocolVersion is invalid"
   | "transactionId not found";
 
 export type Category = {
@@ -81,6 +82,8 @@ export const createCategory = (
   self: Account,
   name: string
 ): Result<[Account, AccountEvent], AccountError> => {
+  if (getLastEvent(self).protocolVersion > protocolVersion)
+    return err("protocolVersion is invalid");
   if (self.deletedAt !== null) return err("account is deleted");
   if (name.length === 0) return err("name is empty");
   const event: CategoryAdded = {
@@ -99,6 +102,8 @@ export const createTransaction = (
   self: Account,
   { amount, categoryId, comment, date }: TransactionProps
 ): Result<[Account, AccountEvent], AccountError> => {
+  if (getLastEvent(self).protocolVersion > protocolVersion)
+    return err("protocolVersion is invalid");
   if (self.deletedAt !== null) return err("account is deleted");
   if (amount.length === 0) return err("amount is empty");
   if (categoryId.length === 0) return err("categoryId is empty");
@@ -136,6 +141,8 @@ export const createTransaction = (
 export const deleteAccount = (
   self: Account
 ): Result<[Account, AccountEvent], AccountError> => {
+  if (getLastEvent(self).protocolVersion > protocolVersion)
+    return err("protocolVersion is invalid");
   if (self.deletedAt !== null) return err("account is deleted");
   const event: AccountDeleted = {
     accountId: self.id,
@@ -151,6 +158,8 @@ export const deleteCategory = (
   self: Account,
   categoryId: string
 ): Result<[Account, AccountEvent], AccountError> => {
+  if (getLastEvent(self).protocolVersion > protocolVersion)
+    return err("protocolVersion is invalid");
   if (self.deletedAt !== null) return err("account is deleted");
   if (!self.categories.some((category) => category.id === categoryId))
     return err("categoryId not found");
@@ -169,6 +178,8 @@ export const deleteTransaction = (
   self: Account,
   transactionId: string
 ): Result<[Account, AccountEvent], AccountError> => {
+  if (getLastEvent(self).protocolVersion > protocolVersion)
+    return err("protocolVersion is invalid");
   if (self.deletedAt !== null) return err("account is deleted");
   if (!self.transactions.some(({ id }) => id === transactionId))
     return err("transactionId not found");
@@ -225,6 +236,8 @@ export const updateAccount = (
   self: Account,
   name: string
 ): Result<[Account, AccountEvent], AccountError> => {
+  if (getLastEvent(self).protocolVersion > protocolVersion)
+    return err("protocolVersion is invalid");
   if (self.deletedAt !== null) return err("account is deleted");
   if (name.length === 0) return err("name is empty");
   const event: AccountUpdated = {
@@ -243,6 +256,8 @@ export const updateCategory = (
   categoryId: string,
   name: string
 ): Result<[Account, AccountEvent], AccountError> => {
+  if (getLastEvent(self).protocolVersion > protocolVersion)
+    return err("protocolVersion is invalid");
   if (self.deletedAt !== null) return err("account is deleted");
   if (!self.categories.some((category) => category.id === categoryId))
     return err("categoryId not found");
@@ -264,6 +279,8 @@ export const updateTransaction = (
   transactionId: string,
   { amount, categoryId, comment, date }: TransactionProps
 ): Result<[Account, AccountEvent], AccountError> => {
+  if (getLastEvent(self).protocolVersion > protocolVersion)
+    return err("protocolVersion is invalid");
   if (self.deletedAt !== null) return err("account is deleted");
   if (!self.transactions.some(({ id }) => id === transactionId))
     return err("transactionId not found");
