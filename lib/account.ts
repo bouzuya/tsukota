@@ -23,6 +23,7 @@ export { AccountEvent };
 
 export type AccountError =
   | "account is deleted"
+  | "account not found"
   | "amount is empty"
   | "amount is invalid"
   | "categoryId is empty"

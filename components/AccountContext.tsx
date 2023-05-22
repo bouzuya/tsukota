@@ -11,6 +11,7 @@ import {
 } from "react";
 import {
   Account,
+  AccountError,
   AccountEvent,
   getLastEventId,
   restoreAccount,
@@ -30,7 +31,7 @@ type ContextValue = {
 
 type HandleAccountCommandCallback<T> = (
   account: T
-) => Result<[Account, AccountEvent], string>;
+) => Result<[Account, AccountEvent], AccountError>;
 type HandleAccountCommand = (
   accountId: string | null,
   callback: HandleAccountCommandCallback<Account | null>
