@@ -21,6 +21,17 @@ export const protocolVersion = 2;
 // re-export
 export { AccountEvent };
 
+export type AccountError =
+  | "account is deleted"
+  | "amount is empty"
+  | "amount is invalid"
+  | "categoryId is empty"
+  | "categoryId not found"
+  | "date is empty"
+  | "date is invalid"
+  | "name is empty"
+  | "transactionId not found";
+
 export type Category = {
   accountId: string;
   createdAt: string;
@@ -52,7 +63,7 @@ export type Account = {
 export const createAccount = (
   uid: string,
   name: string
-): Result<[Account, AccountEvent], string> => {
+): Result<[Account, AccountEvent], AccountError> => {
   if (name.length === 0) return err("name is empty");
   const event: AccountCreated = {
     accountId: generateUuidV4(),
@@ -69,7 +80,7 @@ export const createAccount = (
 export const createCategory = (
   self: Account,
   name: string
-): Result<[Account, AccountEvent], string> => {
+): Result<[Account, AccountEvent], AccountError> => {
   if (self.deletedAt !== null) return err("account is deleted");
   if (name.length === 0) return err("name is empty");
   const event: CategoryAdded = {
@@ -87,7 +98,7 @@ export const createCategory = (
 export const createTransaction = (
   self: Account,
   { amount, categoryId, comment, date }: TransactionProps
-): Result<[Account, AccountEvent], string> => {
+): Result<[Account, AccountEvent], AccountError> => {
   if (self.deletedAt !== null) return err("account is deleted");
   if (amount.length === 0) return err("amount is empty");
   if (categoryId.length === 0) return err("categoryId is empty");
@@ -124,7 +135,7 @@ export const createTransaction = (
 
 export const deleteAccount = (
   self: Account
-): Result<[Account, AccountEvent], string> => {
+): Result<[Account, AccountEvent], AccountError> => {
   if (self.deletedAt !== null) return err("account is deleted");
   const event: AccountDeleted = {
     accountId: self.id,
@@ -139,7 +150,7 @@ export const deleteAccount = (
 export const deleteCategory = (
   self: Account,
   categoryId: string
-): Result<[Account, AccountEvent], string> => {
+): Result<[Account, AccountEvent], AccountError> => {
   if (self.deletedAt !== null) return err("account is deleted");
   if (!self.categories.some((category) => category.id === categoryId))
     return err("categoryId not found");
@@ -157,7 +168,7 @@ export const deleteCategory = (
 export const deleteTransaction = (
   self: Account,
   transactionId: string
-): Result<[Account, AccountEvent], string> => {
+): Result<[Account, AccountEvent], AccountError> => {
   if (self.deletedAt !== null) return err("account is deleted");
   if (!self.transactions.some(({ id }) => id === transactionId))
     return err("transactionId not found");
@@ -213,7 +224,7 @@ export const restoreAccount = (events: AccountEvent[]): Account => {
 export const updateAccount = (
   self: Account,
   name: string
-): Result<[Account, AccountEvent], string> => {
+): Result<[Account, AccountEvent], AccountError> => {
   if (self.deletedAt !== null) return err("account is deleted");
   if (name.length === 0) return err("name is empty");
   const event: AccountUpdated = {
@@ -231,7 +242,7 @@ export const updateCategory = (
   self: Account,
   categoryId: string,
   name: string
-): Result<[Account, AccountEvent], string> => {
+): Result<[Account, AccountEvent], AccountError> => {
   if (self.deletedAt !== null) return err("account is deleted");
   if (!self.categories.some((category) => category.id === categoryId))
     return err("categoryId not found");
@@ -252,7 +263,7 @@ export const updateTransaction = (
   self: Account,
   transactionId: string,
   { amount, categoryId, comment, date }: TransactionProps
-): Result<[Account, AccountEvent], string> => {
+): Result<[Account, AccountEvent], AccountError> => {
   if (self.deletedAt !== null) return err("account is deleted");
   if (!self.transactions.some(({ id }) => id === transactionId))
     return err("transactionId not found");
