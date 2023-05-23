@@ -22,6 +22,7 @@ export const protocolVersion = 2;
 export { AccountEvent };
 
 export type AccountError =
+  | "account already exists"
   | "account is deleted"
   | "account not found"
   | "amount is empty"
