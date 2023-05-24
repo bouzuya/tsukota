@@ -3,6 +3,7 @@ import { err } from "neverthrow";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import Toast from "react-native-root-toast";
 import {
   ActivityIndicator,
   IconButton,
@@ -36,12 +37,17 @@ export default function AccountNew(): JSX.Element {
   if (currentUserId === null) return <></>;
 
   const onClickOk = async ({ name }: Form): Promise<void> => {
-    await handleAccountCommand(null, (oldAccount) =>
-      oldAccount !== null
-        ? err("account already exists")
-        : createAccount(currentUserId, name)
-    );
-    return router.back();
+    try {
+      await handleAccountCommand(null, (oldAccount) =>
+        oldAccount !== null
+          ? err("account already exists")
+          : createAccount(currentUserId, name)
+      );
+      return router.back();
+    } catch (e) {
+      // TODO: i18n
+      Toast.show(String(e));
+    }
   };
   return (
     <Screen
@@ -53,7 +59,6 @@ export default function AccountNew(): JSX.Element {
           ) : (
             <IconButton
               accessibilityLabel={t("button.save") ?? ""}
-              disabled={isSubmitSuccessful}
               icon="check"
               onPress={handleSubmit(onClickOk)}
               size={28}

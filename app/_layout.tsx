@@ -5,6 +5,7 @@ import {
   MD3LightTheme,
   MD3Theme,
 } from "react-native-paper";
+import { RootSiblingParent } from "react-native-root-siblings";
 import { useColorScheme } from "react-native";
 import { AccountContextProvider } from "../components";
 import { CredentialProvider } from "../hooks/use-credential";
@@ -17,14 +18,16 @@ export default function Layout(): JSX.Element {
     <PaperProvider theme={theme}>
       <AccountContextProvider>
         <CredentialProvider>
-          <Stack
-            screenOptions={{
-              headerStyle: {
-                backgroundColor: theme.colors.surface,
-              },
-              headerTintColor: theme.colors.onSurface,
-            }}
-          />
+          <RootSiblingParent>
+            <Stack
+              screenOptions={{
+                headerStyle: {
+                  backgroundColor: theme.colors.surface,
+                },
+                headerTintColor: theme.colors.onSurface,
+              }}
+            />
+          </RootSiblingParent>
         </CredentialProvider>
       </AccountContextProvider>
     </PaperProvider>
