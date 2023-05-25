@@ -120,7 +120,7 @@ function buildHandleAccountCommand(
     await storeAccountEvent(
       oldAccount === null ? null : getLastEventId(oldAccount),
       event
-    ).catch((_) => {
+    ).mapErr((_) => {
       setAccount(newAccount.id, oldAccount);
     });
   };

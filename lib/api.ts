@@ -12,6 +12,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import { Result, ResultAsync } from "neverthrow";
 import { AccountEvent } from "./account";
 import { db, storeAccountEvent as firebaseStoreAccountEvent } from "./firebase";
 import { timeSpan } from "./time-span";
@@ -52,14 +53,17 @@ const systemStatusDocumentConverter: FirestoreDataConverter<SystemStatusDocument
     },
   };
 
-export async function storeAccountEvent(
+export function storeAccountEvent(
   lastEventId: string | null,
   event: AccountEvent
-): Promise<void> {
-  await firebaseStoreAccountEvent({
-    last_event_id: lastEventId,
-    event,
-  });
+): ResultAsync<void, string> {
+  return ResultAsync.fromPromise(
+    firebaseStoreAccountEvent({
+      last_event_id: lastEventId,
+      event,
+    }).then(() => {}),
+    String
+  );
 }
 
 export async function loadAccountIds(currentUserId: string): Promise<string[]> {
