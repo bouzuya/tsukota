@@ -99,7 +99,12 @@ export default function Settings(): JSX.Element {
               oldAccount === null
                 ? err("account not found")
                 : deleteAccount(oldAccount)
-            ).then(() => router.back());
+            ).match(
+              () => router.back(),
+              () => {
+                // TODO
+              }
+            );
           }}
           visible={deleteModalVisible}
         />

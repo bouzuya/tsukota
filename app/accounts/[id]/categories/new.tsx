@@ -41,8 +41,12 @@ export default function CategoryNew(): JSX.Element {
       oldAccount === null
         ? err("account not found")
         : createCategory(oldAccount, name)
+    ).match(
+      () => router.back(),
+      () => {
+        // TODO
+      }
     );
-    return router.back();
   };
 
   return (

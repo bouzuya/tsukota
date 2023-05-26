@@ -93,11 +93,16 @@ export default function Transactions(): JSX.Element {
         onClickOk={() => {
           if (transactionId === null) return;
 
-          // TODO: error handling
+          // TODO: await ?
           handleAccountCommand(account.id, (oldAccount) =>
             oldAccount === null
               ? err("account not found")
               : deleteTransaction(oldAccount, transactionId)
+          ).match(
+            () => {},
+            () => {
+              // TODO: error handling
+            }
           );
 
           setDeleteModalVisible(false);

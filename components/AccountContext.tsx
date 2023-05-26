@@ -1,4 +1,4 @@
-import { Result } from "neverthrow";
+import { errAsync, Result, ResultAsync } from "neverthrow";
 import {
   createContext,
   DependencyList,
@@ -35,7 +35,7 @@ type HandleAccountCommandCallback<T> = (
 type HandleAccountCommand = (
   accountId: string | null,
   callback: HandleAccountCommandCallback<Account | null>
-) => Promise<void>;
+) => ResultAsync<void, string>;
 
 const AccountContext = createContext<ContextValue>({
   accounts: {},
@@ -108,20 +108,21 @@ function buildHandleAccountCommand(
 ): HandleAccountCommand {
   const { accounts, setAccounts } = context;
   const setAccount = buildSetAccount(setAccounts);
-  return async (
+  return (
     accountId: string | null,
     callback: HandleAccountCommandCallback<Account | null>
-  ): Promise<void> => {
+  ): ResultAsync<void, AccountError | "server error"> => {
     const oldAccount = accountId === null ? null : accounts[accountId] ?? null;
     const result = callback(oldAccount);
-    if (result.isErr()) throw new Error(result.error);
+    if (result.isErr()) return errAsync(result.error);
     const [newAccount, event] = result.value;
     setAccount(newAccount.id, newAccount);
-    await storeAccountEvent(
+    return storeAccountEvent(
       oldAccount === null ? null : getLastEventId(oldAccount),
       event
     ).mapErr((_) => {
       setAccount(newAccount.id, oldAccount);
+      return "server error";
     });
   };
 }

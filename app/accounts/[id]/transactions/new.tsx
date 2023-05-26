@@ -53,8 +53,12 @@ export default function TransactionNew(): JSX.Element {
             comment,
             date,
           })
+    ).match(
+      () => router.back(),
+      () => {
+        // TODO: error handling
+      }
     );
-    return router.back();
   };
 
   return (

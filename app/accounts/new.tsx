@@ -37,17 +37,17 @@ export default function AccountNew(): JSX.Element {
   if (currentUserId === null) return <></>;
 
   const onClickOk = async ({ name }: Form): Promise<void> => {
-    try {
-      await handleAccountCommand(null, (oldAccount) =>
-        oldAccount !== null
-          ? err("account already exists")
-          : createAccount(currentUserId, name)
-      );
-      return router.back();
-    } catch (e) {
-      // TODO: i18n
-      Toast.show(String(e));
-    }
+    await handleAccountCommand(null, (oldAccount) =>
+      oldAccount !== null
+        ? err("account already exists")
+        : createAccount(currentUserId, name)
+    ).match(
+      () => router.back(),
+      (e) => {
+        // TODO: i18n
+        Toast.show(String(e));
+      }
+    );
   };
   return (
     <Screen

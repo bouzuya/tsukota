@@ -42,8 +42,12 @@ export default function CategoryEdit(): JSX.Element {
       oldAccount === null
         ? err("account not found")
         : updateAccount(oldAccount, name)
+    ).match(
+      () => router.back(),
+      () => {
+        // TODO
+      }
     );
-    return router.back();
   };
 
   return (

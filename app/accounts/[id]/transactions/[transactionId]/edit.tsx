@@ -54,8 +54,12 @@ export default function TransactionEdit(): JSX.Element {
             comment,
             date,
           })
+    ).match(
+      () => router.back(),
+      () => {
+        // TODO: error handling
+      }
     );
-    router.back();
   };
 
   return (

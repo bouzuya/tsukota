@@ -76,11 +76,16 @@ export default function Categories(): JSX.Element {
         }}
         onClickOk={() => {
           if (categoryId === null) return;
-          // TODO: error handling
+          // TODO: await ?
           handleAccountCommand(account.id, (oldAccount) =>
             oldAccount === null
               ? err("account not found")
               : deleteCategory(oldAccount, categoryId)
+          ).match(
+            () => {},
+            () => {
+              // TODO: error handling
+            }
           );
           setName("");
           setCategoryId(null);
