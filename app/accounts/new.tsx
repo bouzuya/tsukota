@@ -15,6 +15,11 @@ import { useAccounts } from "../../components/AccountContext";
 import { useCurrentUserId } from "../../hooks/use-credential";
 import { createAccount } from "../../lib/account";
 
+const showErrorMessage = (e: unknown) => {
+  // TODO: i18n
+  Toast.show(String(e));
+};
+
 type Form = {
   name: string;
 };
@@ -41,13 +46,7 @@ export default function AccountNew(): JSX.Element {
       oldAccount !== null
         ? err("account already exists")
         : createAccount(currentUserId, name)
-    ).match(
-      () => router.back(),
-      (e) => {
-        // TODO: i18n
-        Toast.show(String(e));
-      }
-    );
+    ).match(() => router.back(), showErrorMessage);
   };
   return (
     <Screen
