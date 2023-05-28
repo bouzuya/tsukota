@@ -11,7 +11,7 @@
     "expo-file-system": "~15.2.2",
     "expo-linking": "~4.0.1",
     "expo-localization": "~14.1.1",
-    "expo-router": "^1.2.2",
+    "expo-router": "^1.5.3",
     "expo-status-bar": "~1.4.4",
     "expo-system-ui": "~2.2.1",
     "firebase": "^9.17.2",
