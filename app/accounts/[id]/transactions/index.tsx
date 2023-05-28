@@ -17,6 +17,7 @@ import {
   Transaction,
 } from "../../../../lib/account";
 import { useTranslation } from "../../../../lib/i18n";
+import { showErrorMessage } from "../../../../lib/show-error-message";
 
 export default function Transactions(): JSX.Element {
   const pathname = usePathname();
@@ -98,12 +99,7 @@ export default function Transactions(): JSX.Element {
             oldAccount === null
               ? err("account not found")
               : deleteTransaction(oldAccount, transactionId)
-          ).match(
-            () => {},
-            () => {
-              // TODO: error handling
-            }
-          );
+          ).match(() => {}, showErrorMessage);
 
           setDeleteModalVisible(false);
         }}

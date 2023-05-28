@@ -3,7 +3,6 @@ import { err } from "neverthrow";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import Toast from "react-native-root-toast";
 import {
   ActivityIndicator,
   IconButton,
@@ -14,11 +13,7 @@ import {
 import { useAccounts } from "../../components/AccountContext";
 import { useCurrentUserId } from "../../hooks/use-credential";
 import { createAccount } from "../../lib/account";
-
-const showErrorMessage = (e: unknown) => {
-  // TODO: i18n
-  Toast.show(String(e));
-};
+import { showErrorMessage } from "../../lib/show-error-message";
 
 type Form = {
   name: string;

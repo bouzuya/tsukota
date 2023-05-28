@@ -13,6 +13,7 @@ import {
 } from "../../../../../components";
 import { updateTransaction } from "../../../../../lib/account";
 import { useTranslation } from "../../../../../lib/i18n";
+import { showErrorMessage } from "../../../../../lib/show-error-message";
 
 export default function TransactionEdit(): JSX.Element {
   const params = useSearchParams();
@@ -54,12 +55,7 @@ export default function TransactionEdit(): JSX.Element {
             comment,
             date,
           })
-    ).match(
-      () => router.back(),
-      () => {
-        // TODO: error handling
-      }
-    );
+    ).match(() => router.back(), showErrorMessage);
   };
 
   return (

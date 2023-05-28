@@ -13,6 +13,7 @@ import {
   useAccount,
 } from "../../../../components";
 import { deleteCategory, listCategory } from "../../../../lib/account";
+import { showErrorMessage } from "../../../../lib/show-error-message";
 
 export default function Categories(): JSX.Element {
   const pathname = usePathname();
@@ -81,12 +82,7 @@ export default function Categories(): JSX.Element {
             oldAccount === null
               ? err("account not found")
               : deleteCategory(oldAccount, categoryId)
-          ).match(
-            () => {},
-            () => {
-              // TODO: error handling
-            }
-          );
+          ).match(() => {}, showErrorMessage);
           setName("");
           setCategoryId(null);
           setDeleteDialogVisible(false);

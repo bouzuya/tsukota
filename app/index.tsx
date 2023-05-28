@@ -16,6 +16,7 @@ import { useCurrentUserId } from "../hooks/use-credential";
 import { deleteAccount } from "../lib/account";
 import { getMinAppVersion, loadAccountIds } from "../lib/api";
 import { useTranslation } from "../lib/i18n";
+import { showErrorMessage } from "../lib/show-error-message";
 
 const useMinAppVersion = (): string | null => {
   const [minAppVersion, setMinAppVersion] = useState<string | null>(null);
@@ -115,7 +116,7 @@ export default function Index(): JSX.Element {
             oldAccount === null
               ? err("account not found")
               : deleteAccount(oldAccount)
-          );
+          ).match(() => {}, showErrorMessage);
           setDeleteModalVisible(false);
         }}
         visible={deleteModalVisible}

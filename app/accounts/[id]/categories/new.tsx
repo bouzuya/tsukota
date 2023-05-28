@@ -12,6 +12,7 @@ import {
 } from "../../../../components";
 import { createCategory } from "../../../../lib/account";
 import { useTranslation } from "../../../../lib/i18n";
+import { showErrorMessage } from "../../../../lib/show-error-message";
 
 type Form = {
   name: string;
@@ -41,12 +42,7 @@ export default function CategoryNew(): JSX.Element {
       oldAccount === null
         ? err("account not found")
         : createCategory(oldAccount, name)
-    ).match(
-      () => router.back(),
-      () => {
-        // TODO
-      }
-    );
+    ).match(() => router.back(), showErrorMessage);
   };
 
   return (

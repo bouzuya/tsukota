@@ -12,6 +12,7 @@ import {
   useAccount,
 } from "../../../../../components";
 import { updateCategory } from "../../../../../lib/account";
+import { showErrorMessage } from "../../../../../lib/show-error-message";
 
 type Form = {
   name: string;
@@ -43,12 +44,7 @@ export default function CategoryEdit(): JSX.Element {
       oldAccount === null
         ? err("account not found")
         : updateCategory(oldAccount, categoryId, name)
-    ).match(
-      () => router.back(),
-      () => {
-        // TODO
-      }
-    );
+    ).match(() => router.back(), showErrorMessage);
   };
 
   return (

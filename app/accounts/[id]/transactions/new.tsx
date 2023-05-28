@@ -13,6 +13,7 @@ import {
 import { TransactionFormValues } from "../../../../components/TransactionForm";
 import { createTransaction } from "../../../../lib/account";
 import { useTranslation } from "../../../../lib/i18n";
+import { showErrorMessage } from "../../../../lib/show-error-message";
 
 export default function TransactionNew(): JSX.Element {
   const params = useSearchParams();
@@ -53,12 +54,7 @@ export default function TransactionNew(): JSX.Element {
             comment,
             date,
           })
-    ).match(
-      () => router.back(),
-      () => {
-        // TODO: error handling
-      }
-    );
+    ).match(() => router.back(), showErrorMessage);
   };
 
   return (

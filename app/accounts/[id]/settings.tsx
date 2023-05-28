@@ -16,6 +16,7 @@ import {
   listCategory,
 } from "../../../lib/account";
 import { useTranslation } from "../../../lib/i18n";
+import { showErrorMessage } from "../../../lib/show-error-message";
 
 export default function Settings(): JSX.Element {
   const pathname = usePathname();
@@ -99,12 +100,7 @@ export default function Settings(): JSX.Element {
               oldAccount === null
                 ? err("account not found")
                 : deleteAccount(oldAccount)
-            ).match(
-              () => router.back(),
-              () => {
-                // TODO
-              }
-            );
+            ).match(() => router.back(), showErrorMessage);
           }}
           visible={deleteModalVisible}
         />
