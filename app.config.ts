@@ -1,4 +1,4 @@
-import { ExpoConfig } from "expo/config";
+import { ExpoConfig, getPackageJson } from "expo/config";
 
 const expoConfig: ExpoConfig = {
   android: {
@@ -7,7 +7,7 @@ const expoConfig: ExpoConfig = {
       foregroundImage: "./assets/adaptive-icon-v2.png",
     },
     package: "net.bouzuya.lab.tsukota",
-    versionCode: 16,
+    versionCode: 17,
   },
   assetBundlePatterns: ["**/*"],
   extra: {
@@ -34,7 +34,7 @@ const expoConfig: ExpoConfig = {
     image: "./assets/adaptive-icon-v2.png",
     resizeMode: "contain",
   },
-  version: "0.1.16",
+  version: getPackageJson(__dirname).version,
 };
 
 module.exports.expo = expoConfig;
