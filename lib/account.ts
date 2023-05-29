@@ -1,17 +1,17 @@
 // Account Aggregate
 
 import {
-  AccountCreated,
-  AccountDeleted,
-  AccountEvent,
-  AccountUpdated,
-  CategoryAdded,
-  CategoryDeleted,
-  CategoryUpdated,
-  TransactionAdded,
-  TransactionDeleted,
-  TransactionProps,
-  TransactionUpdated,
+  type AccountCreated,
+  type AccountDeleted,
+  type AccountEvent,
+  type AccountUpdated,
+  type CategoryAdded,
+  type CategoryDeleted,
+  type CategoryUpdated,
+  type TransactionAdded,
+  type TransactionDeleted,
+  type TransactionProps,
+  type TransactionUpdated,
 } from "@bouzuya/tsukota-account-events";
 import { Result, err, ok } from "neverthrow";
 import { generate as generateUuidV4 } from "./uuid";
