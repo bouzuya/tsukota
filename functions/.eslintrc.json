@@ -14,19 +14,11 @@
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": [
-      "tsconfig.json",
-      "tsconfig.dev.json"
-    ],
+    "project": ["tsconfig.json", "tsconfig.dev.json"],
     "sourceType": "module"
   },
-  "ignorePatterns": [
-    "/lib/**/*"
-  ],
-  "plugins": [
-    "@typescript-eslint",
-    "import"
-  ],
+  "ignorePatterns": ["/lib/**/*"],
+  "plugins": ["@typescript-eslint", "import"],
   "rules": {
     "@typescript-eslint/no-unused-vars": [
       "error",
@@ -35,18 +27,9 @@
       }
     ],
     "import/no-unresolved": "off",
-    "indent": [
-      "error",
-      2
-    ],
-    "object-curly-spacing": [
-      "error",
-      "always"
-    ],
+    "indent": ["error", 2],
+    "object-curly-spacing": ["error", "always"],
     "operator-linebreak": "off",
-    "quotes": [
-      "error",
-      "double"
-    ]
+    "quotes": ["error", "double"]
   }
 }

@@ -1,4 +1,3 @@
-
 <https://firebase.google.com/docs/firestore/solutions/schedule-export?hl=ja>
 
 ```console
