@@ -36,6 +36,13 @@ export function buildStoreAccountEvent(
   });
 }
 
+function err(message: string): Promise<never> {
+  return Promise.reject(
+    // TODO: fix error code
+    new functions.https.HttpsError("invalid-argument", message)
+  );
+}
+
 function storeAccountEvent(
   db: Firestore,
   uid: string,
@@ -67,11 +74,9 @@ function storeAccountEvent(
       const esDocSnapshot = await transaction.get(eventStreamDocRef);
       if (lastEventId === null) {
         if (esDocSnapshot.exists)
-          return Promise.reject(
-            `account already exist (accountId: ${event.accountId})`
-          );
+          return err(`account already exist (accountId: ${event.accountId})`);
         if (event.type !== "accountCreated")
-          return Promise.reject(
+          return err(
             `event type is not accountCreated (accountId: ${event.accountId})`
           );
         transaction.create(eventStreamDocRef, {
@@ -91,27 +96,25 @@ function storeAccountEvent(
         const data = esDocSnapshot.data();
         // not found
         if (data === undefined)
-          return Promise.reject(
-            `account does not exist (accountId: ${event.accountId})`
-          );
+          return err(`account does not exist (accountId: ${event.accountId})`);
         // forbidden
         if (data.owners.indexOf(uid) === -1)
-          return Promise.reject(
+          return err(
             `account is not owned by the user (accountId: ${event.accountId}, uid: ${uid})`
           );
         // conflict
         if (data.lastEventId !== lastEventId)
-          return Promise.reject(
+          return err(
             `account already updated (accountId: ${event.accountId}, expected: ${lastEventId}, actual: ${data.lastEventId})`
           );
         // bad request (invalid protocol version)
         if (event.protocolVersion < data.protocolVersion)
-          return Promise.reject(
+          return err(
             `invalid protocol version (accountId: ${event.accountId}, expected: ${data.protocolVersion}, actual: ${event.protocolVersion})`
           );
         // bad request (invalid event timestamp)
         if (event.at <= data.updatedAt)
-          return Promise.reject(
+          return err(
             `invalid event timestamp (accountId: ${event.accountId}, expected: ${data.updatedAt}, actual: ${event.at})`
           );
         transaction.update(
