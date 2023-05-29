@@ -28,10 +28,7 @@
       }
     ],
     "import/no-unresolved": "off",
-    "indent": ["error", 2],
-    "object-curly-spacing": ["error", "always"],
     "operator-linebreak": "off",
-    "quotes": ["error", "double"],
     "require-jsdoc": "off"
   }
 }
