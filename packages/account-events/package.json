@@ -13,7 +13,7 @@
   },
   "keywords": [],
   "license": "MIT",
-  "main": "lib/index.js",
+  "main": "./lib/index.js",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
@@ -25,6 +25,5 @@
     "prepare": "tsc",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "type": "module"
+  }
 }
