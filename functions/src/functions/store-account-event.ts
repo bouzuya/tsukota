@@ -50,7 +50,7 @@ function storeAccountEvent(
   event: AccountEvent
 ): Promise<void> {
   return db.runTransaction(
-    async (transaction) => {
+    async (transaction: FirebaseFirestore.Transaction): Promise<void> => {
       const eventStreamDocRef = db
         .collection("aggregates")
         .doc("account")
@@ -150,6 +150,7 @@ function storeAccountEvent(
           account_ids: FieldValue.arrayUnion(event.accountId),
         });
       }
+      return Promise.resolve();
     },
     { maxAttempts: 1 }
   );
