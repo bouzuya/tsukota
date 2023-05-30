@@ -118,7 +118,7 @@ function storeAccountEvent(
         if (data === undefined)
           return err(`account does not exist (accountId: ${event.accountId})`);
         // forbidden
-        if (data.owners.indexOf(uid) === -1)
+        if (!data.owners.includes(uid))
           return err(
             `account is not owned by the user (accountId: ${event.accountId}, uid: ${uid})`
           );
