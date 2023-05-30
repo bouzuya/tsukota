@@ -29,7 +29,7 @@ export function buildScheduledFirestoreExport(
         });
 
         const response = responses[0];
-        console.log(`Operation Name: ${response["name"]}`);
+        console.log(`Operation Name: ${response.name ?? "(none)"}`);
       } catch (err) {
         console.error(err);
         throw new Error("Export operation failed");
