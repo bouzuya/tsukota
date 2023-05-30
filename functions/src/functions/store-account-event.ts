@@ -16,24 +16,44 @@ export function buildStoreAccountEvent(
 ): functions.HttpsFunction {
   const db = getFirestore(app);
 
-  return functions.region(region).https.onCall(async (data, context) => {
-    if (typeof data !== "object" || data === null)
-      throw new functions.https.HttpsError(
-        "invalid-argument",
-        // TODO: fix message
-        "invalid-argument"
-      );
-    const uid = context.auth?.uid;
-    if (uid === undefined)
-      throw new functions.https.HttpsError(
-        "unauthenticated",
-        // TODO: fix message
-        "unauthenticated"
-      );
-    const { event, last_event_id: lastEventId } = data;
-    await storeAccountEvent(db, uid, lastEventId, event);
-    return {};
-  });
+  return functions
+    .region(region)
+    .https.onCall(async (data: unknown, context) => {
+      if (
+        typeof data !== "object" ||
+        data === null ||
+        !("event" in data) ||
+        !("last_event_id" in data)
+      )
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          // TODO: fix message
+          "invalid-argument"
+        );
+      const uid = context.auth?.uid;
+      if (uid === undefined)
+        throw new functions.https.HttpsError(
+          "unauthenticated",
+          // TODO: fix message
+          "unauthenticated"
+        );
+      const { event, last_event_id: lastEventId } = data;
+      if (lastEventId !== null && typeof lastEventId !== "string")
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          // TODO: fix message
+          "invalid-argument"
+        );
+      // TODO: check event format
+      if (typeof event !== "object" || event === null)
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          // TODO: fix message
+          "invalid-argument"
+        );
+      await storeAccountEvent(db, uid, lastEventId, event as AccountEvent);
+      return {};
+    });
 }
 
 function err(message: string): Promise<never> {
