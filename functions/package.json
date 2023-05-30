@@ -8,7 +8,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@bouzuya/tsukota-account-events": "^3.0.0",
+    "@bouzuya/tsukota-account-events": "^3.0.2",
     "@types/bcryptjs": "^2.4.2",
     "@typescript-eslint/eslint-plugin": "^5.12.0",
     "@typescript-eslint/parser": "^5.12.0",
@@ -28,9 +28,9 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
+    "deploy": "firebase deploy --only functions",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
-    "deploy": "firebase deploy --only functions",
     "lint": "eslint --ext .js,.ts .",
     "logs": "firebase functions:log",
     "serve": "npm run build && firebase emulators:start --only functions",
