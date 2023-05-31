@@ -5,6 +5,7 @@ import {
   QueryDocumentSnapshot,
   WithFieldValue,
 } from "firebase-admin/firestore";
+export { validateStoreAccountEventBody } from "./validate-store-account-event-body";
 
 // `/accounts/${account_id}`
 export type AccountDocumentForQuery = {

@@ -8,6 +8,7 @@ import {
   accountEventDocumentForQueryConverter,
   accountEventStreamDocumentConverter,
   userDocumentConverter,
+  validateStoreAccountEventBody,
 } from "../schema";
 
 export function buildStoreAccountEvent(
@@ -19,17 +20,6 @@ export function buildStoreAccountEvent(
   return functions
     .region(region)
     .https.onCall(async (data: unknown, context) => {
-      if (
-        typeof data !== "object" ||
-        data === null ||
-        !("event" in data) ||
-        !("last_event_id" in data)
-      )
-        throw new functions.https.HttpsError(
-          "invalid-argument",
-          // TODO: fix message
-          "invalid-argument"
-        );
       const uid = context.auth?.uid;
       if (uid === undefined)
         throw new functions.https.HttpsError(
@@ -37,21 +27,21 @@ export function buildStoreAccountEvent(
           // TODO: fix message
           "unauthenticated"
         );
-      const { event, last_event_id: lastEventId } = data;
+      const result = validateStoreAccountEventBody(data);
+      if (result.isErr())
+        throw new functions.https.HttpsError(
+          "invalid-argument",
+          // TODO: fix message
+          "invalid-argument"
+        );
+      const { event, last_event_id: lastEventId } = result.value;
       if (lastEventId !== null && typeof lastEventId !== "string")
         throw new functions.https.HttpsError(
           "invalid-argument",
           // TODO: fix message
           "invalid-argument"
         );
-      // TODO: check event format
-      if (typeof event !== "object" || event === null)
-        throw new functions.https.HttpsError(
-          "invalid-argument",
-          // TODO: fix message
-          "invalid-argument"
-        );
-      await storeAccountEvent(db, uid, lastEventId, event as AccountEvent);
+      await storeAccountEvent(db, uid, lastEventId, event);
       return {};
     });
 }
