@@ -6,6 +6,7 @@
     "bcryptjs": "^2.4.3",
     "firebase-admin": "^11.5.0",
     "firebase-functions": "^4.2.0",
+    "neverthrow": "^6.0.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
