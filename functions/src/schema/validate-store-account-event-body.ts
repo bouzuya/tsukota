@@ -99,7 +99,7 @@ export function validateStoreAccountEventBody(data: unknown): Result<
   if (validate(data)) {
     return ok(data);
   } else {
-    const errors = ajv.errors;
+    const errors = validate.errors;
     if (errors === undefined || errors === null)
       throw new Error("assert(errors !== undefined && errors !== null)");
     return err(errors);
