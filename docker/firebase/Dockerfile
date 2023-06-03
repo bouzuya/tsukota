@@ -1,8 +1,8 @@
-FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:425.0.0-emulators
+FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:433.0.1-emulators
 # RUN apk add --upgrade npm
 # RUN apt-get update && apt-get -y install nodejs npm
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
-ENV NODE_VERSION=16.20.0
+ENV NODE_VERSION=18.16.0
 ENV NVM_DIR=/root/.nvm
 RUN . "${NVM_DIR}/nvm.sh" && nvm install "${NODE_VERSION}"
 RUN . "${NVM_DIR}/nvm.sh" && nvm use "v${NODE_VERSION}"
