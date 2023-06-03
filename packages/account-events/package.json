@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "@tsconfig/strictest": "^2.0.1",
+    "prettier": "^2.8.8",
     "typescript": "^5.0.4"
   },
   "keywords": [],
@@ -24,6 +25,8 @@
   "scripts": {
     "prepare": "tsc",
     "build": "tsc",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write .",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
