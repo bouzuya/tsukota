@@ -1,0 +1,26 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "ignorePatterns": ["/lib"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": ["tsconfig.json"],
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint", "import"],
+  "root": true,
+  "rules": {
+    "import/order": [
+      "error",
+      {
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ]
+  }
+}
