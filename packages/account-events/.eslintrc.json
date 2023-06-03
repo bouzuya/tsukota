@@ -2,6 +2,8 @@
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:@typescript-eslint/strict",
     "prettier"
   ],
   "ignorePatterns": ["/lib"],
@@ -13,6 +15,7 @@
   "plugins": ["@typescript-eslint", "import"],
   "root": true,
   "rules": {
+    "@typescript-eslint/consistent-type-definitions": ["error", "type"],
     "import/order": [
       "error",
       {
