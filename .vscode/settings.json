@@ -1,0 +1,7 @@
+{
+  "eslint.workingDirectories": [
+    "packages/account-events",
+    "packages/functions",
+    "packages/tsukota"
+  ]
+}
