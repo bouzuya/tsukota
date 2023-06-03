@@ -28,11 +28,12 @@
     "url": "https://github.com/bouzuya/tsukota.git"
   },
   "scripts": {
-    "prepare": "tsc",
-    "build": "tsc",
+    "build": "npm run format:write && npm run lint && npm run compile",
+    "compile": "tsc",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
     "lint": "eslint .",
+    "prepare": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
