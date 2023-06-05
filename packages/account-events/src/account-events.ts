@@ -37,6 +37,16 @@ export type CategoryUpdated = {
   name: string;
 } & AccountEventCommonProps;
 
+export type OwnerAdded = {
+  type: "ownerAdded";
+  owner: string;
+} & AccountEventCommonProps;
+
+export type OwnerRemoved = {
+  type: "ownerRemoved";
+  owner: string;
+} & AccountEventCommonProps;
+
 export type TransactionAdded = {
   type: "transactionAdded";
   transactionId: string;
@@ -68,6 +78,8 @@ export type AccountEvent =
   | CategoryAdded
   | CategoryDeleted
   | CategoryUpdated
+  | OwnerAdded
+  | OwnerRemoved
   | TransactionAdded
   | TransactionDeleted
   | TransactionUpdated;
