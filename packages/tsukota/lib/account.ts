@@ -1,6 +1,7 @@
 // Account Aggregate
 
 import {
+  OwnerAdded,
   type AccountCreated,
   type AccountDeleted,
   type AccountEvent,
@@ -12,11 +13,12 @@ import {
   type TransactionDeleted,
   type TransactionProps,
   type TransactionUpdated,
+  OwnerRemoved,
 } from "@bouzuya/tsukota-account-events";
 import { Result, err, ok } from "neverthrow";
 import { generate as generateUuidV4 } from "./uuid";
 
-export const protocolVersion = 2;
+export const protocolVersion = 3;
 
 // re-export
 export { AccountEvent };
@@ -32,6 +34,9 @@ export type AccountError =
   | "date is empty"
   | "date is invalid"
   | "name is empty"
+  | "owner already exists"
+  | "owner is the last owner"
+  | "owner not found"
   | "protocolVersion is invalid"
   | "transactionId not found";
 
@@ -61,6 +66,22 @@ export type Account = {
   name: string;
   owners: string[];
   transactions: Transaction[];
+};
+
+export const addOwner = (
+  self: Account,
+  owner: string
+): Result<[Account, AccountEvent], AccountError> => {
+  if (self.owners.includes(owner)) return err("owner already exists");
+  const event: OwnerAdded = {
+    accountId: self.id,
+    at: new Date().toISOString(),
+    id: generateUuidV4(),
+    owner,
+    protocolVersion,
+    type: "ownerAdded",
+  };
+  return ok([applyEvent(self, event), event]);
 };
 
 export const createAccount = (
@@ -220,6 +241,23 @@ export const listCategory = (
         ? self.categories.filter(({ deletedAt }) => deletedAt !== null)
         : []
     );
+};
+
+export const removeOwner = (
+  self: Account,
+  owner: string
+): Result<[Account, AccountEvent], AccountError> => {
+  if (self.owners.every((it) => it !== owner)) return err("owner not found");
+  if (self.owners.length === 1) return err("owner is the last owner");
+  const event: OwnerRemoved = {
+    accountId: self.id,
+    at: new Date().toISOString(),
+    id: generateUuidV4(),
+    owner,
+    protocolVersion,
+    type: "ownerRemoved",
+  };
+  return ok([applyEvent(self, event), event]);
 };
 
 export const restoreAccount = (events: AccountEvent[]): Account => {
@@ -403,6 +441,22 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
               };
         }),
         events: self.events.concat([event]),
+      };
+    }
+    case "ownerAdded": {
+      const { owner } = event;
+      return {
+        ...self,
+        events: self.events.concat([event]),
+        owners: self.owners.concat([owner]),
+      };
+    }
+    case "ownerRemoved": {
+      const { owner } = event;
+      return {
+        ...self,
+        events: self.events.concat([event]),
+        owners: self.owners.filter((it) => it !== owner),
       };
     }
     case "transactionAdded": {

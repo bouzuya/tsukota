@@ -1,16 +1,64 @@
 import { describe, expect, it } from "@jest/globals";
 import {
+  addOwner,
   createAccount,
   createCategory,
   createTransaction,
   deleteAccount,
   deleteCategory,
   deleteTransaction,
+  removeOwner,
   updateAccount,
   updateCategory,
   updateTransaction,
 } from "./account";
-import { generate as generateUuidV4 } from "./uuid";
+import { v4 as uuidv4 } from "uuid";
+import { getRandomValues } from "node:crypto";
+
+function generateUuidV4(): string {
+  return uuidv4({
+    rng: () => {
+      const array = new Uint8Array(16);
+      getRandomValues(array);
+      return array;
+    },
+  });
+}
+
+describe("addOwner", () => {
+  describe("happy path", () => {
+    it("works", () => {
+      const uid = generateUuidV4();
+      const before = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
+      const owner = generateUuidV4();
+      const result = addOwner(before, owner);
+      if (result.isErr()) throw new Error(result.error);
+      const [account, event] = result.value;
+      if (event.type !== "ownerAdded") throw new Error();
+      const ownerAdded = event;
+      expect(account.categories).toStrictEqual(before.categories);
+      expect(account.events[account.events.length - 1]).toStrictEqual(event);
+      expect(account.id).toStrictEqual(before.id);
+      expect(account.name).toStrictEqual(before.name);
+      expect(account.owners.length).toBe(2);
+      expect(account.owners[1]).toStrictEqual(owner);
+      expect(account.transactions).toStrictEqual(before.transactions);
+      expect(ownerAdded.accountId).toStrictEqual(account.id);
+      expect(ownerAdded.owner).toStrictEqual(owner);
+    });
+  });
+
+  describe("when owner already exists", () => {
+    it("returns err", () => {
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
+      const owner = generateUuidV4();
+      const v2 = addOwner(v1, owner)._unsafeUnwrap()[0];
+      const result = addOwner(v2, owner);
+      expect(result.isErr()).toBe(true);
+    });
+  });
+});
 
 describe("createAccount", () => {
   describe("happy path", () => {
@@ -356,6 +404,54 @@ describe("deleteTransaction", () => {
 // TODO: Add getLastEventId tests
 // TODO: Add listCategory tests
 // TODO: Add restoreAccount tests
+
+describe("removeOwner", () => {
+  describe("happy path", () => {
+    it("works", () => {
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
+      const owner = generateUuidV4();
+      const before = addOwner(v1, owner)._unsafeUnwrap()[0];
+      const result = removeOwner(before, owner);
+      if (result.isErr()) throw new Error(result.error);
+      const [account, event] = result.value;
+      if (event.type !== "ownerRemoved") throw new Error();
+      const ownerRemoved = event;
+      expect(account.categories).toStrictEqual(before.categories);
+      expect(account.events[account.events.length - 1]).toStrictEqual(event);
+      expect(account.id).toStrictEqual(before.id);
+      expect(account.name).toStrictEqual(before.name);
+      expect(account.owners.length).toBe(1);
+      expect(account.owners[0]).not.toStrictEqual(owner);
+      expect(account.transactions).toStrictEqual(before.transactions);
+      expect(ownerRemoved.accountId).toStrictEqual(account.id);
+      expect(ownerRemoved.owner).toStrictEqual(owner);
+    });
+  });
+
+  describe("when owner not found", () => {
+    it("returns err", () => {
+      const uid = generateUuidV4();
+      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
+      const owner = generateUuidV4();
+      const before = addOwner(v1, owner)._unsafeUnwrap()[0];
+      const owner2 = generateUuidV4();
+      const result = removeOwner(before, owner2);
+      expect(result.isErr()).toBe(true);
+    });
+  });
+
+  describe("when owner is the last owner", () => {
+    it("returns err", () => {
+      const uid = generateUuidV4();
+      const before = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
+      const owner = before.owners[0];
+      if (owner === undefined) throw new Error();
+      const result = removeOwner(before, owner);
+      expect(result.isErr()).toBe(true);
+    });
+  });
+});
 
 describe("updateCategory", () => {
   describe("happy path", () => {
