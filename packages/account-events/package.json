@@ -1,6 +1,6 @@
 {
   "name": "@bouzuya/tsukota-account-events",
-  "description": "",
+  "description": "tsukota account event types",
   "version": "4.0.0",
   "author": {
     "email": "m@bouzuya.net",
