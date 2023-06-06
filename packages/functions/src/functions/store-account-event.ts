@@ -1,4 +1,4 @@
-import { AccountEvent } from "@bouzuya/tsukota-account-events";
+import { type AccountEvent } from "@bouzuya/tsukota-account-events";
 import { App } from "firebase-admin/app";
 import { FieldValue, Firestore, getFirestore } from "firebase-admin/firestore";
 import * as functions from "firebase-functions";
@@ -142,6 +142,12 @@ function storeAccountEvent(
           ...(event.type === "accountDeleted" ? { deletedAt: event.at } : {}),
           ...(event.type === "accountUpdated" ? { name: event.name } : {}),
           ...(event.type === "accountCreated" ? { owners: event.owners } : {}),
+          ...(event.type === "ownerAdded"
+            ? { owners: FieldValue.arrayUnion(event.owner) }
+            : {}),
+          ...(event.type === "ownerRemoved"
+            ? { owners: FieldValue.arrayRemove(event.owner) }
+            : {}),
         });
       }
 
@@ -150,16 +156,42 @@ function storeAccountEvent(
       transaction.create(accountEventForQueryDocRef, event);
 
       // update the `accounts` field of the `users/{uid}`
-      if (event.type === "accountCreated") {
-        const userRef = db
-          .collection("users")
-          .doc(uid)
-          .withConverter(userDocumentConverter);
-        transaction.update(userRef, {
-          id: uid,
-          account_ids: FieldValue.arrayUnion(event.accountId),
-        });
+      switch (event.type) {
+        case "accountCreated": {
+          const userRef = db
+            .collection("users")
+            .doc(uid)
+            .withConverter(userDocumentConverter);
+          transaction.update(userRef, {
+            id: uid,
+            account_ids: FieldValue.arrayUnion(event.accountId),
+          });
+          break;
+        }
+        case "ownerAdded": {
+          const userRef = db
+            .collection("users")
+            .doc(event.owner)
+            .withConverter(userDocumentConverter);
+          transaction.update(userRef, {
+            id: event.owner,
+            account_ids: FieldValue.arrayUnion(event.accountId),
+          });
+          break;
+        }
+        case "ownerRemoved": {
+          const userRef = db
+            .collection("users")
+            .doc(event.owner)
+            .withConverter(userDocumentConverter);
+          transaction.update(userRef, {
+            id: event.owner,
+            account_ids: FieldValue.arrayRemove(event.accountId),
+          });
+          break;
+        }
       }
+
       return Promise.resolve();
     },
     { maxAttempts: 1 }

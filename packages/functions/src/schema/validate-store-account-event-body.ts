@@ -62,6 +62,18 @@ const schema: JTDSchemaType<{
             ...schemaOfAccountEventCommonProps,
           },
         },
+        ownerAdded: {
+          properties: {
+            owner: { type: "string" },
+            ...schemaOfAccountEventCommonProps,
+          },
+        },
+        ownerRemoved: {
+          properties: {
+            owner: { type: "string" },
+            ...schemaOfAccountEventCommonProps,
+          },
+        },
         transactionAdded: {
           properties: {
             transactionId: { type: "string" },

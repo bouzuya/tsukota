@@ -38,6 +38,34 @@ describe("validateStoreAccountEventBody", () => {
     // TODO: CategoryAdded
     // TODO: CategoryDeleted
     // TODO: CategoryUpdated
+    [
+      {
+        event: {
+          owner: "b4af61e2-43b4-4e65-b1d9-2b14db7885c4",
+          type: "ownerAdded",
+          accountId: "159911cf-9afb-49f0-aa97-da62a492f8a1",
+          at: "2021-01-02T00:00:00.000Z",
+          id: "0b4f90d0-e8fc-464d-b44b-951fa64be2ce",
+          protocolVersion: 2,
+        },
+        last_event_id: "9db95105-6551-4648-a5ff-631ca545dafe",
+      },
+      true,
+    ],
+    [
+      {
+        event: {
+          owner: "b4af61e2-43b4-4e65-b1d9-2b14db7885c4",
+          type: "ownerRemoved",
+          accountId: "159911cf-9afb-49f0-aa97-da62a492f8a1",
+          at: "2021-01-02T00:00:00.000Z",
+          id: "0b4f90d0-e8fc-464d-b44b-951fa64be2ce",
+          protocolVersion: 2,
+        },
+        last_event_id: "9db95105-6551-4648-a5ff-631ca545dafe",
+      },
+      true,
+    ],
     // TODO: TransactionAdded
     // TODO: TransactionDeleted
     // TODO: TransactionUpdated

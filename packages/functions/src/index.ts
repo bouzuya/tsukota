@@ -10,7 +10,6 @@ const bucketNameParams = defineString("BUCKET_NAME");
 
 const region = "asia-northeast2";
 const app = initializeApp(functions.config().firebase as AppOptions);
-// const app = initializeApp({ projectId: "demo-project" });
 
 export const createCustomToken = buildCreateCustomToken(app, region);
 
