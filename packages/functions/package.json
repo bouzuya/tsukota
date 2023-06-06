@@ -1,5 +1,7 @@
 {
   "name": "functions",
+  "description": "Cloud Functions for tsukota",
+  "version": "0.0.0",
   "dependencies": {
     "@google-cloud/firestore": "^6.5.0",
     "ajv": "^8.12.0",
