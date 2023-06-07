@@ -13,6 +13,7 @@ import { AccountList, Item as AccountListItem } from "./AccountList";
 import { CategoryList } from "./CategoryList";
 import { DeleteAccountDialog } from "./DeleteAccountDialog";
 import { DeleteCategoryDialog } from "./DeleteCategoryDialog";
+import { DeleteOwnerDialog } from "./DeleteOwnerDialog";
 import { DeleteTransactionDialog } from "./DeleteTransactionDialog";
 import { Screen } from "./Screen";
 import { TextInput } from "./TextInput";
@@ -28,6 +29,7 @@ export {
   CategoryList,
   DeleteAccountDialog,
   DeleteCategoryDialog,
+  DeleteOwnerDialog,
   DeleteTransactionDialog,
   Divider,
   FAB,

@@ -60,6 +60,20 @@ export default function Settings(): JSX.Element {
         />
         <Divider style={{ width: "100%" }} />
         <List.Item
+          title={t("account.owners")}
+          description={account.owners.join("\n")}
+          onPress={() => {
+            router.push({
+              pathname: "/accounts/[id]/owners",
+              params: {
+                id: accountId,
+              },
+            });
+          }}
+          style={{ width: "100%" }}
+        />
+        <Divider style={{ width: "100%" }} />
+        <List.Item
           title={t("settings.number_of_transactions")}
           description={`${account.transactions.length}`}
           style={{ width: "100%" }}

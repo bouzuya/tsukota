@@ -9,6 +9,7 @@ export const resources = {
         empty: "Register a new account",
         name: "Name",
         new: "Add new account",
+        owners: "Owners",
       },
       button: {
         cancel: "Cancel",
@@ -28,7 +29,12 @@ export const resources = {
       message: {
         confirm_account_deletion: "Delete account?",
         confirm_category_deletion: "Delete category?",
+        confirm_owner_deletion: "Delete owner?",
         confirm_transaction_deletion: "Delete transaction?",
+      },
+      owner: {
+        id: "User ID",
+        new: "Add new owner",
       },
       settings: {
         delete_account: "Delete account",
@@ -54,6 +60,11 @@ export const resources = {
           index: "Categories",
           new: "Add Category",
           select: "Select Category",
+        },
+        owner: {
+          delete: "Delete Owner",
+          index: "Owners",
+          new: "Add Owner",
         },
         setting: {
           index: "Settings",
@@ -83,6 +94,7 @@ export const resources = {
         id: "ID",
         name: "アカウント名",
         new: "アカウントの追加",
+        owners: "所有者",
       },
       button: {
         cancel: "キャンセル",
@@ -102,7 +114,12 @@ export const resources = {
       message: {
         confirm_account_deletion: "アカウントを削除しますか？",
         confirm_category_deletion: "分類を削除しますか？",
+        confirm_owner_deletion: "所有者を削除しますか?",
         confirm_transaction_deletion: "取引を削除しますか？",
+      },
+      owner: {
+        id: "ユーザーID",
+        new: "所有者の追加",
       },
       settings: {
         delete_account: "アカウントの削除",
@@ -128,6 +145,11 @@ export const resources = {
           index: "分類一覧",
           new: "分類追加",
           select: "分類の選択",
+        },
+        owner: {
+          delete: "所有者削除",
+          index: "所有者一覧",
+          new: "所有者追加",
         },
         setting: {
           index: "設定",
