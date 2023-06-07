@@ -131,7 +131,12 @@ function storeAccountEvent(
           eventStreamDocRef,
           {
             lastEventId: event.id,
-            ...(event.type === "accountUpdated" ? { name: event.name } : {}),
+            ...(event.type === "ownerAdded"
+              ? { owners: FieldValue.arrayUnion(event.owner) }
+              : {}),
+            ...(event.type === "ownerRemoved"
+              ? { owners: FieldValue.arrayRemove(event.owner) }
+              : {}),
             protocolVersion: event.protocolVersion,
             updatedAt: event.at,
           },
