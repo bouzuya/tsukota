@@ -5,6 +5,7 @@ import {
   Dispatch,
   ReactNode,
   SetStateAction,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -63,35 +64,18 @@ async function fetchAccount(accountId: string): Promise<Account> {
   return restoreAccount(events);
 }
 
-function fetchAccountsWithCache(
+function buildFetchAccounts(
   context: ContextValue
 ): (...accountIds: string[]) => Promise<void> {
-  const { accounts, setAccounts } = context;
+  const { setAccounts } = context;
   return async (...accountIds: string[]): Promise<void> => {
-    const _ = await Promise.all(accountIds.map(fetchAccount)).then(
-      (newAccounts) => {
-        const updated: Accounts = {};
-        for (const newAccount of newAccounts) {
-          updated[newAccount.id] = newAccount;
-        }
-        setAccounts((accounts) => ({ ...accounts, ...updated }));
-      }
-    );
+    const newAccounts = await Promise.all(accountIds.map(fetchAccount));
+    const updated: Accounts = {};
+    for (const newAccount of newAccounts) {
+      updated[newAccount.id] = newAccount;
+    }
+    setAccounts((accounts) => ({ ...accounts, ...updated }));
     return;
-  };
-}
-
-function buildSetAccount(
-  setAccounts: Dispatch<SetStateAction<Accounts>>
-): (accountId: string, account: Account | null) => void {
-  return (accountId: string, account: Account | null): void => {
-    setAccounts((accounts) =>
-      account === null
-        ? Object.fromEntries(
-            Object.entries(accounts).filter(([id, _]) => id !== accountId)
-          )
-        : { ...accounts, [accountId]: account }
-    );
   };
 }
 
@@ -99,7 +83,6 @@ function buildHandleAccountCommand(
   context: ContextValue
 ): HandleAccountCommand {
   const { accounts, setAccounts } = context;
-  const setAccount = buildSetAccount(setAccounts);
   return (
     accountId: string | null,
     callback: HandleAccountCommandCallback<Account | null>
@@ -108,12 +91,18 @@ function buildHandleAccountCommand(
     const result = callback(oldAccount);
     if (result.isErr()) return errAsync(result.error);
     const [newAccount, event] = result.value;
-    setAccount(newAccount.id, newAccount);
+    setAccounts((accounts) => ({ ...accounts, [newAccount.id]: newAccount }));
     return storeAccountEvent(
       oldAccount === null ? null : getLastEventId(oldAccount),
       event
     ).mapErr((_) => {
-      setAccount(newAccount.id, oldAccount);
+      setAccounts((accounts) =>
+        oldAccount === null
+          ? Object.fromEntries(
+              Object.entries(accounts).filter(([id, _]) => id !== accountId)
+            )
+          : { ...accounts, [newAccount.id]: oldAccount }
+      );
       return "server error";
     });
   };
@@ -138,38 +127,32 @@ export function useAccount(
 ): [Account | null, HandleAccountCommand, () => Promise<void>] {
   const context = useContext(AccountContext);
   const { accounts } = context;
-  useEffect(() => {
-    // no await
-    fetchAccountsWithCache(context)(accountId);
-  }, deps);
-  return [
-    accounts[accountId] ?? null,
-    buildHandleAccountCommand(context),
-    () => fetchAccountsWithCache(context)(accountId),
-  ];
+  const fetchAccount = useCallback(
+    () => buildFetchAccounts(context)(accountId),
+    [accountId]
+  );
+  const handleAccountCommand = useCallback(buildHandleAccountCommand(context), [
+    context,
+  ]);
+  // no await
+  useEffect(() => void fetchAccount(), deps);
+  return [accounts[accountId] ?? null, handleAccountCommand, fetchAccount];
 }
 
 export function useAccounts(): {
   accounts: Accounts;
-  setAccount: (accountId: string, account: Account | null) => void;
   fetchAccounts: (...accountIds: string[]) => Promise<void>;
   handleAccountCommand: HandleAccountCommand;
 } {
   const context = useContext(AccountContext);
-  const { accounts, setAccounts } = context;
-  const setAccount = (accountId: string, account: Account | null) => {
-    setAccounts((accounts) =>
-      account === null
-        ? Object.fromEntries(
-            Object.entries(accounts).filter(([id, _]) => id !== accountId)
-          )
-        : { ...accounts, [accountId]: account }
-    );
-  };
+  const { accounts } = context;
+  const fetchAccounts = useCallback(buildFetchAccounts(context), [context]);
+  const handleAccountCommand = useCallback(buildHandleAccountCommand(context), [
+    context,
+  ]);
   return {
     accounts,
-    setAccount,
-    fetchAccounts: fetchAccountsWithCache(context),
-    handleAccountCommand: buildHandleAccountCommand(context),
+    fetchAccounts,
+    handleAccountCommand,
   };
 }
