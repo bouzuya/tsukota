@@ -68,23 +68,15 @@ function fetchAccountsWithCache(
 ): (...accountIds: string[]) => Promise<void> {
   const { accounts, setAccounts } = context;
   return async (...accountIds: string[]): Promise<void> => {
-    const _ = await Promise.all(
-      accountIds.map(async (accountId: string): Promise<Account> => {
-        const cachedAccount = accounts[accountId];
-        if (cachedAccount !== undefined) {
-          return cachedAccount;
-        } else {
-          const account = await fetchAccount(accountId);
-          return account;
+    const _ = await Promise.all(accountIds.map(fetchAccount)).then(
+      (newAccounts) => {
+        const updated: Accounts = {};
+        for (const newAccount of newAccounts) {
+          updated[newAccount.id] = newAccount;
         }
-      })
-    ).then((newAccounts) => {
-      const updated: Accounts = {};
-      for (const newAccount of newAccounts) {
-        updated[newAccount.id] = newAccount;
+        setAccounts((accounts) => ({ ...accounts, ...updated }));
       }
-      setAccounts((accounts) => ({ ...accounts, ...updated }));
-    });
+    );
     return;
   };
 }
@@ -143,14 +135,18 @@ export function AccountContextProvider({ children }: Props): JSX.Element {
 export function useAccount(
   accountId: string,
   deps: DependencyList
-): [Account | null, HandleAccountCommand] {
+): [Account | null, HandleAccountCommand, () => Promise<void>] {
   const context = useContext(AccountContext);
   const { accounts } = context;
   useEffect(() => {
     // no await
     fetchAccountsWithCache(context)(accountId);
   }, deps);
-  return [accounts[accountId] ?? null, buildHandleAccountCommand(context)];
+  return [
+    accounts[accountId] ?? null,
+    buildHandleAccountCommand(context),
+    () => fetchAccountsWithCache(context)(accountId),
+  ];
 }
 
 export function useAccounts(): {

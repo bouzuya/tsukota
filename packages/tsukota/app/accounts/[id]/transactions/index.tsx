@@ -31,8 +31,11 @@ export default function Transactions(): JSX.Element {
     new Date().toISOString().substring(0, 10)
   );
   const [transactionId, setTransactionId] = useState<string | null>(null);
-  const [account, handleAccountCommand] = useAccount(accountId, [pathname]);
+  const [account, handleAccountCommand, fetchAccount] = useAccount(accountId, [
+    pathname,
+  ]);
   const { t } = useTranslation();
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
@@ -68,6 +71,15 @@ export default function Transactions(): JSX.Element {
               },
             });
           }}
+          onRefresh={async () => {
+            setRefreshing(true);
+            try {
+              await fetchAccount();
+            } finally {
+              setRefreshing(false);
+            }
+          }}
+          refreshing={refreshing}
         />
       )}
       {account.categories.length === 0 ? null : (
