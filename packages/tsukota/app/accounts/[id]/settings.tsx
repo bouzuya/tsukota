@@ -23,7 +23,7 @@ export default function Settings(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
   const router = useRouter();
-  const [account, handleAccountCommand] = useAccount(accountId, [pathname]);
+  const { account, handleAccountCommand } = useAccount(accountId, [pathname]);
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const { t } = useTranslation();
 

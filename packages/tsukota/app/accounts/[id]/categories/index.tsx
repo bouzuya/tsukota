@@ -20,7 +20,7 @@ export default function Categories(): JSX.Element {
   const params = useSearchParams();
   const router = useRouter();
   const accountId = `${params.id}`;
-  const [account, handleAccountCommand] = useAccount(accountId, [pathname]);
+  const { account, handleAccountCommand } = useAccount(accountId, [pathname]);
   const [name, setName] = useState<string>("");
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [deleteDialogVisible, setDeleteDialogVisible] =

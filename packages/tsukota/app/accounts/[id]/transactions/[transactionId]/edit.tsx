@@ -19,7 +19,7 @@ export default function TransactionEdit(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
   const transactionId = `${params.transactionId}`;
-  const [account, handleAccountCommand] = useAccount(accountId, []);
+  const { account, handleAccountCommand } = useAccount(accountId, []);
   const router = useRouter();
   const {
     control,

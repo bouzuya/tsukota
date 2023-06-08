@@ -21,7 +21,7 @@ type Form = {
 export default function AccountOwnerNew(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
-  const [account, handleAccountCommand] = useAccount(accountId, []);
+  const { account, handleAccountCommand } = useAccount(accountId, []);
   const router = useRouter();
   const {
     control,

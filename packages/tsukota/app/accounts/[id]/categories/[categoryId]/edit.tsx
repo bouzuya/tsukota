@@ -23,7 +23,7 @@ export default function CategoryEdit(): JSX.Element {
   const accountId = `${params.id}`;
   const nameDefault = decodeURIComponent(`${params.name}`);
   const categoryId = `${params.categoryId}`;
-  const [account, handleAccountCommand] = useAccount(accountId, []);
+  const { account, handleAccountCommand } = useAccount(accountId, []);
   const router = useRouter();
   const {
     control,

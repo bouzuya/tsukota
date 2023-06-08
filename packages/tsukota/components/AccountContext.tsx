@@ -124,7 +124,11 @@ export function AccountContextProvider({ children }: Props): JSX.Element {
 export function useAccount(
   accountId: string,
   deps: DependencyList
-): [Account | null, HandleAccountCommand, () => Promise<void>] {
+): {
+  account: Account | null;
+  fetchAccount: () => Promise<void>;
+  handleAccountCommand: HandleAccountCommand;
+} {
   const context = useContext(AccountContext);
   const { accounts } = context;
   const fetchAccount = useCallback(
@@ -136,7 +140,11 @@ export function useAccount(
   ]);
   // no await
   useEffect(() => void fetchAccount(), deps);
-  return [accounts[accountId] ?? null, handleAccountCommand, fetchAccount];
+  return {
+    account: accounts[accountId] ?? null,
+    fetchAccount,
+    handleAccountCommand,
+  };
 }
 
 export function useAccounts(): {

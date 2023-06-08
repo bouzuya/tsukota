@@ -31,9 +31,10 @@ export default function Transactions(): JSX.Element {
     new Date().toISOString().substring(0, 10)
   );
   const [transactionId, setTransactionId] = useState<string | null>(null);
-  const [account, handleAccountCommand, fetchAccount] = useAccount(accountId, [
-    pathname,
-  ]);
+  const { account, fetchAccount, handleAccountCommand } = useAccount(
+    accountId,
+    [pathname]
+  );
   const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState<boolean>(false);
 

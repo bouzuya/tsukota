@@ -16,7 +16,7 @@ export default function AccountOwnerIndex(): JSX.Element {
   const router = useRouter();
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const [ownerId, setOwnerId] = useState<string | null>(null);
-  const [account, handleAccountCommand] = useAccount(accountId, []);
+  const { account, handleAccountCommand } = useAccount(accountId, []);
 
   useEffect(() => {
     if (account !== null) return;

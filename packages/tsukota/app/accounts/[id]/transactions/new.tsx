@@ -18,7 +18,7 @@ import { showErrorMessage } from "../../../../lib/show-error-message";
 export default function TransactionNew(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
-  const [account, handleAccountCommand] = useAccount(accountId, []);
+  const { account, handleAccountCommand } = useAccount(accountId, []);
   const router = useRouter();
   const {
     control,

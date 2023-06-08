@@ -21,7 +21,7 @@ type Form = {
 export default function CategoryNew(): JSX.Element {
   const params = useSearchParams();
   const accountId = `${params.id}`;
-  const [account, handleAccountCommand] = useAccount(accountId, []);
+  const { account, handleAccountCommand } = useAccount(accountId, []);
   const router = useRouter();
   const {
     control,
