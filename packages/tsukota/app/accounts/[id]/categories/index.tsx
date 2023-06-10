@@ -20,12 +20,16 @@ export default function Categories(): JSX.Element {
   const params = useSearchParams();
   const router = useRouter();
   const accountId = `${params.id}`;
-  const { account, handleAccountCommand } = useAccount(accountId, [pathname]);
+  const { account, fetchAccount, handleAccountCommand } = useAccount(
+    accountId,
+    [pathname]
+  );
   const [name, setName] = useState<string>("");
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [deleteDialogVisible, setDeleteDialogVisible] =
     useState<boolean>(false);
   const { t } = useTranslation();
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
@@ -52,6 +56,15 @@ export default function Categories(): JSX.Element {
               },
             });
           }}
+          onRefresh={async () => {
+            setRefreshing(true);
+            try {
+              await fetchAccount();
+            } finally {
+              setRefreshing(false);
+            }
+          }}
+          refreshing={refreshing}
         />
       )}
       <FAB
