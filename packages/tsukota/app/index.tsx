@@ -2,7 +2,7 @@ import Constants from "expo-constants";
 import { SplashScreen, useFocusEffect, useRouter } from "expo-router";
 import { err } from "neverthrow";
 import React, { useCallback, useEffect, useState } from "react";
-import { Linking, StyleSheet } from "react-native";
+import { Linking, StyleSheet, View } from "react-native";
 import * as semver from "semver";
 import {
   FAB,
@@ -10,6 +10,7 @@ import {
   AccountList,
   DeleteAccountDialog,
   Screen,
+  IconButton,
 } from "../components";
 import { useAccounts } from "../components/AccountContext";
 import { useCurrentUserId } from "../hooks/use-credential";
@@ -70,7 +71,29 @@ export default function Index(): JSX.Element {
     );
   }
   return (
-    <Screen options={{ title: t("title.account.index") ?? "" }}>
+    <Screen
+      options={{
+        title: t("title.account.index") ?? "",
+        headerLeft: () => (
+          <View
+            style={{
+              marginLeft: -16,
+              width: 48 + 16,
+              height: 48,
+              paddingRight: 16,
+            }}
+          >
+            <IconButton
+              accessibilityLabel={t("button.save") ?? ""}
+              icon="menu"
+              onPress={() => {
+                // TODO
+              }}
+            />
+          </View>
+        ),
+      }}
+    >
       {Object.keys(accounts).length === 0 ? (
         <Text>{t("account.empty")}</Text>
       ) : (
