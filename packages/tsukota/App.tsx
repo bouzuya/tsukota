@@ -7,6 +7,7 @@ import {
   NativeStackNavigationProp,
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
+import { useTranslation } from "./lib/i18n";
 
 const Stack = createNativeStackNavigator();
 
@@ -44,11 +45,20 @@ function AccountNew(): JSX.Element {
 }
 
 function App() {
+  const { t } = useTranslation();
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="AccountNew" component={AccountNew} />
+        <Stack.Screen
+          component={Home}
+          name="Home"
+          options={{ headerTitle: t("title.account.index") ?? "" }}
+        />
+        <Stack.Screen
+          component={AccountNew}
+          name="AccountNew"
+          options={{ headerTitle: t("title.account.new") ?? "" }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
