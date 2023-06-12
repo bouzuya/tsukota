@@ -1,14 +1,23 @@
-import { View, Text } from "react-native";
+import { View, useColorScheme } from "react-native";
+import { Text } from "react-native-paper";
 import {
   NavigationContainer,
-  useNavigation as RNNUseNavigation,
+  useNavigation,
+  DarkTheme as NavigationDarkTheme,
+  DefaultTheme as NavigationDefaultTheme,
 } from "@react-navigation/native";
 import {
   NativeStackNavigationProp,
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
 import { useTranslation } from "./lib/i18n";
-import { IconButton } from "react-native-paper";
+import {
+  IconButton,
+  MD3DarkTheme,
+  MD3LightTheme,
+  MD3Theme,
+  PaperProvider,
+} from "react-native-paper";
 import { useEffect, useState } from "react";
 
 const Stack = createNativeStackNavigator();
@@ -18,12 +27,12 @@ const paramList = {
 } as const;
 type ParamList = typeof paramList;
 
-const useNavigation = (): NativeStackNavigationProp<ParamList> => {
-  return RNNUseNavigation();
+const useTypedNavigation = (): NativeStackNavigationProp<ParamList> => {
+  return useNavigation();
 };
 
 function Home(): JSX.Element {
-  const navigation = useNavigation();
+  const navigation = useTypedNavigation();
 
   return (
     <View>
@@ -39,7 +48,7 @@ function Home(): JSX.Element {
 }
 
 function AccountNew(): JSX.Element {
-  const navigation = useNavigation();
+  const navigation = useTypedNavigation();
   const [count, setCount] = useState<number>(0);
   const { t } = useTranslation();
 
@@ -66,32 +75,39 @@ function AccountNew(): JSX.Element {
 }
 
 function App() {
+  const colorScheme = useColorScheme();
   const { t } = useTranslation();
+
+  const theme: MD3Theme = colorScheme === "dark" ? MD3DarkTheme : MD3LightTheme;
+  const navigationTheme =
+    colorScheme === "dark" ? NavigationDarkTheme : NavigationDefaultTheme;
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          component={Home}
-          name="Home"
-          options={{ headerTitle: t("title.account.index") ?? "" }}
-        />
-        <Stack.Screen
-          component={AccountNew}
-          name="AccountNew"
-          options={{
-            headerRight: () => (
-              // placeholder button to avoid flicker
-              <IconButton
-                accessibilityLabel={t("button.save") ?? ""}
-                icon="check"
-                style={{ marginRight: -8 }}
-              />
-            ),
-            headerTitle: t("title.account.new") ?? "",
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <PaperProvider theme={theme}>
+      <NavigationContainer theme={navigationTheme}>
+        <Stack.Navigator>
+          <Stack.Screen
+            component={Home}
+            name="Home"
+            options={{ headerTitle: t("title.account.index") ?? "" }}
+          />
+          <Stack.Screen
+            component={AccountNew}
+            name="AccountNew"
+            options={{
+              headerRight: () => (
+                // placeholder button to avoid flicker
+                <IconButton
+                  accessibilityLabel={t("button.save") ?? ""}
+                  icon="check"
+                  style={{ marginRight: -8 }}
+                />
+              ),
+              headerTitle: t("title.account.new") ?? "",
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
   );
 }
 
