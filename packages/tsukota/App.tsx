@@ -8,6 +8,8 @@ import {
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
 import { useTranslation } from "./lib/i18n";
+import { IconButton } from "react-native-paper";
+import { useEffect, useState } from "react";
 
 const Stack = createNativeStackNavigator();
 
@@ -37,9 +39,28 @@ function Home(): JSX.Element {
 }
 
 function AccountNew(): JSX.Element {
+  const navigation = useNavigation();
+  const [count, setCount] = useState<number>(0);
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <IconButton
+          accessibilityLabel={t("button.save") ?? ""}
+          icon="check"
+          onPress={() => {
+            setCount((prev) => prev + 1);
+          }}
+          style={{ marginRight: -8 }}
+        />
+      ),
+    });
+  }, [navigation]);
   return (
     <View>
       <Text>AccountNew</Text>
+      <Text>{count}</Text>
     </View>
   );
 }
@@ -57,7 +78,17 @@ function App() {
         <Stack.Screen
           component={AccountNew}
           name="AccountNew"
-          options={{ headerTitle: t("title.account.new") ?? "" }}
+          options={{
+            headerRight: () => (
+              // placeholder button to avoid flicker
+              <IconButton
+                accessibilityLabel={t("button.save") ?? ""}
+                icon="check"
+                style={{ marginRight: -8 }}
+              />
+            ),
+            headerTitle: t("title.account.new") ?? "",
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
