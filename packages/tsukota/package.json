@@ -50,7 +50,6 @@
       "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry/.*|uuid|@react-native/.*)"
     ]
   },
-  "main": "index.ts",
   "private": true,
   "scripts": {
     "build": "npx eas-cli build --local --output=dist/tsukota.aab --platform=android",
