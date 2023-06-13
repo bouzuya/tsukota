@@ -5,6 +5,8 @@ import {
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { EffectCallback } from "react";
 
+export { NativeStackNavigationOptions } from "@react-navigation/native-stack";
+
 type ParamList = {
   AccountNew: undefined;
   AccountShow: { accountId: string };
