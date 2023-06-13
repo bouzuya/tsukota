@@ -1,10 +1,18 @@
-import { useNavigation } from "@react-navigation/native";
+import {
+  useNavigation,
+  useFocusEffect as NavigationUseFocusEffect,
+} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { EffectCallback } from "react";
 
-const paramList = {
-  AccountNew: undefined,
-} as const;
-type ParamList = typeof paramList;
+type ParamList = {
+  AccountNew: undefined;
+  AccountShow: { accountId: string };
+};
+
+export function useFocusEffect(effect: EffectCallback): void {
+  return NavigationUseFocusEffect(effect);
+}
 
 export function useTypedNavigation(): NativeStackNavigationProp<ParamList> {
   return useNavigation();
