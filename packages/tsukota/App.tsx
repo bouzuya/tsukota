@@ -10,6 +10,7 @@ import {
   DefaultTheme as NavigationDefaultTheme,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { View, useColorScheme } from "react-native";
 import {
@@ -138,6 +139,7 @@ function App() {
     <PaperProvider theme={theme}>
       <AccountContextProvider>
         <CredentialProvider>
+          <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
           <NavigationContainer theme={navigationTheme}>
             <Drawer.Navigator initialRouteName="Home">
               <Drawer.Screen
