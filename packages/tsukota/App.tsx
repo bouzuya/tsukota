@@ -9,12 +9,9 @@ import {
   DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationDefaultTheme,
 } from "@react-navigation/native";
-import {
-  NativeStackNavigationProp,
-  createNativeStackNavigator,
-} from "@react-navigation/native-stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
-import { View, useColorScheme, Image, StyleProp } from "react-native";
+import { View, useColorScheme } from "react-native";
 import {
   IconButton,
   MD3DarkTheme,
@@ -24,18 +21,10 @@ import {
   Text,
 } from "react-native-paper";
 import { useTranslation } from "./lib/i18n";
+import { useTypedNavigation } from "./lib/navigation";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
-
-const paramList = {
-  AccountNew: undefined,
-} as const;
-type ParamList = typeof paramList;
-
-const useTypedNavigation = (): NativeStackNavigationProp<ParamList> => {
-  return useNavigation();
-};
 
 function AccountIndex(): JSX.Element {
   const navigation = useTypedNavigation();
