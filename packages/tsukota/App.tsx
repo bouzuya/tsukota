@@ -20,6 +20,8 @@ import {
   PaperProvider,
   Text,
 } from "react-native-paper";
+import { AccountContextProvider } from "./components";
+import { CredentialProvider } from "./hooks/use-credential";
 import { useTranslation } from "./lib/i18n";
 import { useTypedNavigation } from "./lib/navigation";
 
@@ -134,39 +136,43 @@ function App() {
     colorScheme === "dark" ? NavigationDarkTheme : NavigationDefaultTheme;
   return (
     <PaperProvider theme={theme}>
-      <NavigationContainer theme={navigationTheme}>
-        <Drawer.Navigator initialRouteName="Home">
-          <Drawer.Screen
-            component={Home}
-            name="Home"
-            options={{
-              headerShown: false,
-              drawerLabel: t("title.account.index") ?? "",
-            }}
-          />
-          <Drawer.Screen
-            component={NotificationsScreen}
-            name="Notifications"
-            options={({ navigation }): DrawerNavigationOptions => ({
-              headerLeft: () => (
-                <View
-                  style={{
-                    height: 48,
-                  }}
-                >
-                  <IconButton
-                    accessibilityLabel={t("button.menu") ?? ""}
-                    icon="menu"
-                    onPress={() => {
-                      navigation.openDrawer();
-                    }}
-                  />
-                </View>
-              ),
-            })}
-          />
-        </Drawer.Navigator>
-      </NavigationContainer>
+      <AccountContextProvider>
+        <CredentialProvider>
+          <NavigationContainer theme={navigationTheme}>
+            <Drawer.Navigator initialRouteName="Home">
+              <Drawer.Screen
+                component={Home}
+                name="Home"
+                options={{
+                  headerShown: false,
+                  drawerLabel: t("title.account.index") ?? "",
+                }}
+              />
+              <Drawer.Screen
+                component={NotificationsScreen}
+                name="Notifications"
+                options={({ navigation }): DrawerNavigationOptions => ({
+                  headerLeft: () => (
+                    <View
+                      style={{
+                        height: 48,
+                      }}
+                    >
+                      <IconButton
+                        accessibilityLabel={t("button.menu") ?? ""}
+                        icon="menu"
+                        onPress={() => {
+                          navigation.openDrawer();
+                        }}
+                      />
+                    </View>
+                  ),
+                })}
+              />
+            </Drawer.Navigator>
+          </NavigationContainer>
+        </CredentialProvider>
+      </AccountContextProvider>
     </PaperProvider>
   );
 }
