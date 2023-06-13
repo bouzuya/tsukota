@@ -1,22 +1,30 @@
-import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
-import { Stack } from "expo-router";
-import React from "react";
+import React, { ReactNode, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "react-native-paper";
+import {
+  NativeStackNavigationOptions,
+  useTypedNavigation,
+} from "../lib/navigation";
 
 export function Screen({ children, options }: Props): JSX.Element {
-  // SafeAreaProvider, StatusBar は expo-router の ExpoRoot に含まれるため不要
+  const navigation = useTypedNavigation();
+
+  useEffect(() => {
+    if (options) {
+      navigation.setOptions(options);
+    }
+  }, [navigation]);
+
   const theme = useTheme();
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
-      {options ? <Stack.Screen options={options} /> : null}
       {children}
     </View>
   );
 }
 
 type Props = {
-  children: React.ReactNode;
+  children: ReactNode;
   options?: NativeStackNavigationOptions;
 };
 
