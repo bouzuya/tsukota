@@ -13,6 +13,7 @@ export const resources = {
       },
       button: {
         cancel: "Cancel",
+        menu: "Menu",
         ok: "OK",
         save: "Save",
       },
@@ -98,6 +99,7 @@ export const resources = {
       },
       button: {
         cancel: "キャンセル",
+        menu: "メニュー",
         ok: "OK",
         save: "保存",
       },

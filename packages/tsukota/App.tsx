@@ -1,5 +1,8 @@
-import { View, useColorScheme } from "react-native";
-import { Text } from "react-native-paper";
+import {
+  DrawerNavigationOptions,
+  DrawerNavigationProp,
+  createDrawerNavigator,
+} from "@react-navigation/drawer";
 import {
   NavigationContainer,
   useNavigation,
@@ -10,16 +13,19 @@ import {
   NativeStackNavigationProp,
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
-import { useTranslation } from "./lib/i18n";
+import { useEffect, useState } from "react";
+import { View, useColorScheme, Image, StyleProp } from "react-native";
 import {
   IconButton,
   MD3DarkTheme,
   MD3LightTheme,
   MD3Theme,
   PaperProvider,
+  Text,
 } from "react-native-paper";
-import { useEffect, useState } from "react";
+import { useTranslation } from "./lib/i18n";
 
+const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
 const paramList = {
@@ -31,7 +37,7 @@ const useTypedNavigation = (): NativeStackNavigationProp<ParamList> => {
   return useNavigation();
 };
 
-function Home(): JSX.Element {
+function AccountIndex(): JSX.Element {
   const navigation = useTypedNavigation();
 
   return (
@@ -41,7 +47,7 @@ function Home(): JSX.Element {
           navigation.push("AccountNew");
         }}
       >
-        Home
+        AccountIndex
       </Text>
     </View>
   );
@@ -74,38 +80,103 @@ function AccountNew(): JSX.Element {
   );
 }
 
-function App() {
-  const colorScheme = useColorScheme();
+function Home(): JSX.Element {
+  const navigation = useNavigation<DrawerNavigationProp<{}>>();
   const { t } = useTranslation();
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        component={AccountIndex}
+        name="AccountIndex"
+        options={{
+          headerLeft: () => (
+            <View
+              style={{
+                marginLeft: -16,
+                width: 48 + 16,
+                height: 48,
+                paddingRight: 16,
+              }}
+            >
+              <IconButton
+                accessibilityLabel={t("button.menu") ?? ""}
+                icon="menu"
+                onPress={() => {
+                  navigation.openDrawer();
+                }}
+              />
+            </View>
+          ),
+          headerTitle: t("title.account.index") ?? "",
+        }}
+      />
+      <Stack.Screen
+        component={AccountNew}
+        name="AccountNew"
+        options={{
+          headerRight: () => (
+            // placeholder button to avoid flicker
+            <IconButton
+              accessibilityLabel={t("button.save") ?? ""}
+              icon="check"
+              style={{ marginRight: -8 }}
+            />
+          ),
+          headerTitle: t("title.account.new") ?? "",
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
 
+function NotificationsScreen(): JSX.Element {
+  return (
+    <View>
+      <Text>Notifications</Text>
+    </View>
+  );
+}
+
+function App() {
+  const { t } = useTranslation();
+  const colorScheme = useColorScheme();
   const theme: MD3Theme = colorScheme === "dark" ? MD3DarkTheme : MD3LightTheme;
   const navigationTheme =
     colorScheme === "dark" ? NavigationDarkTheme : NavigationDefaultTheme;
   return (
     <PaperProvider theme={theme}>
       <NavigationContainer theme={navigationTheme}>
-        <Stack.Navigator>
-          <Stack.Screen
+        <Drawer.Navigator initialRouteName="Home">
+          <Drawer.Screen
             component={Home}
             name="Home"
-            options={{ headerTitle: t("title.account.index") ?? "" }}
-          />
-          <Stack.Screen
-            component={AccountNew}
-            name="AccountNew"
             options={{
-              headerRight: () => (
-                // placeholder button to avoid flicker
-                <IconButton
-                  accessibilityLabel={t("button.save") ?? ""}
-                  icon="check"
-                  style={{ marginRight: -8 }}
-                />
-              ),
-              headerTitle: t("title.account.new") ?? "",
+              headerShown: false,
+              drawerLabel: t("title.account.index") ?? "",
             }}
           />
-        </Stack.Navigator>
+          <Drawer.Screen
+            component={NotificationsScreen}
+            name="Notifications"
+            options={({ navigation }): DrawerNavigationOptions => ({
+              headerLeft: () => (
+                <View
+                  style={{
+                    height: 48,
+                  }}
+                >
+                  <IconButton
+                    accessibilityLabel={t("button.menu") ?? ""}
+                    icon="menu"
+                    onPress={() => {
+                      navigation.openDrawer();
+                    }}
+                  />
+                </View>
+              ),
+            })}
+          />
+        </Drawer.Navigator>
       </NavigationContainer>
     </PaperProvider>
   );
