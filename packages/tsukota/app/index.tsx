@@ -1,8 +1,7 @@
 import Constants from "expo-constants";
-import { SplashScreen, useFocusEffect, useRouter } from "expo-router";
 import { err } from "neverthrow";
 import React, { useCallback, useEffect, useState } from "react";
-import { Linking, StyleSheet, View } from "react-native";
+import { Linking, StyleSheet } from "react-native";
 import * as semver from "semver";
 import {
   FAB,
@@ -10,13 +9,13 @@ import {
   AccountList,
   DeleteAccountDialog,
   Screen,
-  IconButton,
 } from "../components";
 import { useAccounts } from "../components/AccountContext";
 import { useCurrentUserId } from "../hooks/use-credential";
 import { deleteAccount } from "../lib/account";
 import { getMinAppVersion, loadAccountIds } from "../lib/api";
 import { useTranslation } from "../lib/i18n";
+import { useFocusEffect, useTypedNavigation } from "../lib/navigation";
 import { showErrorMessage } from "../lib/show-error-message";
 
 const useMinAppVersion = (): string | null => {
@@ -30,9 +29,9 @@ const useMinAppVersion = (): string | null => {
   return minAppVersion;
 };
 
-export default function Index(): JSX.Element {
+export function AccountIndex(): JSX.Element {
   const { t } = useTranslation();
-  const router = useRouter();
+  const navigation = useTypedNavigation();
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const [accountName, setAccountName] = useState<string | null>(null);
   const [accountId, setAccountId] = useState<string | null>(null);
@@ -49,8 +48,10 @@ export default function Index(): JSX.Element {
 
   const minAppVersion = useMinAppVersion();
 
-  if (currentUserId === null || minAppVersion === null) return <SplashScreen />;
+  // FIXME: Show ActivityIndicator
+  if (currentUserId === null || minAppVersion === null) return <></>;
 
+  // FIXME: Move to root
   const version = Constants.expoConfig?.version ?? "1.0.0";
   if (semver.lt(version, minAppVersion)) {
     const packageName = Constants.expoConfig?.android?.package ?? "";
@@ -71,29 +72,7 @@ export default function Index(): JSX.Element {
     );
   }
   return (
-    <Screen
-      options={{
-        title: t("title.account.index") ?? "",
-        headerLeft: () => (
-          <View
-            style={{
-              marginLeft: -16,
-              width: 48 + 16,
-              height: 48,
-              paddingRight: 16,
-            }}
-          >
-            <IconButton
-              accessibilityLabel={t("button.save") ?? ""}
-              icon="menu"
-              onPress={() => {
-                // TODO
-              }}
-            />
-          </View>
-        ),
-      }}
-    >
+    <Screen>
       {Object.keys(accounts).length === 0 ? (
         <Text>{t("account.empty")}</Text>
       ) : (
@@ -110,10 +89,7 @@ export default function Index(): JSX.Element {
             setDeleteModalVisible(true);
           }}
           onPressAccount={(account) =>
-            router.push({
-              pathname: "/accounts/[id]",
-              params: { id: account.id },
-            })
+            void navigation.push("AccountShow", { accountId: account.id })
           }
         />
       )}
@@ -121,12 +97,7 @@ export default function Index(): JSX.Element {
         accessibilityLabel={t("account.new") ?? ""}
         icon="plus"
         style={styles.fab}
-        onPress={() => {
-          router.push({
-            pathname: "/accounts/new",
-            params: {},
-          });
-        }}
+        onPress={() => void navigation.push("AccountNew")}
       />
       <DeleteAccountDialog
         id={accountId ?? ""}

@@ -21,6 +21,7 @@ import {
   PaperProvider,
   Text,
 } from "react-native-paper";
+import { AccountIndex } from "./app/index";
 import { AccountContextProvider } from "./components";
 import { CredentialProvider } from "./hooks/use-credential";
 import { useTranslation } from "./lib/i18n";
@@ -28,22 +29,6 @@ import { useTypedNavigation } from "./lib/navigation";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
-
-function AccountIndex(): JSX.Element {
-  const navigation = useTypedNavigation();
-
-  return (
-    <View>
-      <Text
-        onPress={() => {
-          navigation.push("AccountNew");
-        }}
-      >
-        AccountIndex
-      </Text>
-    </View>
-  );
-}
 
 function AccountNew(): JSX.Element {
   const navigation = useTypedNavigation();
@@ -132,15 +117,15 @@ function NotificationsScreen(): JSX.Element {
 function App() {
   const { t } = useTranslation();
   const colorScheme = useColorScheme();
-  const theme: MD3Theme = colorScheme === "dark" ? MD3DarkTheme : MD3LightTheme;
-  const navigationTheme =
-    colorScheme === "dark" ? NavigationDarkTheme : NavigationDefaultTheme;
+  const isDark = colorScheme === "dark";
   return (
-    <PaperProvider theme={theme}>
+    <PaperProvider theme={isDark ? MD3DarkTheme : MD3LightTheme}>
       <AccountContextProvider>
         <CredentialProvider>
-          <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-          <NavigationContainer theme={navigationTheme}>
+          <StatusBar style={isDark ? "light" : "dark"} />
+          <NavigationContainer
+            theme={isDark ? NavigationDarkTheme : NavigationDefaultTheme}
+          >
             <Drawer.Navigator initialRouteName="Home">
               <Drawer.Screen
                 component={Home}
