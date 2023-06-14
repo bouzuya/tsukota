@@ -11,51 +11,22 @@ import {
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
 import { View, useColorScheme } from "react-native";
 import {
   IconButton,
   MD3DarkTheme,
   MD3LightTheme,
-  MD3Theme,
   PaperProvider,
   Text,
 } from "react-native-paper";
 import { AccountIndex } from "./app/index";
+import { AccountNew } from "./app/accounts/new";
 import { AccountContextProvider } from "./components";
 import { CredentialProvider } from "./hooks/use-credential";
 import { useTranslation } from "./lib/i18n";
-import { useTypedNavigation } from "./lib/navigation";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
-
-function AccountNew(): JSX.Element {
-  const navigation = useTypedNavigation();
-  const [count, setCount] = useState<number>(0);
-  const { t } = useTranslation();
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <IconButton
-          accessibilityLabel={t("button.save") ?? ""}
-          icon="check"
-          onPress={() => {
-            setCount((prev) => prev + 1);
-          }}
-          style={{ marginRight: -8 }}
-        />
-      ),
-    });
-  }, [navigation]);
-  return (
-    <View>
-      <Text>AccountNew</Text>
-      <Text>{count}</Text>
-    </View>
-  );
-}
 
 function Home(): JSX.Element {
   const navigation = useNavigation<DrawerNavigationProp<{}>>();
@@ -90,17 +61,7 @@ function Home(): JSX.Element {
       <Stack.Screen
         component={AccountNew}
         name="AccountNew"
-        options={{
-          headerRight: () => (
-            // placeholder button to avoid flicker
-            <IconButton
-              accessibilityLabel={t("button.save") ?? ""}
-              icon="check"
-              style={{ marginRight: -8 }}
-            />
-          ),
-          headerTitle: t("title.account.new") ?? "",
-        }}
+        options={{ headerTitle: t("title.account.new") ?? "" }}
       />
     </Stack.Navigator>
   );
