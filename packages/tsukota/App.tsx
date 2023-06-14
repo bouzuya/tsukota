@@ -22,6 +22,7 @@ import {
 import { AccountIndex } from "./app/index";
 import { AccountNew } from "./app/accounts/new";
 import { AccountShow } from "./app/accounts/[id]";
+import { CategoryEdit } from "./app/accounts/[id]/categories/[categoryId]/edit";
 import { CategoryIndex } from "./app/accounts/[id]/categories";
 import { CategoryNew } from "./app/accounts/[id]/categories/new";
 import { Settings } from "./app/accounts/[id]/settings";
@@ -72,6 +73,11 @@ function Home(): JSX.Element {
         component={AccountShow}
         name="AccountShow"
         options={{ headerTitle: t("title.account.show") ?? "" }}
+      />
+      <Stack.Screen
+        component={CategoryEdit}
+        name="CategoryEdit"
+        options={{ headerTitle: t("title.category.edit") ?? "" }}
       />
       <Stack.Screen
         component={CategoryIndex}
