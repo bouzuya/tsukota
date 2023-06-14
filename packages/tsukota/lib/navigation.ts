@@ -1,15 +1,32 @@
 import {
   useNavigation,
   useFocusEffect as NavigationUseFocusEffect,
+  useRoute,
+  RouteProp,
 } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { EffectCallback } from "react";
 
 export { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 
-type ParamList = {
+export type ParamList = {
+  AccountEdit: { accountId: string } & { name: string };
+  AccountIndex: undefined;
   AccountNew: undefined;
   AccountShow: { accountId: string };
+  CategoryEdit: { accountId: string; categoryId: string } & { name: string };
+  CategoryIndex: { accountId: string };
+  CategoryNew: { accountId: string };
+  OwnerIndex: { accountId: string };
+  Settings: { accountId: string };
+  TransactionEdit: { accountId: string; transactionId: string } & {
+    categoryId: string;
+    date: string;
+    amount: string;
+    comment: string;
+  };
+  TransactionIndex: { accountId: string };
+  TransactionNew: { accountId: string };
 };
 
 export function useFocusEffect(effect: EffectCallback): void {

@@ -1,4 +1,3 @@
-import { usePathname, useRouter, useSearchParams } from "expo-router";
 import { err } from "neverthrow";
 import { useState } from "react";
 import { StyleSheet } from "react-native";
@@ -17,13 +16,14 @@ import {
   Transaction,
 } from "../../../../lib/account";
 import { useTranslation } from "../../../../lib/i18n";
+import { useTypedNavigation, useTypedRoute } from "../../../../lib/navigation";
 import { showErrorMessage } from "../../../../lib/show-error-message";
 
-export default function Transactions(): JSX.Element {
-  const pathname = usePathname();
-  const router = useRouter();
-  const params = useSearchParams();
-  const accountId = `${params.id}`;
+export function TransactionIndex(): JSX.Element {
+  const navigation = useTypedNavigation();
+  const route = useTypedRoute<"TransactionIndex">();
+  const pathname = route.path;
+  const { accountId } = route.params;
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const [amount, setAmount] = useState<string>("");
   const [comment, setComment] = useState<string>("");
@@ -60,16 +60,13 @@ export default function Transactions(): JSX.Element {
             setDeleteModalVisible(true);
           }}
           onPressTransaction={(transaction: Transaction) => {
-            router.push({
-              pathname: "/accounts/[id]/transactions/[transactionId]/edit",
-              params: {
-                id: accountId,
-                categoryId: transaction.categoryId,
-                transactionId: transaction.id,
-                date: transaction.date,
-                amount: transaction.amount,
-                comment: encodeURIComponent(transaction.comment),
-              },
+            navigation.push("TransactionEdit", {
+              accountId,
+              categoryId: transaction.categoryId,
+              transactionId: transaction.id,
+              date: transaction.date,
+              amount: transaction.amount,
+              comment: encodeURIComponent(transaction.comment),
             });
           }}
           onRefresh={async () => {
@@ -89,11 +86,8 @@ export default function Transactions(): JSX.Element {
           icon="plus"
           style={styles.fab}
           onPress={() => {
-            router.push({
-              pathname: "/accounts/[id]/transactions/new",
-              params: {
-                id: accountId,
-              },
+            navigation.push("TransactionNew", {
+              accountId,
             });
           }}
         />

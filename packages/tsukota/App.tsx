@@ -21,6 +21,10 @@ import {
 } from "react-native-paper";
 import { AccountIndex } from "./app/index";
 import { AccountNew } from "./app/accounts/new";
+import { AccountShow } from "./app/accounts/[id]";
+import { CategoryIndex } from "./app/accounts/[id]/categories";
+import { Settings } from "./app/accounts/[id]/settings";
+import { TransactionIndex } from "./app/accounts/[id]/transactions";
 import { AccountContextProvider } from "./components";
 import { CredentialProvider } from "./hooks/use-credential";
 import { useTranslation } from "./lib/i18n";
@@ -62,6 +66,26 @@ function Home(): JSX.Element {
         component={AccountNew}
         name="AccountNew"
         options={{ headerTitle: t("title.account.new") ?? "" }}
+      />
+      <Stack.Screen
+        component={AccountShow}
+        name="AccountShow"
+        options={{ headerTitle: t("title.account.show") ?? "" }}
+      />
+      <Stack.Screen
+        component={CategoryIndex}
+        name="CategoryIndex"
+        options={{ headerTitle: t("title.category.index") ?? "" }}
+      />
+      <Stack.Screen
+        component={Settings}
+        name="Settings"
+        options={{ headerTitle: t("title.setting.index") ?? "" }}
+      />
+      <Stack.Screen
+        component={TransactionIndex}
+        name="TransactionIndex"
+        options={{ headerTitle: t("title.transaction.index") ?? "" }}
       />
     </Stack.Navigator>
   );

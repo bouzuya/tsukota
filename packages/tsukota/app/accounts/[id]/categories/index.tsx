@@ -1,4 +1,3 @@
-import { usePathname, useRouter, useSearchParams } from "expo-router";
 import { err } from "neverthrow";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -13,13 +12,14 @@ import {
   useAccount,
 } from "../../../../components";
 import { deleteCategory, listCategory } from "../../../../lib/account";
+import { useTypedNavigation, useTypedRoute } from "../../../../lib/navigation";
 import { showErrorMessage } from "../../../../lib/show-error-message";
 
-export default function Categories(): JSX.Element {
-  const pathname = usePathname();
-  const params = useSearchParams();
-  const router = useRouter();
-  const accountId = `${params.id}`;
+export function CategoryIndex(): JSX.Element {
+  const navigation = useTypedNavigation();
+  const route = useTypedRoute<"CategoryIndex">();
+  const pathname = route.path;
+  const { accountId } = route.params;
   const { account, fetchAccount, handleAccountCommand } = useAccount(
     accountId,
     [pathname]
@@ -47,13 +47,10 @@ export default function Categories(): JSX.Element {
             setDeleteDialogVisible(true);
           }}
           onPressCategory={(category) => {
-            router.push({
-              pathname: "/accounts/[id]/categories/[categoryId]/edit",
-              params: {
-                id: accountId,
-                categoryId: category.id,
-                name: encodeURIComponent(category.name),
-              },
+            navigation.push("CategoryEdit", {
+              accountId,
+              categoryId: category.id,
+              name: encodeURIComponent(category.name),
             });
           }}
           onRefresh={async () => {
@@ -72,11 +69,8 @@ export default function Categories(): JSX.Element {
         icon="plus"
         style={styles.fab}
         onPress={() => {
-          router.push({
-            pathname: "/accounts/[id]/categories/new",
-            params: {
-              id: accountId,
-            },
+          navigation.push("CategoryNew", {
+            accountId,
           });
         }}
       />

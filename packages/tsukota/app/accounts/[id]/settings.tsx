@@ -1,4 +1,3 @@
-import { usePathname, useRouter, useSearchParams } from "expo-router";
 import { err } from "neverthrow";
 import { useState } from "react";
 import {
@@ -16,13 +15,14 @@ import {
   listCategory,
 } from "../../../lib/account";
 import { useTranslation } from "../../../lib/i18n";
+import { useTypedNavigation, useTypedRoute } from "../../../lib/navigation";
 import { showErrorMessage } from "../../../lib/show-error-message";
 
-export default function Settings(): JSX.Element {
-  const pathname = usePathname();
-  const params = useSearchParams();
-  const accountId = `${params.id}`;
-  const router = useRouter();
+export function Settings(): JSX.Element {
+  const navigation = useTypedNavigation();
+  const route = useTypedRoute<"Settings">();
+  const pathname = route.path;
+  const { accountId } = route.params;
   const { account, handleAccountCommand } = useAccount(accountId, [pathname]);
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const { t } = useTranslation();
@@ -48,12 +48,9 @@ export default function Settings(): JSX.Element {
           title={t("account.name")}
           description={account.name}
           onPress={() => {
-            router.push({
-              pathname: "/accounts/[id]/edit",
-              params: {
-                id: accountId,
-                name: encodeURIComponent(account.name),
-              },
+            navigation.push("AccountEdit", {
+              accountId,
+              name: encodeURIComponent(account.name),
             });
           }}
           style={{ width: "100%" }}
@@ -63,11 +60,8 @@ export default function Settings(): JSX.Element {
           title={t("account.owners")}
           description={account.owners.join("\n")}
           onPress={() => {
-            router.push({
-              pathname: "/accounts/[id]/owners",
-              params: {
-                id: accountId,
-              },
+            navigation.push("OwnerIndex", {
+              accountId,
             });
           }}
           style={{ width: "100%" }}
@@ -114,7 +108,7 @@ export default function Settings(): JSX.Element {
               oldAccount === null
                 ? err("account not found")
                 : deleteAccount(oldAccount)
-            ).match(() => router.back(), showErrorMessage);
+            ).match(() => navigation.goBack(), showErrorMessage);
           }}
           visible={deleteModalVisible}
         />
