@@ -38,13 +38,13 @@ export function CategoryNew(): JSX.Element {
     navigation.setOptions({
       headerRight: () =>
         isSubmitting ? (
-          <ActivityIndicator size={24} style={{ marginHorizontal: 16 }} />
+          <ActivityIndicator />
         ) : (
           <IconButton
             accessibilityLabel={t("button.save") ?? ""}
             icon="check"
             onPress={handleSubmit(onClickOk)}
-            size={28}
+            style={{ marginRight: -8 }}
           />
         ),
     });

@@ -38,7 +38,7 @@ export function AccountNew(): JSX.Element {
     navigation.setOptions({
       headerRight: () =>
         isSubmitting ? (
-          <ActivityIndicator size={24} style={{ marginHorizontal: 0 }} />
+          <ActivityIndicator />
         ) : (
           <IconButton
             accessibilityLabel={t("button.save") ?? ""}
