@@ -23,6 +23,7 @@ import { AccountIndex } from "./app/index";
 import { AccountNew } from "./app/accounts/new";
 import { AccountShow } from "./app/accounts/[id]";
 import { CategoryIndex } from "./app/accounts/[id]/categories";
+import { CategoryNew } from "./app/accounts/[id]/categories/new";
 import { Settings } from "./app/accounts/[id]/settings";
 import { TransactionIndex } from "./app/accounts/[id]/transactions";
 import { AccountContextProvider } from "./components";
@@ -76,6 +77,11 @@ function Home(): JSX.Element {
         component={CategoryIndex}
         name="CategoryIndex"
         options={{ headerTitle: t("title.category.index") ?? "" }}
+      />
+      <Stack.Screen
+        component={CategoryNew}
+        name="CategoryNew"
+        options={{ headerTitle: t("title.category.new") ?? "" }}
       />
       <Stack.Screen
         component={Settings}
