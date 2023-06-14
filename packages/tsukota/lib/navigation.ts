@@ -19,3 +19,10 @@ export function useFocusEffect(effect: EffectCallback): void {
 export function useTypedNavigation(): NativeStackNavigationProp<ParamList> {
   return useNavigation();
 }
+
+export function useTypedRoute<K extends keyof ParamList>(): RouteProp<
+  ParamList,
+  K
+> {
+  return useRoute<RouteProp<ParamList, K>>();
+}
