@@ -1,31 +1,31 @@
-import { useRouter, useSearchParams } from "expo-router";
 import { err } from "neverthrow";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
+  ActivityIndicator,
   IconButton,
   Screen,
   TextInput,
   View,
   useAccount,
-  ActivityIndicator,
 } from "../../../../components";
-import { addOwner, updateAccount } from "../../../../lib/account";
+import { addOwner } from "../../../../lib/account";
 import { useTranslation } from "../../../../lib/i18n";
+import { useTypedNavigation, useTypedRoute } from "../../../../lib/navigation";
 import { showErrorMessage } from "../../../../lib/show-error-message";
 
 type Form = {
   uid: string;
 };
 
-export default function AccountOwnerNew(): JSX.Element {
-  const params = useSearchParams();
-  const accountId = `${params.id}`;
+export function OwnerNew(): JSX.Element {
+  const navigation = useTypedNavigation();
+  const route = useTypedRoute<"OwnerNew">();
+  const { accountId } = route.params;
   const { account, handleAccountCommand } = useAccount(accountId, []);
-  const router = useRouter();
   const {
     control,
-    formState: { isSubmitSuccessful, isSubmitting },
+    formState: { isSubmitting },
     handleSubmit,
   } = useForm<Form>({
     defaultValues: {
@@ -34,33 +34,33 @@ export default function AccountOwnerNew(): JSX.Element {
   });
   const { t } = useTranslation();
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () =>
+        isSubmitting ? (
+          <ActivityIndicator />
+        ) : (
+          <IconButton
+            accessibilityLabel={t("button.save") ?? ""}
+            icon="check"
+            onPress={handleSubmit(onClickOk)}
+            style={{ marginRight: -8 }}
+          />
+        ),
+    });
+  }, [isSubmitting, navigation]);
+
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
 
   const onClickOk = async ({ uid }: Form): Promise<void> => {
     await handleAccountCommand(account.id, (oldAccount) =>
       oldAccount === null ? err("account not found") : addOwner(oldAccount, uid)
-    ).match(() => router.back(), showErrorMessage);
+    ).match(() => navigation.goBack(), showErrorMessage);
   };
 
   return (
-    <Screen
-      options={{
-        title: t("title.owner.new") ?? "",
-        headerRight: () =>
-          isSubmitting ? (
-            <ActivityIndicator size={24} style={{ marginHorizontal: 16 }} />
-          ) : (
-            <IconButton
-              accessibilityLabel={t("button.save") ?? ""}
-              disabled={isSubmitSuccessful}
-              icon="check"
-              onPress={handleSubmit(onClickOk)}
-              size={28}
-            />
-          ),
-      }}
-    >
+    <Screen>
       <View style={{ flex: 1, width: "100%" }}>
         <TextInput
           control={control}

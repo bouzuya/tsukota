@@ -28,6 +28,7 @@ import { CategoryIndex } from "./app/accounts/[id]/categories";
 import { CategoryNew } from "./app/accounts/[id]/categories/new";
 import { CategorySelect } from "./app/accounts/[id]/categories/select";
 import { OwnerIndex } from "./app/accounts/[id]/owners/index";
+import { OwnerNew } from "./app/accounts/[id]/owners/new";
 import { Settings } from "./app/accounts/[id]/settings";
 import { TransactionEdit } from "./app/accounts/[id]/transactions/[transactionId]/edit";
 import { TransactionIndex } from "./app/accounts/[id]/transactions/index";
@@ -110,6 +111,11 @@ function Home(): JSX.Element {
         component={OwnerIndex}
         name="OwnerIndex"
         options={{ headerTitle: t("title.owner.index") ?? "" }}
+      />
+      <Stack.Screen
+        component={OwnerNew}
+        name="OwnerNew"
+        options={{ headerTitle: t("title.owner.new") ?? "" }}
       />
       <Stack.Screen
         component={Settings}
