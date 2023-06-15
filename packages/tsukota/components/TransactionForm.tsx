@@ -1,12 +1,10 @@
+import { ErrorMessage } from "@hookform/error-message";
+import { useEffect } from "react";
 import { View } from "react-native";
 import {
   HelperText,
   TextInput as ReactNativePaperTextInput,
 } from "react-native-paper";
-import { Category } from "../lib/account";
-import { usePathname, useRouter, useSearchParams } from "expo-router";
-import { useEffect } from "react";
-import { TextInput } from "./TextInput";
 import {
   Control,
   useController,
@@ -14,8 +12,11 @@ import {
   UseFormSetValue,
   useFormState,
 } from "react-hook-form";
-import { ErrorMessage } from "@hookform/error-message";
-import { useTranslation } from "react-i18next";
+import { Category } from "../lib/account";
+import { useTranslation } from "../lib/i18n";
+import { useTypedNavigation } from "../lib/navigation";
+import { useCategorySelect } from "./CategorySelectContext";
+import { TextInput } from "./TextInput";
 
 export type TransactionFormValues = {
   amount: string;
@@ -25,6 +26,7 @@ export type TransactionFormValues = {
 };
 
 type Props = {
+  accountId: string;
   control: Control<TransactionFormValues>;
   categories: Category[];
   getValues: UseFormGetValues<TransactionFormValues>;
@@ -32,16 +34,16 @@ type Props = {
 };
 
 export function TransactionForm({
+  accountId,
   control,
   categories,
   getValues,
   setValue,
 }: Props): JSX.Element {
-  const pathname = usePathname();
-  const params = useSearchParams();
-  const accountId = `${params.id}`;
-  const router = useRouter();
+  const navigation = useTypedNavigation();
   const { t } = useTranslation();
+  const { selectedCategory, setSelectedCategory } =
+    useCategorySelect(accountId);
 
   useController({
     control,
@@ -57,12 +59,13 @@ export function TransactionForm({
   const { errors } = useFormState({ control });
 
   useEffect(() => {
-    if (params.selectedCategoryId) {
-      setValue("categoryId", `${params.selectedCategoryId}`, {
+    if (selectedCategory !== null) {
+      setValue("categoryId", selectedCategory.id, {
         shouldValidate: true,
       });
+      setSelectedCategory(null);
     }
-  }, [pathname]);
+  }, [selectedCategory]);
 
   const categoryId = getValues("categoryId");
   const categoryName =
@@ -111,11 +114,8 @@ export function TransactionForm({
             <ReactNativePaperTextInput.Icon
               icon="shape"
               onPress={() => {
-                router.push({
-                  pathname: "/accounts/[id]/categories/select",
-                  params: {
-                    id: accountId,
-                  },
+                navigation.push("CategorySelect", {
+                  accountId,
                 });
               }}
               size={28}

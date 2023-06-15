@@ -11,6 +11,10 @@ import {
 import { AccountContextProvider, useAccount } from "./AccountContext";
 import { AccountList, Item as AccountListItem } from "./AccountList";
 import { CategoryList } from "./CategoryList";
+import {
+  CategorySelectProvider,
+  useCategorySelect,
+} from "./CategorySelectContext";
 import { DeleteAccountDialog } from "./DeleteAccountDialog";
 import { DeleteCategoryDialog } from "./DeleteCategoryDialog";
 import { DeleteOwnerDialog } from "./DeleteOwnerDialog";
@@ -27,6 +31,7 @@ export {
   ActivityIndicator,
   BottomNavigation,
   CategoryList,
+  CategorySelectProvider,
   DeleteAccountDialog,
   DeleteCategoryDialog,
   DeleteOwnerDialog,
@@ -43,4 +48,5 @@ export {
   TransactionList,
   View,
   useAccount,
+  useCategorySelect,
 };

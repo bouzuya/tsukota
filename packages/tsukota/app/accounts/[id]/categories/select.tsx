@@ -1,37 +1,30 @@
 // 分類の選択画面
 // 画面というよりは選択用ダイアログの代用
-import { useRouter, useSearchParams } from "expo-router";
-import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   CategoryList,
   Screen,
-  useAccount,
+  useCategorySelect,
 } from "../../../../components";
-import { listCategory } from "../../../../lib/account";
+import { useTypedNavigation, useTypedRoute } from "../../../../lib/navigation";
 
-export default function CategoriesSelect(): JSX.Element {
-  const params = useSearchParams();
-  const router = useRouter();
-  const accountId = `${params.id}`;
-  const { account } = useAccount(accountId, []);
-  const { t } = useTranslation();
+export function CategorySelect(): JSX.Element {
+  const navigation = useTypedNavigation();
+  const route = useTypedRoute<"CategorySelect">();
+  const { accountId } = route.params;
+  const { categoriesWithDeleted, setSelectedCategory } =
+    useCategorySelect(accountId);
 
-  if (account === null)
-    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
-
-  const categoriesWithDeleted = listCategory(account, true);
-  return (
-    <Screen options={{ title: t("title.category.select") ?? "" }}>
+  return categoriesWithDeleted === null ? (
+    <ActivityIndicator size="large" style={{ flex: 1 }} />
+  ) : (
+    <Screen>
       <CategoryList
         data={categoriesWithDeleted}
         onLongPressCategory={(_category) => {}}
         onPressCategory={(category) => {
-          router.back();
-          router.setParams({
-            selectedCategoryId: category.id,
-            selectedCategoryName: category.name,
-          });
+          setSelectedCategory(category);
+          navigation.goBack();
         }}
       />
     </Screen>

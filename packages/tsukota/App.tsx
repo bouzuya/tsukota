@@ -25,9 +25,11 @@ import { AccountShow } from "./app/accounts/[id]";
 import { CategoryEdit } from "./app/accounts/[id]/categories/[categoryId]/edit";
 import { CategoryIndex } from "./app/accounts/[id]/categories";
 import { CategoryNew } from "./app/accounts/[id]/categories/new";
+import { CategorySelect } from "./app/accounts/[id]/categories/select";
 import { Settings } from "./app/accounts/[id]/settings";
-import { TransactionIndex } from "./app/accounts/[id]/transactions";
-import { AccountContextProvider } from "./components";
+import { TransactionIndex } from "./app/accounts/[id]/transactions/index";
+import { TransactionNew } from "./app/accounts/[id]/transactions/new";
+import { AccountContextProvider, CategorySelectProvider } from "./components";
 import { CredentialProvider } from "./hooks/use-credential";
 import { useTranslation } from "./lib/i18n";
 
@@ -90,6 +92,11 @@ function Home(): JSX.Element {
         options={{ headerTitle: t("title.category.new") ?? "" }}
       />
       <Stack.Screen
+        component={CategorySelect}
+        name="CategorySelect"
+        options={{ headerTitle: t("title.category.select") ?? "" }}
+      />
+      <Stack.Screen
         component={Settings}
         name="Settings"
         options={{ headerTitle: t("title.setting.index") ?? "" }}
@@ -98,6 +105,11 @@ function Home(): JSX.Element {
         component={TransactionIndex}
         name="TransactionIndex"
         options={{ headerTitle: t("title.transaction.index") ?? "" }}
+      />
+      <Stack.Screen
+        component={TransactionNew}
+        name="TransactionNew"
+        options={{ headerTitle: t("title.transaction.new") ?? "" }}
       />
     </Stack.Navigator>
   );
@@ -118,44 +130,46 @@ function App() {
   return (
     <PaperProvider theme={isDark ? MD3DarkTheme : MD3LightTheme}>
       <AccountContextProvider>
-        <CredentialProvider>
-          <StatusBar style={isDark ? "light" : "dark"} />
-          <NavigationContainer
-            theme={isDark ? NavigationDarkTheme : NavigationDefaultTheme}
-          >
-            <Drawer.Navigator initialRouteName="Home">
-              <Drawer.Screen
-                component={Home}
-                name="Home"
-                options={{
-                  headerShown: false,
-                  drawerLabel: t("title.account.index") ?? "",
-                }}
-              />
-              <Drawer.Screen
-                component={NotificationsScreen}
-                name="Notifications"
-                options={({ navigation }): DrawerNavigationOptions => ({
-                  headerLeft: () => (
-                    <View
-                      style={{
-                        height: 48,
-                      }}
-                    >
-                      <IconButton
-                        accessibilityLabel={t("button.menu") ?? ""}
-                        icon="menu"
-                        onPress={() => {
-                          navigation.openDrawer();
+        <CategorySelectProvider>
+          <CredentialProvider>
+            <StatusBar style={isDark ? "light" : "dark"} />
+            <NavigationContainer
+              theme={isDark ? NavigationDarkTheme : NavigationDefaultTheme}
+            >
+              <Drawer.Navigator initialRouteName="Home">
+                <Drawer.Screen
+                  component={Home}
+                  name="Home"
+                  options={{
+                    headerShown: false,
+                    drawerLabel: t("title.account.index") ?? "",
+                  }}
+                />
+                <Drawer.Screen
+                  component={NotificationsScreen}
+                  name="Notifications"
+                  options={({ navigation }): DrawerNavigationOptions => ({
+                    headerLeft: () => (
+                      <View
+                        style={{
+                          height: 48,
                         }}
-                      />
-                    </View>
-                  ),
-                })}
-              />
-            </Drawer.Navigator>
-          </NavigationContainer>
-        </CredentialProvider>
+                      >
+                        <IconButton
+                          accessibilityLabel={t("button.menu") ?? ""}
+                          icon="menu"
+                          onPress={() => {
+                            navigation.openDrawer();
+                          }}
+                        />
+                      </View>
+                    ),
+                  })}
+                />
+              </Drawer.Navigator>
+            </NavigationContainer>
+          </CredentialProvider>
+        </CategorySelectProvider>
       </AccountContextProvider>
     </PaperProvider>
   );
