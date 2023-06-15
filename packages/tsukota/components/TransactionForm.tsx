@@ -106,7 +106,7 @@ export function TransactionForm({
       <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
         <ReactNativePaperTextInput
           editable={false}
-          error={errors["categoryId"] !== undefined}
+          error={errors.categoryId !== undefined}
           label={t("transaction.category") ?? ""}
           mode="outlined"
           onChangeText={() => {}}
@@ -126,7 +126,7 @@ export function TransactionForm({
         <HelperText
           padding="none"
           type="error"
-          visible={errors["categoryId"] !== undefined}
+          visible={errors.categoryId !== undefined}
         >
           <ErrorMessage errors={errors} name="categoryId" />
         </HelperText>

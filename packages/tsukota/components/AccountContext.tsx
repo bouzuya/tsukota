@@ -23,7 +23,7 @@ import {
   storeEventsToLocal,
 } from "../lib/local-event-store";
 
-type Accounts = { [accountId: string]: Account };
+type Accounts = Record<string, Account>;
 
 type ContextValue = {
   accounts: Accounts;

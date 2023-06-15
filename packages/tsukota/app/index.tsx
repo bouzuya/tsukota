@@ -89,7 +89,7 @@ export function AccountIndex(): JSX.Element {
             setDeleteModalVisible(true);
           }}
           onPressAccount={(account) =>
-            void navigation.push("AccountShow", { accountId: account.id })
+            navigation.push("AccountShow", { accountId: account.id })
           }
         />
       )}
@@ -97,7 +97,7 @@ export function AccountIndex(): JSX.Element {
         accessibilityLabel={t("account.new") ?? ""}
         icon="plus"
         style={styles.fab}
-        onPress={() => void navigation.push("AccountNew")}
+        onPress={() => navigation.push("AccountNew")}
       />
       <DeleteAccountDialog
         id={accountId ?? ""}
