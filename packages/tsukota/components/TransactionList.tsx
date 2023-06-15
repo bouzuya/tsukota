@@ -24,7 +24,7 @@ export function TransactionList({
   const categoryNames = Object.fromEntries(
     categories.map(({ id, name, deletedAt }) => [
       id,
-      name + (deletedAt === null ? "" : t("transaction.deleted") ?? ""),
+      name + (deletedAt === null ? "" : t("transaction.deleted")),
     ])
   );
   return (

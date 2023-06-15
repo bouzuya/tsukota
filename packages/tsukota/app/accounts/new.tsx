@@ -3,8 +3,7 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import {
-  ActivityIndicator,
-  IconButton,
+  HeaderRightSaveButton,
   Screen,
   TextInput,
   View,
@@ -36,17 +35,12 @@ export function AccountNew(): JSX.Element {
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () =>
-        isSubmitting ? (
-          <ActivityIndicator />
-        ) : (
-          <IconButton
-            accessibilityLabel={t("button.save") ?? ""}
-            icon="check"
-            onPress={handleSubmit(onClickOk)}
-            style={{ marginRight: -8 }}
-          />
-        ),
+      headerRight: () => (
+        <HeaderRightSaveButton
+          isSubmitting={isSubmitting}
+          onPress={handleSubmit(onClickOk)}
+        />
+      ),
     });
   }, [isSubmitting, navigation]);
 

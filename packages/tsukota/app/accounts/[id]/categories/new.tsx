@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
   ActivityIndicator,
-  IconButton,
+  HeaderRightSaveButton,
   Screen,
   TextInput,
   View,
@@ -36,17 +36,12 @@ export function CategoryNew(): JSX.Element {
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () =>
-        isSubmitting ? (
-          <ActivityIndicator />
-        ) : (
-          <IconButton
-            accessibilityLabel={t("button.save") ?? ""}
-            icon="check"
-            onPress={handleSubmit(onClickOk)}
-            style={{ marginRight: -8 }}
-          />
-        ),
+      headerRight: () => (
+        <HeaderRightSaveButton
+          isSubmitting={isSubmitting}
+          onPress={handleSubmit(onClickOk)}
+        />
+      ),
     });
   }, [isSubmitting, navigation]);
 
@@ -66,7 +61,7 @@ export function CategoryNew(): JSX.Element {
       <View style={{ flex: 1, width: "100%" }}>
         <TextInput
           control={control}
-          label={t("category.name") ?? ""}
+          label={t("category.name")}
           name="name"
           rules={{
             required: {

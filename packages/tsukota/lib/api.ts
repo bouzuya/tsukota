@@ -12,7 +12,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { Result, ResultAsync } from "neverthrow";
+import { ResultAsync } from "neverthrow";
 import { AccountEvent } from "./account";
 import { db, storeAccountEvent as firebaseStoreAccountEvent } from "./firebase";
 import { timeSpan } from "./time-span";
@@ -53,6 +53,26 @@ const systemStatusDocumentConverter: FirestoreDataConverter<SystemStatusDocument
     },
   };
 
+type UserDocument = {
+  id: string;
+  account_ids: string[];
+};
+
+const userDocumentConverter: FirestoreDataConverter<UserDocument> = {
+  fromFirestore: function (
+    // 怪しい
+    snapshot: QueryDocumentSnapshot<UserDocument>,
+    options?: SnapshotOptions | undefined
+  ): UserDocument {
+    return snapshot.data(options);
+  },
+  toFirestore: function (
+    modelObject: WithFieldValue<UserDocument>
+  ): DocumentData {
+    return modelObject;
+  },
+};
+
 export function storeAccountEvent(
   lastEventId: string | null,
   event: AccountEvent
@@ -61,14 +81,16 @@ export function storeAccountEvent(
     firebaseStoreAccountEvent({
       last_event_id: lastEventId,
       event,
-    }).then(() => {}),
+    }).then((result) => void result),
     String
   );
 }
 
 export async function loadAccountIds(currentUserId: string): Promise<string[]> {
   const uid = currentUserId;
-  const userSnapshot = await getDoc(doc(db, `users/${uid}`));
+  const userSnapshot = await getDoc(
+    doc(db, `users/${uid}`).withConverter(userDocumentConverter)
+  );
   const data = userSnapshot.data();
   if (data === undefined) return [];
   return data.account_ids;

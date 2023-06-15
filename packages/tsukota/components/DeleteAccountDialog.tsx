@@ -10,14 +10,13 @@ type Props = {
 };
 
 export function DeleteAccountDialog({
-  id,
   name,
   onClickCancel,
   onClickOk,
   visible,
 }: Props): JSX.Element | null {
   const { t } = useTranslation();
-  return id === null ? null : (
+  return (
     <Dialog visible={visible}>
       <Dialog.Title>{t("title.account.delete") ?? ""}</Dialog.Title>
       <Dialog.Content>

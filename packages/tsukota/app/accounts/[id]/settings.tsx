@@ -103,8 +103,8 @@ export function Settings(): JSX.Element {
           name={account.name}
           onClickCancel={() => setDeleteModalVisible(false)}
           onClickOk={() => {
-            if (accountId === null) return;
-            handleAccountCommand(accountId, (oldAccount) =>
+            // no wait
+            void handleAccountCommand(accountId, (oldAccount) =>
               oldAccount === null
                 ? err("account not found")
                 : deleteAccount(oldAccount)

@@ -19,6 +19,7 @@ import { DeleteAccountDialog } from "./DeleteAccountDialog";
 import { DeleteCategoryDialog } from "./DeleteCategoryDialog";
 import { DeleteOwnerDialog } from "./DeleteOwnerDialog";
 import { DeleteTransactionDialog } from "./DeleteTransactionDialog";
+import { HeaderRightSaveButton } from "./HeaderRightSaveButton";
 import { Screen } from "./Screen";
 import { TextInput } from "./TextInput";
 import { TransactionForm, TransactionFormValues } from "./TransactionForm";
@@ -38,6 +39,7 @@ export {
   DeleteTransactionDialog,
   Divider,
   FAB,
+  HeaderRightSaveButton,
   IconButton,
   List,
   Screen,

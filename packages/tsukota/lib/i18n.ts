@@ -1,4 +1,4 @@
-import i18next from "i18next";
+import { use } from "i18next";
 import { initReactI18next, useTranslation } from "react-i18next";
 import * as Localization from "expo-localization";
 
@@ -176,7 +176,8 @@ export const resources = {
   },
 };
 
-i18next.use(initReactI18next).init({
+// no await
+void use(initReactI18next).init({
   compatibilityJSON: "v3",
   debug: false,
   lng: Localization.locale,

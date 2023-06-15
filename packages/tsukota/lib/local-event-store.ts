@@ -26,7 +26,8 @@ export async function loadEventsFromLocal(
     const data = await readAsStringAsync(accountEventFile, {
       encoding: "utf8",
     });
-    const accountEvents = JSON.parse(data);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const accountEvents: AccountEvent[] = JSON.parse(data);
     return accountEvents;
   });
 }

@@ -66,11 +66,13 @@ export function OwnerIndex(): JSX.Element {
         onClickOk={() => {
           if (ownerId === null) return;
           // no await
-          handleAccountCommand(accountId, (oldAccount) =>
+          void handleAccountCommand(accountId, (oldAccount) =>
             oldAccount === null
               ? err("account not found")
               : removeOwner(oldAccount, ownerId)
-          ).match(() => {}, showErrorMessage);
+          ).match(() => {
+            // do nothing
+          }, showErrorMessage);
           setDeleteModalVisible(false);
         }}
         visible={deleteModalVisible}

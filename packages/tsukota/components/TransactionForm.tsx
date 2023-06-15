@@ -74,7 +74,7 @@ export function TransactionForm({
     <View>
       <TextInput
         control={control}
-        label={t("transaction.date") ?? ""}
+        label={t("transaction.date")}
         name="date"
         rules={{
           pattern: {
@@ -90,7 +90,7 @@ export function TransactionForm({
       <TextInput
         control={control}
         keyboardType="numeric"
-        label={t("transaction.amount") ?? ""}
+        label={t("transaction.amount")}
         name="amount"
         rules={{
           pattern: {
@@ -109,7 +109,9 @@ export function TransactionForm({
           error={errors.categoryId !== undefined}
           label={t("transaction.category") ?? ""}
           mode="outlined"
-          onChangeText={() => {}}
+          onChangeText={() => {
+            // do nothing
+          }}
           right={
             <ReactNativePaperTextInput.Icon
               icon="shape"

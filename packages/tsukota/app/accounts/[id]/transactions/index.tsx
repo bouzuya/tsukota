@@ -42,8 +42,8 @@ export function TransactionIndex(): JSX.Element {
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
   return (
     <Screen>
-      {(account.transactions ?? []).length === 0 ? (
-        (account.categories ?? []).length === 0 ? (
+      {account.transactions.length === 0 ? (
+        account.categories.length === 0 ? (
           <Text>{t("category.empty")}</Text>
         ) : (
           <Text>{t("transaction.empty")}</Text>
@@ -51,7 +51,7 @@ export function TransactionIndex(): JSX.Element {
       ) : (
         <TransactionList
           categories={listCategory(account, true)}
-          transactions={account.transactions ?? []}
+          transactions={account.transactions}
           onLongPressTransaction={(transaction: Transaction) => {
             setDate(transaction.date);
             setAmount(transaction.amount);
@@ -69,13 +69,16 @@ export function TransactionIndex(): JSX.Element {
               comment: encodeURIComponent(transaction.comment),
             });
           }}
-          onRefresh={async () => {
-            setRefreshing(true);
-            try {
-              await fetchAccount();
-            } finally {
-              setRefreshing(false);
-            }
+          onRefresh={() => {
+            // no wait
+            void (async () => {
+              setRefreshing(true);
+              try {
+                await fetchAccount();
+              } finally {
+                setRefreshing(false);
+              }
+            })();
           }}
           refreshing={refreshing}
         />
@@ -100,14 +103,14 @@ export function TransactionIndex(): JSX.Element {
         onClickCancel={() => setDeleteModalVisible(false)}
         onClickOk={() => {
           if (transactionId === null) return;
-
-          // TODO: await ?
-          handleAccountCommand(account.id, (oldAccount) =>
+          // no wait
+          void handleAccountCommand(account.id, (oldAccount) =>
             oldAccount === null
               ? err("account not found")
               : deleteTransaction(oldAccount, transactionId)
-          ).match(() => {}, showErrorMessage);
-
+          ).match(() => {
+            // do nothing
+          }, showErrorMessage);
           setDeleteModalVisible(false);
         }}
         visible={deleteModalVisible}

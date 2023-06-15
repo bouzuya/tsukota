@@ -53,13 +53,16 @@ export function CategoryIndex(): JSX.Element {
               name: encodeURIComponent(category.name),
             });
           }}
-          onRefresh={async () => {
-            setRefreshing(true);
-            try {
-              await fetchAccount();
-            } finally {
-              setRefreshing(false);
-            }
+          onRefresh={() => {
+            // no wait
+            void (async () => {
+              setRefreshing(true);
+              try {
+                await fetchAccount();
+              } finally {
+                setRefreshing(false);
+              }
+            })();
           }}
           refreshing={refreshing}
         />
@@ -84,12 +87,14 @@ export function CategoryIndex(): JSX.Element {
         }}
         onClickOk={() => {
           if (categoryId === null) return;
-          // TODO: await ?
-          handleAccountCommand(account.id, (oldAccount) =>
+          // no wait
+          void handleAccountCommand(account.id, (oldAccount) =>
             oldAccount === null
               ? err("account not found")
               : deleteCategory(oldAccount, categoryId)
-          ).match(() => {}, showErrorMessage);
+          ).match(() => {
+            // do nothing
+          }, showErrorMessage);
           setName("");
           setCategoryId(null);
           setDeleteDialogVisible(false);

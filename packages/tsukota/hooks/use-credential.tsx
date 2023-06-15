@@ -42,7 +42,8 @@ export function CredentialProvider({
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    (async () => {
+    // no await
+    void (async () => {
       if (processing) return;
       setProcessing(true);
       try {
@@ -84,12 +85,14 @@ export function useCurrentUserId(): string | null {
   return user?.uid ?? null;
 }
 
-async function ensureDevice(): Promise<{
+type DeviceCredential = {
   deviceId: string;
   deviceSecret: string;
-}> {
+};
+
+async function ensureDevice(): Promise<DeviceCredential> {
   try {
-    const { deviceId, deviceSecret } = await storage.load({
+    const { deviceId, deviceSecret } = await storage.load<DeviceCredential>({
       key: "device",
     });
     return { deviceId, deviceSecret };

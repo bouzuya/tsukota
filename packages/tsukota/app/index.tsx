@@ -21,7 +21,8 @@ import { showErrorMessage } from "../lib/show-error-message";
 const useMinAppVersion = (): string | null => {
   const [minAppVersion, setMinAppVersion] = useState<string | null>(null);
   useEffect(() => {
-    (async () => {
+    // no await
+    void (async () => {
       const version = await getMinAppVersion();
       setMinAppVersion(version);
     })();
@@ -40,8 +41,9 @@ export function AccountIndex(): JSX.Element {
   useFocusEffect(
     useCallback(() => {
       if (currentUserId === null) return;
-      loadAccountIds(currentUserId).then((accountIds) =>
-        fetchAccounts.apply(null, accountIds)
+      // no await
+      void loadAccountIds(currentUserId).then((accountIds) =>
+        fetchAccounts(...accountIds)
       );
     }, [currentUserId])
   );
@@ -59,7 +61,10 @@ export function AccountIndex(): JSX.Element {
     return (
       <Screen options={{ title: "tsukota" }}>
         <Text
-          onPress={() => Linking.openURL(url)}
+          onPress={() => {
+            // no await
+            void Linking.openURL(url);
+          }}
           style={{
             color: "#6699ff",
             marginHorizontal: 16,
@@ -99,22 +104,25 @@ export function AccountIndex(): JSX.Element {
         style={styles.fab}
         onPress={() => navigation.push("AccountNew")}
       />
-      <DeleteAccountDialog
-        id={accountId ?? ""}
-        name={accountName ?? ""}
-        onClickCancel={() => setDeleteModalVisible(false)}
-        onClickOk={() => {
-          if (accountId === null) return;
-          // no await
-          handleAccountCommand(accountId, (oldAccount) =>
-            oldAccount === null
-              ? err("account not found")
-              : deleteAccount(oldAccount)
-          ).match(() => {}, showErrorMessage);
-          setDeleteModalVisible(false);
-        }}
-        visible={deleteModalVisible}
-      />
+      {accountId !== null && (
+        <DeleteAccountDialog
+          id={accountId}
+          name={accountName ?? ""}
+          onClickCancel={() => setDeleteModalVisible(false)}
+          onClickOk={() => {
+            // no await
+            void handleAccountCommand(accountId, (oldAccount) =>
+              oldAccount === null
+                ? err("account not found")
+                : deleteAccount(oldAccount)
+            ).match(() => {
+              // do nothing
+            }, showErrorMessage);
+            setDeleteModalVisible(false);
+          }}
+          visible={deleteModalVisible}
+        />
+      )}
     </Screen>
   );
 }

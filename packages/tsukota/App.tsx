@@ -1,5 +1,4 @@
 import {
-  DrawerNavigationOptions,
   DrawerNavigationProp,
   createDrawerNavigator,
 } from "@react-navigation/drawer";
@@ -36,12 +35,17 @@ import { TransactionNew } from "./app/accounts/[id]/transactions/new";
 import { AccountContextProvider, CategorySelectProvider } from "./components";
 import { CredentialProvider } from "./hooks/use-credential";
 import { useTranslation } from "./lib/i18n";
+import { useEffect } from "react";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
+type DrawerParamList = {
+  Home: undefined;
+};
+
 function Home(): JSX.Element {
-  const navigation = useNavigation<DrawerNavigationProp<{}>>();
+  const navigation = useNavigation<DrawerNavigationProp<DrawerParamList>>();
   const { t } = useTranslation();
   return (
     <Stack.Navigator initialRouteName="AccountIndex">
@@ -174,7 +178,11 @@ function App() {
                 <Drawer.Screen
                   component={NotificationsScreen}
                   name="Notifications"
-                  options={({ navigation }): DrawerNavigationOptions => ({
+                  options={({
+                    navigation,
+                  }: {
+                    navigation: DrawerNavigationProp<DrawerParamList>;
+                  }) => ({
                     headerLeft: () => (
                       <View
                         style={{
@@ -190,6 +198,7 @@ function App() {
                         />
                       </View>
                     ),
+                    drawerLabel: "Notifications",
                   })}
                 />
               </Drawer.Navigator>

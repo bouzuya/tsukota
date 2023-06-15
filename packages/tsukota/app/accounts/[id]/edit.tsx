@@ -2,12 +2,12 @@ import { err } from "neverthrow";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
-  IconButton,
   Screen,
   TextInput,
   View,
   useAccount,
   ActivityIndicator,
+  HeaderRightSaveButton,
 } from "../../../components";
 import { updateAccount } from "../../../lib/account";
 import { useTranslation } from "../../../lib/i18n";
@@ -37,17 +37,12 @@ export function AccountEdit(): JSX.Element {
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () =>
-        isSubmitting ? (
-          <ActivityIndicator />
-        ) : (
-          <IconButton
-            accessibilityLabel={t("button.save") ?? ""}
-            icon="check"
-            onPress={handleSubmit(onClickOk)}
-            style={{ marginRight: -8 }}
-          />
-        ),
+      headerRight: () => (
+        <HeaderRightSaveButton
+          isSubmitting={isSubmitting}
+          onPress={handleSubmit(onClickOk)}
+        />
+      ),
     });
   }, [isSubmitting, navigation]);
 
@@ -67,11 +62,11 @@ export function AccountEdit(): JSX.Element {
       <View style={{ flex: 1, width: "100%" }}>
         <TextInput
           control={control}
-          label={t("account.name") ?? ""}
+          label={t("account.name")}
           name="name"
           rules={{
             required: {
-              message: t("error.required") ?? "",
+              message: t("error.required"),
               value: true,
             },
           }}

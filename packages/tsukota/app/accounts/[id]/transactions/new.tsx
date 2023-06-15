@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
   ActivityIndicator,
-  IconButton,
+  HeaderRightSaveButton,
   Screen,
   TransactionForm,
   View,
@@ -11,7 +11,6 @@ import {
 } from "../../../../components";
 import { TransactionFormValues } from "../../../../components/TransactionForm";
 import { createTransaction } from "../../../../lib/account";
-import { useTranslation } from "../../../../lib/i18n";
 import { useTypedNavigation, useTypedRoute } from "../../../../lib/navigation";
 import { showErrorMessage } from "../../../../lib/show-error-message";
 
@@ -34,21 +33,15 @@ export function TransactionNew(): JSX.Element {
       date: new Date().toISOString().substring(0, 10),
     },
   });
-  const { t } = useTranslation();
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () =>
-        isSubmitting ? (
-          <ActivityIndicator />
-        ) : (
-          <IconButton
-            accessibilityLabel={t("button.save") ?? ""}
-            icon="check"
-            onPress={handleSubmit(onClickOk)}
-            style={{ marginRight: -8 }}
-          />
-        ),
+      headerRight: () => (
+        <HeaderRightSaveButton
+          isSubmitting={isSubmitting}
+          onPress={handleSubmit(onClickOk)}
+        />
+      ),
     });
   }, [isSubmitting, navigation]);
 

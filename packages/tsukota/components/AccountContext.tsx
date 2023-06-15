@@ -40,7 +40,9 @@ type HandleAccountCommand = (
 
 const AccountContext = createContext<ContextValue>({
   accounts: {},
-  setAccounts: () => {},
+  setAccounts: () => {
+    // do nothing
+  },
 });
 
 async function fetchAccount(accountId: string): Promise<Account> {

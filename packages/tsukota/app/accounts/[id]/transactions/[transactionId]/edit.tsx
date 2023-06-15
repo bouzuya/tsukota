@@ -4,14 +4,13 @@ import { useForm } from "react-hook-form";
 import { View } from "react-native";
 import {
   ActivityIndicator,
-  IconButton,
+  HeaderRightSaveButton,
   Screen,
   TransactionForm,
   TransactionFormValues,
   useAccount,
 } from "../../../../../components";
 import { updateTransaction } from "../../../../../lib/account";
-import { useTranslation } from "../../../../../lib/i18n";
 import {
   useTypedNavigation,
   useTypedRoute,
@@ -26,7 +25,7 @@ export function TransactionEdit(): JSX.Element {
   const { account, handleAccountCommand } = useAccount(accountId, []);
   const {
     control,
-    formState: { isSubmitSuccessful, isSubmitting },
+    formState: { isSubmitting },
     getValues,
     handleSubmit,
     setValue,
@@ -38,21 +37,15 @@ export function TransactionEdit(): JSX.Element {
       date,
     },
   });
-  const { t } = useTranslation();
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () =>
-        isSubmitting ? (
-          <ActivityIndicator />
-        ) : (
-          <IconButton
-            accessibilityLabel={t("button.save") ?? ""}
-            icon="check"
-            onPress={handleSubmit(onClickOk)}
-            style={{ marginRight: -8 }}
-          />
-        ),
+      headerRight: () => (
+        <HeaderRightSaveButton
+          isSubmitting={isSubmitting}
+          onPress={handleSubmit(onClickOk)}
+        />
+      ),
     });
   }, [isSubmitting, navigation]);
 

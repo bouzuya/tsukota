@@ -9,7 +9,9 @@ type ContextValue = {
 
 const CategorySelectContext = createContext<ContextValue>({
   selectedCategory: null,
-  setSelectedCategory: () => {},
+  setSelectedCategory: () => {
+    // do nothing
+  },
 });
 
 export type Props = {

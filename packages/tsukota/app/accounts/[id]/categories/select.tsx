@@ -21,7 +21,9 @@ export function CategorySelect(): JSX.Element {
     <Screen>
       <CategoryList
         data={categoriesWithDeleted}
-        onLongPressCategory={(_category) => {}}
+        onLongPressCategory={(_category) => {
+          // do nothing
+        }}
         onPressCategory={(category) => {
           setSelectedCategory(category);
           navigation.goBack();

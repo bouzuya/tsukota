@@ -12,17 +12,17 @@ export function AccountShow(): JSX.Element {
     {
       focusedIcon: "cash-multiple",
       key: "transactions",
-      title: t("title.transaction.index") ?? "",
+      title: t("title.transaction.index"),
     },
     {
       focusedIcon: "shape",
       key: "categories",
-      title: t("title.category.index") ?? "",
+      title: t("title.category.index"),
     },
     {
       focusedIcon: "cogs",
       key: "settings",
-      title: t("title.setting.index") ?? "",
+      title: t("title.setting.index"),
     },
   ]);
 
