@@ -27,6 +27,7 @@ import { CategoryEdit } from "./app/accounts/[id]/categories/[categoryId]/edit";
 import { CategoryIndex } from "./app/accounts/[id]/categories";
 import { CategoryNew } from "./app/accounts/[id]/categories/new";
 import { CategorySelect } from "./app/accounts/[id]/categories/select";
+import { OwnerIndex } from "./app/accounts/[id]/owners/index";
 import { Settings } from "./app/accounts/[id]/settings";
 import { TransactionEdit } from "./app/accounts/[id]/transactions/[transactionId]/edit";
 import { TransactionIndex } from "./app/accounts/[id]/transactions/index";
@@ -104,6 +105,11 @@ function Home(): JSX.Element {
         component={CategorySelect}
         name="CategorySelect"
         options={{ headerTitle: t("title.category.select") ?? "" }}
+      />
+      <Stack.Screen
+        component={OwnerIndex}
+        name="OwnerIndex"
+        options={{ headerTitle: t("title.owner.index") ?? "" }}
       />
       <Stack.Screen
         component={Settings}

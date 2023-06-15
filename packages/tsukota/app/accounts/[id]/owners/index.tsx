@@ -1,32 +1,37 @@
-import { useRouter, useSearchParams } from "expo-router";
 import { err } from "neverthrow";
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
-import { FAB, DeleteOwnerDialog, Screen, List } from "../../../../components";
-import { useAccount } from "../../../../components/AccountContext";
+import { FlatList } from "react-native-gesture-handler";
+import {
+  FAB,
+  DeleteOwnerDialog,
+  Screen,
+  List,
+  useAccount,
+} from "../../../../components";
 import { removeOwner } from "../../../../lib/account";
 import { useTranslation } from "../../../../lib/i18n";
+import { useTypedNavigation, useTypedRoute } from "../../../../lib/navigation";
 import { showErrorMessage } from "../../../../lib/show-error-message";
-import { FlatList } from "react-native-gesture-handler";
 
-export default function AccountOwnerIndex(): JSX.Element {
-  const params = useSearchParams();
-  const accountId = `${params.id}`;
+export function OwnerIndex(): JSX.Element {
+  const navigation = useTypedNavigation();
+  const route = useTypedRoute<"OwnerIndex">();
+  const { accountId } = route.params;
   const { t } = useTranslation();
-  const router = useRouter();
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const [ownerId, setOwnerId] = useState<string | null>(null);
   const { account, handleAccountCommand } = useAccount(accountId, []);
 
   useEffect(() => {
     if (account !== null) return;
-    router.back();
+    navigation.goBack();
   }, [account]);
 
   if (account === null) return <></>;
 
   return (
-    <Screen options={{ title: t("title.owner.index") ?? "" }}>
+    <Screen>
       <FlatList
         data={account.owners}
         keyExtractor={(owner) => owner}
@@ -47,11 +52,8 @@ export default function AccountOwnerIndex(): JSX.Element {
         icon="plus"
         style={styles.fab}
         onPress={() => {
-          router.push({
-            pathname: "/accounts/[id]/owners/new",
-            params: {
-              id: accountId,
-            },
+          navigation.push("OwnerNew", {
+            accountId,
           });
         }}
       />
