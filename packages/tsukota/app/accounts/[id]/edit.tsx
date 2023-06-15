@@ -1,6 +1,5 @@
-import { useRouter, useSearchParams } from "expo-router";
 import { err } from "neverthrow";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
   IconButton,
@@ -12,21 +11,22 @@ import {
 } from "../../../components";
 import { updateAccount } from "../../../lib/account";
 import { useTranslation } from "../../../lib/i18n";
+import { useTypedNavigation, useTypedRoute } from "../../../lib/navigation";
 import { showErrorMessage } from "../../../lib/show-error-message";
 
 type Form = {
   name: string;
 };
 
-export default function CategoryEdit(): JSX.Element {
-  const params = useSearchParams();
-  const accountId = `${params.id}`;
-  const nameDefault = decodeURIComponent(`${params.name}`);
+export function AccountEdit(): JSX.Element {
+  const navigation = useTypedNavigation();
+  const route = useTypedRoute<"AccountEdit">();
+  const { accountId, name } = route.params;
+  const nameDefault = decodeURIComponent(name);
   const { account, handleAccountCommand } = useAccount(accountId, []);
-  const router = useRouter();
   const {
     control,
-    formState: { isSubmitSuccessful, isSubmitting },
+    formState: { isSubmitting },
     handleSubmit,
   } = useForm<Form>({
     defaultValues: {
@@ -34,6 +34,22 @@ export default function CategoryEdit(): JSX.Element {
     },
   });
   const { t } = useTranslation();
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () =>
+        isSubmitting ? (
+          <ActivityIndicator />
+        ) : (
+          <IconButton
+            accessibilityLabel={t("button.save") ?? ""}
+            icon="check"
+            onPress={handleSubmit(onClickOk)}
+            style={{ marginRight: -8 }}
+          />
+        ),
+    });
+  }, [isSubmitting, navigation]);
 
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
@@ -43,27 +59,11 @@ export default function CategoryEdit(): JSX.Element {
       oldAccount === null
         ? err("account not found")
         : updateAccount(oldAccount, name)
-    ).match(() => router.back(), showErrorMessage);
+    ).match(() => navigation.goBack(), showErrorMessage);
   };
 
   return (
-    <Screen
-      options={{
-        title: t("title.account.edit") ?? "",
-        headerRight: () =>
-          isSubmitting ? (
-            <ActivityIndicator size={24} style={{ marginHorizontal: 16 }} />
-          ) : (
-            <IconButton
-              accessibilityLabel={t("button.save") ?? ""}
-              disabled={isSubmitSuccessful}
-              icon="check"
-              onPress={handleSubmit(onClickOk)}
-              size={28}
-            />
-          ),
-      }}
-    >
+    <Screen>
       <View style={{ flex: 1, width: "100%" }}>
         <TextInput
           control={control}

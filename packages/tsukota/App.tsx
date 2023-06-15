@@ -20,6 +20,7 @@ import {
   Text,
 } from "react-native-paper";
 import { AccountIndex } from "./app/index";
+import { AccountEdit } from "./app/accounts/[id]/edit";
 import { AccountNew } from "./app/accounts/new";
 import { AccountShow } from "./app/accounts/[id]";
 import { CategoryEdit } from "./app/accounts/[id]/categories/[categoryId]/edit";
@@ -41,7 +42,14 @@ function Home(): JSX.Element {
   const navigation = useNavigation<DrawerNavigationProp<{}>>();
   const { t } = useTranslation();
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="AccountIndex">
+      <Stack.Screen
+        component={AccountEdit}
+        name="AccountEdit"
+        options={{
+          headerTitle: t("title.account.edit") ?? "",
+        }}
+      />
       <Stack.Screen
         component={AccountIndex}
         name="AccountIndex"
