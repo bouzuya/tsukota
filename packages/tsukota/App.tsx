@@ -27,6 +27,7 @@ import { CategoryIndex } from "./app/accounts/[id]/categories";
 import { CategoryNew } from "./app/accounts/[id]/categories/new";
 import { CategorySelect } from "./app/accounts/[id]/categories/select";
 import { Settings } from "./app/accounts/[id]/settings";
+import { TransactionEdit } from "./app/accounts/[id]/transactions/[transactionId]/edit";
 import { TransactionIndex } from "./app/accounts/[id]/transactions/index";
 import { TransactionNew } from "./app/accounts/[id]/transactions/new";
 import { AccountContextProvider, CategorySelectProvider } from "./components";
@@ -100,6 +101,11 @@ function Home(): JSX.Element {
         component={Settings}
         name="Settings"
         options={{ headerTitle: t("title.setting.index") ?? "" }}
+      />
+      <Stack.Screen
+        component={TransactionEdit}
+        name="TransactionEdit"
+        options={{ headerTitle: t("title.transaction.edit") ?? "" }}
       />
       <Stack.Screen
         component={TransactionIndex}

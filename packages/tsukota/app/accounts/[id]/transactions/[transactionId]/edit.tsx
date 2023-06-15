@@ -1,6 +1,5 @@
-import { useRouter, useSearchParams } from "expo-router";
 import { err } from "neverthrow";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { View } from "react-native";
 import {
@@ -13,14 +12,18 @@ import {
 } from "../../../../../components";
 import { updateTransaction } from "../../../../../lib/account";
 import { useTranslation } from "../../../../../lib/i18n";
+import {
+  useTypedNavigation,
+  useTypedRoute,
+} from "../../../../../lib/navigation";
 import { showErrorMessage } from "../../../../../lib/show-error-message";
 
-export default function TransactionEdit(): JSX.Element {
-  const params = useSearchParams();
-  const accountId = `${params.id}`;
-  const transactionId = `${params.transactionId}`;
+export function TransactionEdit(): JSX.Element {
+  const navigation = useTypedNavigation();
+  const route = useTypedRoute<"TransactionEdit">();
+  const { accountId, amount, categoryId, comment, date, transactionId } =
+    route.params;
   const { account, handleAccountCommand } = useAccount(accountId, []);
-  const router = useRouter();
   const {
     control,
     formState: { isSubmitSuccessful, isSubmitting },
@@ -29,13 +32,29 @@ export default function TransactionEdit(): JSX.Element {
     setValue,
   } = useForm<TransactionFormValues>({
     defaultValues: {
-      amount: `${params.amount}`,
-      categoryId: `${params.categoryId}`,
-      comment: decodeURIComponent(`${params.comment}`),
-      date: `${params.date}`,
+      amount,
+      categoryId,
+      comment: decodeURIComponent(comment),
+      date,
     },
   });
   const { t } = useTranslation();
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () =>
+        isSubmitting ? (
+          <ActivityIndicator />
+        ) : (
+          <IconButton
+            accessibilityLabel={t("button.save") ?? ""}
+            icon="check"
+            onPress={handleSubmit(onClickOk)}
+            style={{ marginRight: -8 }}
+          />
+        ),
+    });
+  }, [isSubmitting, navigation]);
 
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
@@ -55,29 +74,14 @@ export default function TransactionEdit(): JSX.Element {
             comment,
             date,
           })
-    ).match(() => router.back(), showErrorMessage);
+    ).match(() => navigation.goBack(), showErrorMessage);
   };
 
   return (
-    <Screen
-      options={{
-        title: t("title.transaction.edit") ?? "",
-        headerRight: () =>
-          isSubmitting ? (
-            <ActivityIndicator size={24} style={{ marginHorizontal: 16 }} />
-          ) : (
-            <IconButton
-              accessibilityLabel={t("button.save") ?? ""}
-              disabled={isSubmitSuccessful}
-              icon="check"
-              onPress={handleSubmit(onClickOk)}
-              size={28}
-            />
-          ),
-      }}
-    >
+    <Screen>
       <View style={{ flex: 1, width: "100%" }}>
         <TransactionForm
+          accountId={accountId}
           control={control}
           categories={account.categories}
           getValues={getValues}
