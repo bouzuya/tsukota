@@ -1,5 +1,7 @@
 # tsukota
 
+<https://play.google.com/store/apps/details?id=net.bouzuya.lab.tsukota>
+
 ## How to run for debugging
 
 ```console
