@@ -10,8 +10,15 @@ import {
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import { View, useColorScheme } from "react-native";
 import {
+  View,
+  useColorScheme,
+  Image,
+  StyleSheet,
+  ColorValue,
+} from "react-native";
+import {
+  Drawer as RNPDrawer,
   IconButton,
   MD3DarkTheme,
   MD3LightTheme,
@@ -35,7 +42,7 @@ import { TransactionNew } from "./app/accounts/[id]/transactions/new";
 import { AccountContextProvider, CategorySelectProvider } from "./components";
 import { CredentialProvider } from "./hooks/use-credential";
 import { useTranslation } from "./lib/i18n";
-import { useEffect } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -153,6 +160,133 @@ function NotificationsScreen(): JSX.Element {
   );
 }
 
+function AppInfo(): JSX.Element {
+  // TODO: get value
+  const appName = "tsukota";
+  const appVersion = "0.2.0";
+  return (
+    <View style={styles.block}>
+      <View style={{ flexDirection: "row", height: 56 }}>
+        <View
+          style={{
+            height: 44 + 6 * 2,
+            margin: 0,
+            paddingHorizontal: 16,
+            paddingVertical: 6,
+            width: 44 + 16 * 2,
+          }}
+        >
+          <Image
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            source={require("./assets/icon-v2.png")}
+            style={{
+              height: "100%",
+              width: "100%",
+            }}
+          />
+        </View>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "column",
+            justifyContent: "center",
+            margin: 0,
+            paddingHorizontal: 0,
+          }}
+        >
+          <Text>{appName}</Text>
+          <Text>v{appVersion}</Text>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+function Copyright(): JSX.Element {
+  return (
+    <Text
+      style={[
+        styles.block,
+        {
+          flex: 1,
+          textAlignVertical: "center",
+        },
+      ]}
+    >
+      @ 2023 bouzuya
+    </Text>
+  );
+}
+
+const styles = StyleSheet.create({
+  block: {
+    height: "100%",
+    margin: 0,
+    padding: 0,
+    width: "100%",
+  },
+  drawerItem: {
+    height: 56,
+    margin: 0,
+    paddingHorizontal: 16,
+    paddingVertical: 0,
+    width: "100%",
+  },
+  drawerTextItem: {
+    height: 56,
+    margin: 0,
+    paddingHorizontal: 28,
+    paddingVertical: 0,
+    width: "100%",
+  },
+});
+
+type DrawerLayoutProps = {
+  backgroundColor: ColorValue;
+};
+
+function DrawerLayout({ backgroundColor }: DrawerLayoutProps): JSX.Element {
+  // TODO: get value
+  const appName = "tsukota";
+  // TODO: set onPress event handler
+  // TODO: i18n
+  return (
+    <View
+      style={[
+        styles.block,
+        {
+          backgroundColor,
+        },
+      ]}
+    >
+      <RNPDrawer.Section>
+        <RNPDrawer.Item label={appName} />
+      </RNPDrawer.Section>
+      <RNPDrawer.Section>
+        <RNPDrawer.Item icon={"wallet"} label="アカウント一覧" />
+        <RNPDrawer.Item icon={"account"} label="ユーザー情報" />
+      </RNPDrawer.Section>
+      <RNPDrawer.Section>
+        <RNPDrawer.Item icon={"file-document-outline"} label="利用規約" />
+        <RNPDrawer.Item
+          icon={"file-document-outline"}
+          label="プライバシーポリシー"
+        />
+        <RNPDrawer.Item
+          icon={"file-document-outline"}
+          label="オープンソースライセンス"
+        />
+      </RNPDrawer.Section>
+      <View style={styles.drawerItem}>
+        <AppInfo />
+      </View>
+      <View style={styles.drawerTextItem}>
+        <Copyright />
+      </View>
+    </View>
+  );
+}
+
 function App() {
   const { t } = useTranslation();
   const colorScheme = useColorScheme();
@@ -166,7 +300,22 @@ function App() {
             <NavigationContainer
               theme={isDark ? NavigationDarkTheme : NavigationDefaultTheme}
             >
-              <Drawer.Navigator initialRouteName="Home">
+              <Drawer.Navigator
+                initialRouteName="Home"
+                drawerContent={(_props) => {
+                  return (
+                    <SafeAreaView>
+                      <DrawerLayout
+                        backgroundColor={
+                          isDark
+                            ? NavigationDarkTheme.colors.background
+                            : NavigationDefaultTheme.colors.background
+                        }
+                      />
+                    </SafeAreaView>
+                  );
+                }}
+              >
                 <Drawer.Screen
                   component={Home}
                   name="Home"
