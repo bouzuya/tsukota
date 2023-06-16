@@ -16,6 +16,8 @@ import {
   Image,
   StyleSheet,
   ColorValue,
+  Linking,
+  TouchableOpacity,
 } from "react-native";
 import {
   Drawer as RNPDrawer,
@@ -202,22 +204,6 @@ function AppInfo(): JSX.Element {
   );
 }
 
-function Copyright(): JSX.Element {
-  return (
-    <Text
-      style={[
-        styles.block,
-        {
-          flex: 1,
-          textAlignVertical: "center",
-        },
-      ]}
-    >
-      @ 2023 bouzuya
-    </Text>
-  );
-}
-
 const styles = StyleSheet.create({
   block: {
     height: "100%",
@@ -229,13 +215,6 @@ const styles = StyleSheet.create({
     height: 56,
     margin: 0,
     paddingHorizontal: 16,
-    paddingVertical: 0,
-    width: "100%",
-  },
-  drawerTextItem: {
-    height: 56,
-    margin: 0,
-    paddingHorizontal: 28,
     paddingVertical: 0,
     width: "100%",
   },
@@ -280,9 +259,10 @@ function DrawerLayout({ backgroundColor }: DrawerLayoutProps): JSX.Element {
       <View style={styles.drawerItem}>
         <AppInfo />
       </View>
-      <View style={styles.drawerTextItem}>
-        <Copyright />
-      </View>
+      <RNPDrawer.Item
+        label="@ 2023 bouzuya"
+        onPress={() => void Linking.openURL("https://bouzuya.net/")}
+      />
     </View>
   );
 }
