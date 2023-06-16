@@ -166,8 +166,13 @@ function AppInfo(): JSX.Element {
   // TODO: get value
   const appName = "tsukota";
   const appVersion = "0.2.0";
+  const appPackageName = "net.bouzuya.lab.tsukota";
+  const playStoreUrl = `https://play.google.com/store/apps/details?id=${appPackageName}`;
   return (
-    <View style={styles.block}>
+    <TouchableOpacity
+      onPress={() => void Linking.openURL(playStoreUrl)}
+      style={styles.block}
+    >
       <View style={{ flexDirection: "row", height: 56 }}>
         <View
           style={{
@@ -200,7 +205,7 @@ function AppInfo(): JSX.Element {
           <Text>v{appVersion}</Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
