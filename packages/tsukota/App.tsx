@@ -230,6 +230,7 @@ type DrawerLayoutProps = {
 };
 
 function DrawerLayout({ backgroundColor }: DrawerLayoutProps): JSX.Element {
+  const { t } = useTranslation();
   // TODO: get value
   const appName = "tsukota";
   // TODO: set onPress event handler
@@ -258,7 +259,12 @@ function DrawerLayout({ backgroundColor }: DrawerLayoutProps): JSX.Element {
         />
         <RNPDrawer.Item
           icon={"file-document-outline"}
-          label="オープンソースライセンス"
+          label={t("license")}
+          onPress={() =>
+            void Linking.openURL(
+              "https://github.com/bouzuya/tsukota/blob/master/docs/LICENSE.md"
+            )
+          }
         />
       </RNPDrawer.Section>
       <View style={styles.drawerItem}>

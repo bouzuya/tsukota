@@ -27,6 +27,7 @@ export const resources = {
         date_format: "This must be in YYYY-MM-DD format.",
         required: "This is required.",
       },
+      license: "Open-source licenses",
       message: {
         confirm_account_deletion: "Delete account?",
         confirm_category_deletion: "Delete category?",
@@ -113,6 +114,7 @@ export const resources = {
         date_format: "日付は YYYY-MM-DD の形式です",
         required: "必須です",
       },
+      license: "オープンソースライセンス",
       message: {
         confirm_account_deletion: "アカウントを削除しますか？",
         confirm_category_deletion: "分類を削除しますか？",
