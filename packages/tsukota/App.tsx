@@ -230,6 +230,7 @@ type DrawerLayoutProps = {
 };
 
 function DrawerLayout({ backgroundColor }: DrawerLayoutProps): JSX.Element {
+  const navigation = useNavigation<DrawerNavigationProp<DrawerParamList>>();
   const { t } = useTranslation();
   // TODO: get value
   const appName = "tsukota";
@@ -248,7 +249,11 @@ function DrawerLayout({ backgroundColor }: DrawerLayoutProps): JSX.Element {
         <RNPDrawer.Item label={appName} />
       </RNPDrawer.Section>
       <RNPDrawer.Section>
-        <RNPDrawer.Item icon={"wallet"} label="アカウント一覧" />
+        <RNPDrawer.Item
+          icon={"wallet"}
+          label={t("title.account.index")}
+          onPress={() => navigation.navigate("Home")}
+        />
         <RNPDrawer.Item icon={"account"} label="ユーザー情報" />
       </RNPDrawer.Section>
       <RNPDrawer.Section>
