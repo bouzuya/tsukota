@@ -252,7 +252,6 @@ function DrawerLayout({ backgroundColor }: DrawerLayoutProps): JSX.Element {
         <RNPDrawer.Item icon={"account"} label="ユーザー情報" />
       </RNPDrawer.Section>
       <RNPDrawer.Section>
-        <RNPDrawer.Item icon={"file-document-outline"} label="利用規約" />
         <RNPDrawer.Item
           icon={"file-document-outline"}
           label={t("legal.privacy_policy")}
