@@ -255,11 +255,16 @@ function DrawerLayout({ backgroundColor }: DrawerLayoutProps): JSX.Element {
         <RNPDrawer.Item icon={"file-document-outline"} label="利用規約" />
         <RNPDrawer.Item
           icon={"file-document-outline"}
-          label="プライバシーポリシー"
+          label={t("legal.privacy_policy")}
+          onPress={() =>
+            void Linking.openURL(
+              "https://github.com/bouzuya/tsukota/blob/master/docs/PRIVACY.md"
+            )
+          }
         />
         <RNPDrawer.Item
           icon={"file-document-outline"}
-          label={t("license")}
+          label={t("legal.license")}
           onPress={() =>
             void Linking.openURL(
               "https://github.com/bouzuya/tsukota/blob/master/docs/LICENSE.md"
