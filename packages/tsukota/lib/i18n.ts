@@ -7,6 +7,7 @@ export const resources = {
     translation: {
       account: {
         empty: "Register a new account",
+        id: "ID",
         name: "Name",
         new: "Add new account",
         owners: "Owners",
