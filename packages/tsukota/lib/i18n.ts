@@ -37,6 +37,7 @@ export const resources = {
         confirm_category_deletion: "Delete category?",
         confirm_owner_deletion: "Delete owner?",
         confirm_transaction_deletion: "Delete transaction?",
+        copied_to_clipboard: "Copied to clipboard",
       },
       owner: {
         id: "User ID",
@@ -81,6 +82,9 @@ export const resources = {
           index: "Transactions",
           new: "Add Transaction",
         },
+        user: {
+          me: "User",
+        },
       },
       transaction: {
         amount: "Amount",
@@ -90,6 +94,9 @@ export const resources = {
         deleted: "(deleted)",
         empty: "Register a new transaction",
         new: "Add new transaction",
+      },
+      user: {
+        id: "User ID",
       },
     },
   },
@@ -127,6 +134,7 @@ export const resources = {
         confirm_category_deletion: "分類を削除しますか？",
         confirm_owner_deletion: "所有者を削除しますか?",
         confirm_transaction_deletion: "取引を削除しますか？",
+        copied_to_clipboard: "クリップボードにコピーしました",
       },
       owner: {
         id: "ユーザーID",
@@ -171,6 +179,9 @@ export const resources = {
           index: "取引一覧",
           new: "取引追加",
         },
+        user: {
+          me: "ユーザー情報",
+        },
       },
       transaction: {
         amount: "金額",
@@ -180,6 +191,9 @@ export const resources = {
         deleted: "(削除済み)",
         empty: "取引を追加してください",
         new: "新しい取引の追加",
+      },
+      user: {
+        id: "ユーザーID",
       },
     },
   },

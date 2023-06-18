@@ -1,4 +1,5 @@
 import {
+  DrawerNavigationOptions,
   DrawerNavigationProp,
   createDrawerNavigator,
 } from "@react-navigation/drawer";
@@ -9,6 +10,7 @@ import {
   DefaultTheme as NavigationDefaultTheme,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import * as Clipboard from "expo-clipboard";
 import { StatusBar } from "expo-status-bar";
 import {
   View,
@@ -26,6 +28,8 @@ import {
   MD3LightTheme,
   PaperProvider,
   Text,
+  List,
+  Divider,
 } from "react-native-paper";
 import { AccountIndex } from "./app/index";
 import { AccountEdit } from "./app/accounts/[id]/edit";
@@ -41,16 +45,22 @@ import { Settings } from "./app/accounts/[id]/settings";
 import { TransactionEdit } from "./app/accounts/[id]/transactions/[transactionId]/edit";
 import { TransactionIndex } from "./app/accounts/[id]/transactions/index";
 import { TransactionNew } from "./app/accounts/[id]/transactions/new";
-import { AccountContextProvider, CategorySelectProvider } from "./components";
-import { CredentialProvider } from "./hooks/use-credential";
+import {
+  AccountContextProvider,
+  CategorySelectProvider,
+  Screen,
+} from "./components";
+import { CredentialProvider, useCurrentUserId } from "./hooks/use-credential";
 import { useTranslation } from "./lib/i18n";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-root-toast";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
 type DrawerParamList = {
   Home: undefined;
+  User: undefined;
 };
 
 function Home(): JSX.Element {
@@ -154,11 +164,32 @@ function Home(): JSX.Element {
   );
 }
 
-function NotificationsScreen(): JSX.Element {
+function User(): JSX.Element {
+  const { t } = useTranslation();
+  const currentUserId = useCurrentUserId();
   return (
-    <View>
-      <Text>Notifications</Text>
-    </View>
+    <Screen>
+      <View style={{ flex: 1, width: "100%", height: "100%" }}>
+        <List.Item
+          description={currentUserId}
+          style={{ width: "100%" }}
+          title={t("user.id") ?? ""}
+          right={() => (
+            <IconButton
+              icon="clipboard-text"
+              onPress={() => {
+                if (currentUserId === null) return;
+                // no wait
+                void Clipboard.setStringAsync(currentUserId).then(() => {
+                  Toast.show(t("message.copied_to_clipboard"));
+                });
+              }}
+            />
+          )}
+        />
+        <Divider style={{ width: "100%" }} />
+      </View>
+    </Screen>
   );
 }
 
@@ -254,7 +285,11 @@ function DrawerLayout({ backgroundColor }: DrawerLayoutProps): JSX.Element {
           label={t("title.account.index")}
           onPress={() => navigation.navigate("Home")}
         />
-        <RNPDrawer.Item icon={"account"} label="ユーザー情報" />
+        <RNPDrawer.Item
+          icon={"account"}
+          label={t("title.user.me")}
+          onPress={() => navigation.navigate("User")}
+        />
       </RNPDrawer.Section>
       <RNPDrawer.Section>
         <RNPDrawer.Item
@@ -321,17 +356,16 @@ function App() {
                   name="Home"
                   options={{
                     headerShown: false,
-                    drawerLabel: t("title.account.index") ?? "",
                   }}
                 />
                 <Drawer.Screen
-                  component={NotificationsScreen}
-                  name="Notifications"
+                  component={User}
+                  name="User"
                   options={({
                     navigation,
                   }: {
                     navigation: DrawerNavigationProp<DrawerParamList>;
-                  }) => ({
+                  }): DrawerNavigationOptions => ({
                     headerLeft: () => (
                       <View
                         style={{
@@ -347,7 +381,7 @@ function App() {
                         />
                       </View>
                     ),
-                    drawerLabel: "Notifications",
+                    headerTitle: t("title.user.me") ?? "",
                   })}
                 />
               </Drawer.Navigator>
