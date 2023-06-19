@@ -1,5 +1,15 @@
 # tsukota
 
+tsukota は使った金額を記録する Android アプリです。
+
+## 機能
+
+- アカウント (Account) の作成・更新・削除
+- 分類 (Category) の作成・更新・削除
+- 使用額 (Transaction) の作成・更新・削除
+
+## インストール方法
+
 <https://play.google.com/store/apps/details?id=net.bouzuya.lab.tsukota>
 
 ## How to run for debugging
@@ -24,74 +34,4 @@ erDiagram
   Account ||--o{ Transaction : ""
   Account ||--o{ Category : ""
   Category ||--o{ Transaction : ""
-```
-
-## Firestore Document Schemas
-
-See also: `firestore.rules`
-
-### `/accounts/{account_id}`
-
-```typescript
-type AccountForQuery = {
-  deletedAt: string | null;
-  id: string;
-  name: string;
-  owners: string[]; // uid
-};
-```
-
-### `/accounts/{account_id}/events/{account_event_id}`
-
-See: `./packages/account-events/src/account-events.ts`
-
-```typescript
-type AccountEvent = ...
-```
-
-### `/aggregates/account/event_streams/{account_event_stream_id}` (private)
-
-```typescript
-type AccountEventStream = {
-  id: string;
-  lastEventId: string;
-  owners: string[]; // uid
-  protocolVersion: number;
-  updatedAt: string;
-};
-```
-
-### `/aggregates/account/event_streams/{account_event_stream_id}/events/{account_event_id}` (private)
-
-See: `./packages/account-events/src/account-events.ts`
-
-```typescript
-type AccountEvent = ...
-```
-
-### `/devices/{device_id}` (private)
-
-```typescript
-type Device = {
-  encryptedSecret: string;
-  id: string;
-  uid: string;
-};
-```
-
-### `/system/status`
-
-```typescript
-type SystemStatus = {
-  minAppVersion: string | null;
-};
-```
-
-### `/users/{user_id}`
-
-```typescript
-type User = {
-  account_ids: string[];
-  id: string; // user_id, uid
-};
 ```
