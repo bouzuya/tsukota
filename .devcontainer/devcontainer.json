@@ -1,0 +1,11 @@
+{
+  "customizations": {
+    "vscode": {
+      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+    }
+  },
+  "dockerComposeFile": "../compose.yaml",
+  "name": "tsukota",
+  "service": "tsukota",
+  "workspaceFolder": "/home/node"
+}

@@ -9,6 +9,10 @@ services:
       - "5001:5001"
       - "8080:8080"
       - "9099:9099"
-    tty: true
     volumes:
       - .:/home/cloudsdk
+  tsukota:
+    build: ./docker/tsukota/
+    tty: true
+    volumes:
+      - .:/home/node
