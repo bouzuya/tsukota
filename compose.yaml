@@ -13,6 +13,9 @@ services:
       - .:/home/cloudsdk
   tsukota:
     build: ./docker/tsukota/
+    env_file: ./packages/tsukota/.env
+    ports:
+      - "19000:19000"
     tty: true
     volumes:
       - .:/home/node
