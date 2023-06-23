@@ -1,6 +1,6 @@
 services:
   firebase:
-    build: ./docker/firebase/
+    build: ./packages/firebase/
     command: emulators:start
     ports:
       - "4000:4000"
