@@ -11,7 +11,7 @@ import { storage } from "../lib/storage";
 import { generate as generateUuidV4 } from "../lib/uuid";
 
 const getFirebaseAuthCurrentUser = (): Promise<User | null> => {
-  return Promise.any([
+  return Promise.race([
     new Promise<never>((_, reject) => setTimeout(reject, 500)),
     new Promise<User | null>((resolve, reject) => {
       try {
