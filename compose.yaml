@@ -11,6 +11,7 @@ services:
       - "9099:9099"
     volumes:
       - .:/home/cloudsdk
+    working_dir: /home/cloudsdk/packages/firebase
   tsukota:
     build: ./docker/tsukota/
     env_file: ./packages/tsukota/.env
