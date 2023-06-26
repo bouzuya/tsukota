@@ -13,7 +13,7 @@ services:
       - .:/home/cloudsdk
     working_dir: /home/cloudsdk/packages/firebase
   tsukota:
-    build: ./docker/tsukota/
+    build: ./packages/tsukota/
     env_file: ./packages/tsukota/.env
     ports:
       - "19000:19000"
