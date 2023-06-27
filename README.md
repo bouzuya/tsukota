@@ -12,18 +12,21 @@ tsukota は使った金額を記録する Android アプリです。
 
 <https://play.google.com/store/apps/details?id=net.bouzuya.lab.tsukota>
 
-## How to run for debugging
+## 実行方法
 
 ```console
-$ # terminal #1
-$ # start firebase emulator
-$ docker compose up --build
+$ # 環境変数の更新
+$ cp packages/functions/_env packages/functions/.env
+$ vi packages/functions/.env
+$ cp packages/tsukota/_env packages/tsukota/.env
+$ vi packages/tsukota/.env
 
-$ # terminal #2
-$ # start expo
+$ # VS Code "Dev Containers: Reopen in Container"
 $ cd packages/tsukota
 $ npm start
 ```
+
+`compose.yaml` に指定されている通り Firebase Emulator が実行されます。
 
 ## Models
 
