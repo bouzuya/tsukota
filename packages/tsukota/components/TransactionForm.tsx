@@ -1,4 +1,5 @@
 import { ErrorMessage } from "@hookform/error-message";
+import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { useEffect } from "react";
 import { View } from "react-native";
 import {
@@ -74,8 +75,29 @@ export function TransactionForm({
     <View>
       <TextInput
         control={control}
+        editable={false}
+        error={errors.date !== undefined}
         label={t("transaction.date")}
+        mode="outlined"
         name="date"
+        right={
+          <ReactNativePaperTextInput.Icon
+            icon="calendar"
+            onPress={() => {
+              DateTimePickerAndroid.open({
+                value: new Date(getValues("date")),
+                onChange: (_event, selectedDate) => {
+                  if (selectedDate === undefined) {
+                    return;
+                  }
+                  setValue("date", selectedDate.toISOString().substring(0, 10));
+                },
+                mode: "date",
+              });
+            }}
+            size={28}
+          />
+        }
         rules={{
           pattern: {
             message: t("error.date_format"),
