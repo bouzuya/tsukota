@@ -1,4 +1,3 @@
-import Constants from "expo-constants";
 import { err } from "neverthrow";
 import React, { useCallback, useEffect, useState } from "react";
 import { Linking, StyleSheet } from "react-native";
@@ -14,6 +13,7 @@ import { useAccounts } from "../components/AccountContext";
 import { useCurrentUserId } from "../hooks/use-credential";
 import { deleteAccount } from "../lib/account";
 import { getMinAppVersion, loadAccountIds } from "../lib/api";
+import { getConfig } from "../lib/config";
 import { useTranslation } from "../lib/i18n";
 import { useFocusEffect, useTypedNavigation } from "../lib/navigation";
 import { showErrorMessage } from "../lib/show-error-message";
@@ -54,9 +54,8 @@ export function AccountIndex(): JSX.Element {
   if (currentUserId === null || minAppVersion === null) return <></>;
 
   // FIXME: Move to root
-  const version = Constants.expoConfig?.version ?? "1.0.0";
+  const { packageName, version } = getConfig();
   if (semver.lt(version, minAppVersion)) {
-    const packageName = Constants.expoConfig?.android?.package ?? "";
     const url = `https://play.google.com/store/apps/details?id=${packageName}`;
     return (
       <Screen options={{ title: "tsukota" }}>

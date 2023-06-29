@@ -1,11 +1,10 @@
-import Constants from "expo-constants";
+import { getConfig } from "./config";
 
 export async function timeSpan<T>(
   label: string,
   callback: () => Promise<T>
 ): Promise<T> {
-  if (Constants.expoConfig?.extra?.enableDebugLogging !== "true")
-    return await callback();
+  if (!getConfig().enableDebugLogging) return await callback();
   const start = new Date();
   console.log(`${label} start`, start.toISOString());
   const result = await callback();
