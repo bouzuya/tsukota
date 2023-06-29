@@ -2,6 +2,7 @@
   "customizations": {
     "vscode": {
       "extensions": [
+        "GitHub.copilot",
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
         "ms-azuretools.vscode-docker"
