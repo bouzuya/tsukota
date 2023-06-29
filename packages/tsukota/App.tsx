@@ -51,6 +51,7 @@ import {
   Screen,
 } from "./components";
 import { CredentialProvider, useCurrentUserId } from "./hooks/use-credential";
+import { getConfig } from "./lib/config";
 import { useTranslation } from "./lib/i18n";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-root-toast";
@@ -194,11 +195,8 @@ function User(): JSX.Element {
 }
 
 function AppInfo(): JSX.Element {
-  // TODO: get value
-  const appName = "tsukota";
-  const appVersion = "0.2.0";
-  const appPackageName = "net.bouzuya.lab.tsukota";
-  const playStoreUrl = `https://play.google.com/store/apps/details?id=${appPackageName}`;
+  const { name, packageName, version } = getConfig();
+  const playStoreUrl = `https://play.google.com/store/apps/details?id=${packageName}`;
   return (
     <TouchableOpacity
       onPress={() => void Linking.openURL(playStoreUrl)}
@@ -232,8 +230,8 @@ function AppInfo(): JSX.Element {
             paddingHorizontal: 0,
           }}
         >
-          <Text>{appName}</Text>
-          <Text>v{appVersion}</Text>
+          <Text>{name}</Text>
+          <Text>v{version}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -263,8 +261,7 @@ type DrawerLayoutProps = {
 function DrawerLayout({ backgroundColor }: DrawerLayoutProps): JSX.Element {
   const navigation = useNavigation<DrawerNavigationProp<DrawerParamList>>();
   const { t } = useTranslation();
-  // TODO: get value
-  const appName = "tsukota";
+  const { name } = getConfig();
   // TODO: set onPress event handler
   // TODO: i18n
   return (
@@ -277,7 +274,7 @@ function DrawerLayout({ backgroundColor }: DrawerLayoutProps): JSX.Element {
       ]}
     >
       <RNPDrawer.Section>
-        <RNPDrawer.Item label={appName} />
+        <RNPDrawer.Item label={name} />
       </RNPDrawer.Section>
       <RNPDrawer.Section>
         <RNPDrawer.Item

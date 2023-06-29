@@ -6,6 +6,7 @@ type Config = {
   enableDebugLogging: boolean;
   firestoreEmulatorHost: string;
   functionsEmulatorHost: string;
+  name: string;
   packageName: string;
   projectId: string;
   version: string;
@@ -24,6 +25,8 @@ export function getConfig(): Config {
   const packageName = android.package;
   if (packageName === undefined)
     throw new Error("assert android.package !== undefined");
+
+  const name = expoConfig.name;
 
   const version = expoConfig.version;
   if (version === undefined) throw new Error("assert version !== undefined");
@@ -72,6 +75,7 @@ export function getConfig(): Config {
     enableDebugLogging: enableDebugLogging === "true",
     firestoreEmulatorHost,
     functionsEmulatorHost,
+    name,
     packageName,
     projectId,
     version,
