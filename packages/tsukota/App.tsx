@@ -262,8 +262,6 @@ function DrawerLayout({ backgroundColor }: DrawerLayoutProps): JSX.Element {
   const navigation = useNavigation<DrawerNavigationProp<DrawerParamList>>();
   const { t } = useTranslation();
   const { name } = getConfig();
-  // TODO: set onPress event handler
-  // TODO: i18n
   return (
     <View
       style={[

@@ -36,7 +36,7 @@ type HandleAccountCommandCallback<T> = (
 type HandleAccountCommand = (
   accountId: string | null,
   callback: HandleAccountCommandCallback<Account | null>
-) => ResultAsync<void, string>;
+) => ResultAsync<void, AccountError | "server error">;
 
 const AccountContext = createContext<ContextValue>({
   accounts: {},

@@ -1,4 +1,4 @@
-import { use } from "i18next";
+import { TFunction, use } from "i18next";
 import { initReactI18next, useTranslation } from "react-i18next";
 import * as Localization from "expo-localization";
 
@@ -25,8 +25,26 @@ export const resources = {
         new: "Add new category",
       },
       error: {
+        account: {
+          account_already_exists: "account already exists",
+          account_is_deleted: "account is deleted",
+          account_not_found: "account not found",
+          amount_is_empty: "amount is empty",
+          amount_is_invalid: "amount is invalid",
+          category_id_is_empty: "categoryId is empty",
+          category_id_not_found: "categoryId not found",
+          date_is_empty: "date is empty",
+          date_is_invalid: "date is invalid",
+          name_is_empty: "name is empty",
+          owner_already_exists: "owner already exists",
+          owner_is_the_last_owner: "owner is the last owner",
+          owner_not_found: "owner not found",
+          protocol_version_is_invalid: "protocolVersion is invalid",
+          transaction_id_not_found: "transactionId not found",
+        },
         date_format: "This must be in YYYY-MM-DD format.",
         required: "This is required.",
+        server_error: "server error",
       },
       legal: {
         license: "Open-source licenses",
@@ -122,8 +140,26 @@ export const resources = {
         new: "分類の追加",
       },
       error: {
+        account: {
+          account_already_exists: "アカウントは既に存在しています",
+          account_is_deleted: "アカウントは削除されています",
+          account_not_found: "アカウントが見つかりません",
+          amount_is_empty: "金額が入力されていません",
+          amount_is_invalid: "金額が不正です",
+          category_id_is_empty: "分類が選択されていません",
+          category_id_not_found: "分類が見つかりません",
+          date_is_empty: "日付が選択されていません",
+          date_is_invalid: "日付が不正です",
+          name_is_empty: "名前が入力されていません",
+          owner_already_exists: "所有者は既に存在しています",
+          owner_is_the_last_owner: "最後の所有者です",
+          owner_not_found: "所有者が見つかりません",
+          protocol_version_is_invalid: "プロトコルバージョンが不正です",
+          transaction_id_not_found: "取引が見つかりません",
+        },
         date_format: "日付は YYYY-MM-DD の形式です",
         required: "必須です",
+        server_error: "サーバーエラー",
       },
       legal: {
         license: "オープンソースライセンス",
@@ -200,11 +236,17 @@ export const resources = {
 };
 
 // no await
-void use(initReactI18next).init({
-  compatibilityJSON: "v3",
-  debug: false,
-  lng: Localization.locale,
-  resources,
-});
+let translation: TFunction<"translation", undefined, "translation"> | null =
+  null;
+void use(initReactI18next)
+  .init({
+    compatibilityJSON: "v3",
+    debug: false,
+    lng: Localization.locale,
+    resources,
+  })
+  .then((t) => {
+    translation = t;
+  });
 
-export { useTranslation };
+export { translation, useTranslation };
