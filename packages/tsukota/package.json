@@ -1,6 +1,6 @@
 {
   "name": "tsukota",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
     "@hookform/error-message": "^2.0.1",
