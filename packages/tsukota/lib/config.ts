@@ -2,10 +2,10 @@ import Constants from "expo-constants";
 
 type Config = {
   apiKey: string;
-  authEmulatorHost: string;
+  authEmulatorHost: string | null;
   enableDebugLogging: boolean;
-  firestoreEmulatorHost: string;
-  functionsEmulatorHost: string;
+  firestoreEmulatorHost: string | null;
+  functionsEmulatorHost: string | null;
   name: string;
   packageName: string;
   projectId: string;
@@ -39,11 +39,18 @@ export function getConfig(): Config {
   if (typeof apiKey !== "string")
     throw new Error("assert typeof apiKey === string");
 
-  const { authEmulatorHost } = extra;
-  if (authEmulatorHost === undefined)
-    throw new Error("assert authEmulatorHost !== undefined");
-  if (typeof authEmulatorHost !== "string")
-    throw new Error("assert typeof authEmulatorHost === string");
+  const getStringOrNull = (
+    record: Record<string, unknown>,
+    key: string
+  ): string | null => {
+    const s = record[key];
+    if (s === undefined) return null;
+    if (typeof s !== "string")
+      throw new Error(`assert typeof ${key} === string`);
+    return s;
+  };
+
+  const authEmulatorHost = getStringOrNull(extra, "authEmulatorHost");
 
   const { enableDebugLogging } = extra;
   if (enableDebugLogging === undefined)
@@ -51,17 +58,8 @@ export function getConfig(): Config {
   if (typeof enableDebugLogging !== "string")
     throw new Error("assert typeof enableDebugLogging === string");
 
-  const { firestoreEmulatorHost } = extra;
-  if (firestoreEmulatorHost === undefined)
-    throw new Error("assert firestoreEmulatorHost !== undefined");
-  if (typeof firestoreEmulatorHost !== "string")
-    throw new Error("assert typeof firestoreEmulatorHost === string");
-
-  const { functionsEmulatorHost } = extra;
-  if (functionsEmulatorHost === undefined)
-    throw new Error("assert functionsEmulatorHost !== undefined");
-  if (typeof functionsEmulatorHost !== "string")
-    throw new Error("assert typeof functionsEmulatorHost === string");
+  const firestoreEmulatorHost = getStringOrNull(extra, "firestoreEmulatorHost");
+  const functionsEmulatorHost = getStringOrNull(extra, "functionsEmulatorHost");
 
   const { projectId } = extra;
   if (projectId === undefined)

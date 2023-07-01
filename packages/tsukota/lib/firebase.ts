@@ -44,7 +44,7 @@ function initializeFirebaseInstances(): {
   const functions = getFunctions(app, "asia-northeast2");
 
   const { authEmulatorHost } = extra;
-  if (authEmulatorHost.length > 0) {
+  if (authEmulatorHost !== null) {
     console.log("authEmulatorHost", authEmulatorHost);
     const [hostOrUndefined, portString] = authEmulatorHost.split(":");
     const host = hostOrUndefined ?? "localhost";
@@ -54,7 +54,7 @@ function initializeFirebaseInstances(): {
   }
 
   const { firestoreEmulatorHost } = extra;
-  if (firestoreEmulatorHost.length > 0) {
+  if (firestoreEmulatorHost !== null) {
     console.log("firestoreEmulatorHost", firestoreEmulatorHost);
     const [hostOrUndefined, portString] = firestoreEmulatorHost.split(":");
     const host = hostOrUndefined ?? "localhost";
@@ -64,7 +64,7 @@ function initializeFirebaseInstances(): {
   }
 
   const { functionsEmulatorHost } = extra;
-  if (functionsEmulatorHost.length > 0) {
+  if (functionsEmulatorHost !== null) {
     console.log("functionsEmulatorHost", functionsEmulatorHost);
     const [hostOrUndefined, portString] = functionsEmulatorHost.split(":");
     const host = hostOrUndefined ?? "localhost";
