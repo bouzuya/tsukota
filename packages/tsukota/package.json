@@ -69,6 +69,7 @@
     "lint": "eslint .",
     "start": "expo start",
     "submit": "npx eas-cli submit --path=dist/tsukota.aab --platform=android --profile=preview",
-    "test": "jest"
+    "test": "jest",
+    "type-check": "tsc"
   }
 }
