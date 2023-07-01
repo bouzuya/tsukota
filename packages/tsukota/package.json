@@ -62,13 +62,12 @@
   },
   "private": true,
   "scripts": {
-    "build": "npx eas-cli build --local --output=dist/tsukota.aab --platform=android",
-    "build-and-submit": "npm run build && npm run submit",
+    "build": "npm run format:check && npm run lint && npm run type-check",
+    "deploy": "npx eas-cli build --auto-submit --platform=android --profile=preview",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
     "lint": "eslint .",
     "start": "expo start",
-    "submit": "npx eas-cli submit --path=dist/tsukota.aab --platform=android --profile=preview",
     "test": "jest",
     "type-check": "tsc"
   }
