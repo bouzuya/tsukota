@@ -28,12 +28,12 @@ const expoConfig: ExpoConfig = {
   plugins: ["expo-localization"],
   scheme: "tsukota",
   slug: "tsukota",
-  userInterfaceStyle: "automatic",
   splash: {
     backgroundColor: "#4e6a41",
     image: "./assets/adaptive-icon-v2.png",
     resizeMode: "contain",
   },
+  userInterfaceStyle: "automatic",
   version: getPackageJson(__dirname).version,
 };
 
