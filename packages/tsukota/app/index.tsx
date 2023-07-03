@@ -3,11 +3,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Linking, StyleSheet } from "react-native";
 import * as semver from "semver";
 import {
-  FAB,
-  Text,
   AccountList,
+  ActivityIndicator,
   DeleteAccountDialog,
+  FAB,
   Screen,
+  Text,
 } from "../components";
 import { useAccounts } from "../components/AccountContext";
 import { useCurrentUserId } from "../hooks/use-credential";
@@ -50,8 +51,8 @@ export function AccountIndex(): JSX.Element {
 
   const minAppVersion = useMinAppVersion();
 
-  // FIXME: Show ActivityIndicator
-  if (currentUserId === null || minAppVersion === null) return <></>;
+  if (currentUserId === null || minAppVersion === null)
+    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
 
   // FIXME: Move to root
   const { packageName, version } = getConfig();
