@@ -310,7 +310,7 @@ function DrawerLayout({ backgroundColor }: DrawerLayoutProps): JSX.Element {
         <AppInfo />
       </View>
       <RNPDrawer.Item
-        label="@ 2023 bouzuya"
+        label="© 2023 bouzuya"
         onPress={() => void Linking.openURL("https://bouzuya.net/")}
       />
     </View>
