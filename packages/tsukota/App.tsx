@@ -31,7 +31,7 @@ import {
   List,
   Divider,
 } from "react-native-paper";
-import { AccountIndex } from "./app/index";
+import { AccountIndex } from "./app/accounts/index";
 import { AccountEdit } from "./app/accounts/[id]/edit";
 import { AccountNew } from "./app/accounts/new";
 import { AccountShow } from "./app/accounts/[id]";

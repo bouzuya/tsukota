@@ -9,15 +9,15 @@ import {
   FAB,
   Screen,
   Text,
-} from "../components";
-import { useAccounts } from "../components/AccountContext";
-import { useCurrentUserId } from "../hooks/use-credential";
-import { deleteAccount } from "../lib/account";
-import { getMinAppVersion, loadAccountIds } from "../lib/api";
-import { getConfig } from "../lib/config";
-import { useTranslation } from "../lib/i18n";
-import { useFocusEffect, useTypedNavigation } from "../lib/navigation";
-import { showErrorMessage } from "../lib/show-error-message";
+} from "../../components";
+import { useAccounts } from "../../components/AccountContext";
+import { useCurrentUserId } from "../../hooks/use-credential";
+import { deleteAccount } from "../../lib/account";
+import { getMinAppVersion, loadAccountIds } from "../../lib/api";
+import { getConfig } from "../../lib/config";
+import { useTranslation } from "../../lib/i18n";
+import { useFocusEffect, useTypedNavigation } from "../../lib/navigation";
+import { showErrorMessage } from "../../lib/show-error-message";
 
 const useMinAppVersion = (): string | null => {
   const [minAppVersion, setMinAppVersion] = useState<string | null>(null);
