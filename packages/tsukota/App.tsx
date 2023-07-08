@@ -10,7 +10,6 @@ import {
   DefaultTheme as NavigationDefaultTheme,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import * as Clipboard from "expo-clipboard";
 import { StatusBar } from "expo-status-bar";
 import {
   View,
@@ -25,8 +24,6 @@ import {
   MD3DarkTheme,
   MD3LightTheme,
   PaperProvider,
-  List,
-  Divider,
 } from "react-native-paper";
 import { AccountIndex } from "./app/accounts/index";
 import { AccountEdit } from "./app/accounts/[id]/edit";
@@ -42,17 +39,16 @@ import { Settings } from "./app/accounts/[id]/settings";
 import { TransactionEdit } from "./app/accounts/[id]/transactions/[transactionId]/edit";
 import { TransactionIndex } from "./app/accounts/[id]/transactions/index";
 import { TransactionNew } from "./app/accounts/[id]/transactions/new";
+import { UserMe } from "./app/users/me";
 import {
   AccountContextProvider,
   AppInfo,
   CategorySelectProvider,
-  Screen,
 } from "./components";
-import { CredentialProvider, useCurrentUserId } from "./hooks/use-credential";
+import { CredentialProvider } from "./hooks/use-credential";
 import { getConfig } from "./lib/config";
 import { useTranslation } from "./lib/i18n";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Toast from "react-native-root-toast";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -160,35 +156,6 @@ function Home(): JSX.Element {
         options={{ headerTitle: t("title.transaction.new") ?? "" }}
       />
     </Stack.Navigator>
-  );
-}
-
-function User(): JSX.Element {
-  const { t } = useTranslation();
-  const currentUserId = useCurrentUserId();
-  return (
-    <Screen>
-      <View style={{ flex: 1, width: "100%", height: "100%" }}>
-        <List.Item
-          description={currentUserId}
-          style={{ width: "100%" }}
-          title={t("user.id") ?? ""}
-          right={() => (
-            <IconButton
-              icon="clipboard-text"
-              onPress={() => {
-                if (currentUserId === null) return;
-                // no wait
-                void Clipboard.setStringAsync(currentUserId).then(() => {
-                  Toast.show(t("message.copied_to_clipboard"));
-                });
-              }}
-            />
-          )}
-        />
-        <Divider style={{ width: "100%" }} />
-      </View>
-    </Screen>
   );
 }
 
@@ -308,7 +275,7 @@ function App() {
                   }}
                 />
                 <Drawer.Screen
-                  component={User}
+                  component={UserMe}
                   name="User"
                   options={({
                     navigation,
