@@ -10,6 +10,7 @@ import {
 } from "react-native-paper";
 import { AccountContextProvider, useAccount } from "./AccountContext";
 import { AccountList, Item as AccountListItem } from "./AccountList";
+import { AppInfo } from "./AppInfo";
 import { CategoryList } from "./CategoryList";
 import {
   CategorySelectProvider,
@@ -30,6 +31,7 @@ export {
   AccountList,
   AccountListItem,
   ActivityIndicator,
+  AppInfo,
   BottomNavigation,
   CategoryList,
   CategorySelectProvider,
