@@ -1,15 +1,3 @@
-import {
-  DrawerNavigationOptions,
-  DrawerNavigationProp,
-  createDrawerNavigator,
-} from "@react-navigation/drawer";
-import {
-  NavigationContainer,
-  useNavigation,
-  DarkTheme as NavigationDarkTheme,
-  DefaultTheme as NavigationDefaultTheme,
-} from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import {
   View,
@@ -36,13 +24,16 @@ import { CredentialProvider } from "./hooks/use-credential";
 import { getConfig } from "./lib/config";
 import { useTranslation } from "./lib/i18n";
 import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  DrawerNavigationOptions,
+  NavigationContainer,
+  NavigationDarkTheme,
+  NavigationDefaultTheme,
+  createDrawerNavigator,
+  useTypedDrawerNavigation,
+} from "./lib/navigation";
 
 const Drawer = createDrawerNavigator();
-
-type DrawerParamList = {
-  AccountLayout: undefined;
-  User: undefined;
-};
 
 const styles = StyleSheet.create({
   block: {
@@ -65,7 +56,7 @@ type DrawerLayoutProps = {
 };
 
 function DrawerLayout({ backgroundColor }: DrawerLayoutProps): JSX.Element {
-  const navigation = useNavigation<DrawerNavigationProp<DrawerParamList>>();
+  const navigation = useTypedDrawerNavigation();
   const { t } = useTranslation();
   const { name } = getConfig();
   return (
@@ -165,7 +156,7 @@ function App() {
                   options={({
                     navigation,
                   }: {
-                    navigation: DrawerNavigationProp<DrawerParamList>;
+                    navigation: ReturnType<typeof useTypedDrawerNavigation>;
                   }): DrawerNavigationOptions => ({
                     headerLeft: () => (
                       <View

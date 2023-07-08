@@ -1,6 +1,3 @@
-import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { useNavigation } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View } from "react-native";
 import { IconButton } from "react-native-paper";
 import { AccountIndex } from "./index";
@@ -18,17 +15,15 @@ import { TransactionEdit } from "./[id]/transactions/[transactionId]/edit";
 import { TransactionIndex } from "./[id]/transactions/index";
 import { TransactionNew } from "./[id]/transactions/new";
 import { useTranslation } from "../../lib/i18n";
+import {
+  createNativeStackNavigator,
+  useTypedDrawerNavigation,
+} from "../../lib/navigation";
 
 const Stack = createNativeStackNavigator();
 
-// TODO: Move to root
-type DrawerParamList = {
-  AccountLayout: undefined;
-  User: undefined;
-};
-
 export function AccountLayout(): JSX.Element {
-  const navigation = useNavigation<DrawerNavigationProp<DrawerParamList>>();
+  const navigation = useTypedDrawerNavigation();
   const { t } = useTranslation();
   return (
     <Stack.Navigator initialRouteName="AccountIndex">
