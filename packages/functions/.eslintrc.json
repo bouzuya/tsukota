@@ -30,7 +30,9 @@
         "argsIgnorePattern": "^_"
       }
     ],
+    "import/no-default-export": "error",
     "import/no-unresolved": "off",
+    "import/order": "error",
     "operator-linebreak": "off",
     "require-jsdoc": "off"
   }

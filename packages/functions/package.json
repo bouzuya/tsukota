@@ -31,6 +31,10 @@
   "engines": {
     "node": "18"
   },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  },
   "main": "lib/index.js",
   "private": true,
   "scripts": {
