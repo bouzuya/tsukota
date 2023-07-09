@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useContext, useMemo, useState } from "react";
-import { useAccount } from "./AccountContext";
 import { Category, listCategory } from "../lib/account";
+import { useAccount } from "./AccountContext";
 
 type ContextValue = {
   selectedCategory: Category | null;

@@ -1,10 +1,10 @@
 import * as Clipboard from "expo-clipboard";
 import { View } from "react-native";
 import { IconButton, List, Divider } from "react-native-paper";
+import Toast from "react-native-root-toast";
 import { Screen } from "../../components";
 import { useCurrentUserId } from "../../hooks/use-credential";
 import { useTranslation } from "../../lib/i18n";
-import Toast from "react-native-root-toast";
 
 export function UserMe(): JSX.Element {
   const { t } = useTranslation();

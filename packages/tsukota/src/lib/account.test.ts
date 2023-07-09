@@ -1,4 +1,6 @@
+import { getRandomValues } from "node:crypto";
 import { describe, expect, it } from "@jest/globals";
+import { v4 as uuidv4 } from "uuid";
 import {
   addOwner,
   createAccount,
@@ -12,8 +14,6 @@ import {
   updateCategory,
   updateTransaction,
 } from "./account";
-import { v4 as uuidv4 } from "uuid";
-import { getRandomValues } from "node:crypto";
 
 function generateUuidV4(): string {
   return uuidv4({

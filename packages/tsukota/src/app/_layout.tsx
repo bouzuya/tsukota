@@ -14,8 +14,6 @@ import {
   PaperProvider,
 } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { AccountLayout } from "./accounts/_layout";
-import { UserMe } from "./users/me";
 import {
   AccountContextProvider,
   AppInfo,
@@ -32,6 +30,8 @@ import {
   createDrawerNavigator,
   useTypedDrawerNavigation,
 } from "../lib/navigation";
+import { UserMe } from "./users/me";
+import { AccountLayout } from "./accounts/_layout";
 
 const Drawer = createDrawerNavigator();
 

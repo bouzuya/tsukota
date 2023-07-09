@@ -1,6 +1,10 @@
 import { View } from "react-native";
 import { IconButton } from "react-native-paper";
-import { AccountIndex } from "./index";
+import { useTranslation } from "../../lib/i18n";
+import {
+  createNativeStackNavigator,
+  useTypedDrawerNavigation,
+} from "../../lib/navigation";
 import { AccountEdit } from "./[id]/edit";
 import { AccountNew } from "./new";
 import { AccountShow } from "./[id]";
@@ -14,11 +18,7 @@ import { Settings } from "./[id]/settings";
 import { TransactionEdit } from "./[id]/transactions/[transactionId]/edit";
 import { TransactionIndex } from "./[id]/transactions/index";
 import { TransactionNew } from "./[id]/transactions/new";
-import { useTranslation } from "../../lib/i18n";
-import {
-  createNativeStackNavigator,
-  useTypedDrawerNavigation,
-} from "../../lib/navigation";
+import { AccountIndex } from "./index";
 
 const Stack = createNativeStackNavigator();
 
