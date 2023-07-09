@@ -28,7 +28,7 @@ export function AppInfo(): JSX.Element {
         >
           <Image
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            source={require("./assets/icon-v2.png")}
+            source={require("../../assets/icon-v2.png")}
             style={{
               height: "100%",
               width: "100%",
