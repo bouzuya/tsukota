@@ -1,7 +1,6 @@
 import { err } from "neverthrow";
-import React, { useCallback, useEffect, useState } from "react";
-import { Linking, StyleSheet } from "react-native";
-import * as semver from "semver";
+import React, { useCallback, useState } from "react";
+import { StyleSheet } from "react-native";
 import {
   AccountList,
   ActivityIndicator,
@@ -13,23 +12,10 @@ import {
 import { useAccounts } from "../../components/AccountContext";
 import { useCurrentUserId } from "../../hooks/use-credential";
 import { deleteAccount } from "../../lib/account";
-import { getMinAppVersion, loadAccountIds } from "../../lib/api";
-import { getConfig } from "../../lib/config";
+import { loadAccountIds } from "../../lib/api";
 import { useTranslation } from "../../lib/i18n";
 import { useFocusEffect, useTypedNavigation } from "../../lib/navigation";
 import { showErrorMessage } from "../../lib/show-error-message";
-
-const useMinAppVersion = (): string | null => {
-  const [minAppVersion, setMinAppVersion] = useState<string | null>(null);
-  useEffect(() => {
-    // no await
-    void (async () => {
-      const version = await getMinAppVersion();
-      setMinAppVersion(version);
-    })();
-  }, []);
-  return minAppVersion;
-};
 
 export function AccountIndex(): JSX.Element {
   const { t } = useTranslation();
@@ -49,33 +35,9 @@ export function AccountIndex(): JSX.Element {
     }, [currentUserId])
   );
 
-  const minAppVersion = useMinAppVersion();
-
-  if (currentUserId === null || minAppVersion === null)
+  if (currentUserId === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
 
-  // FIXME: Move to root
-  const { packageName, version } = getConfig();
-  if (semver.lt(version, minAppVersion)) {
-    const url = `https://play.google.com/store/apps/details?id=${packageName}`;
-    return (
-      <Screen options={{ title: "tsukota" }}>
-        <Text
-          onPress={() => {
-            // no await
-            void Linking.openURL(url);
-          }}
-          style={{
-            color: "#6699ff",
-            marginHorizontal: 16,
-            textDecorationLine: "underline",
-          }}
-        >
-          {t("system.update")}
-        </Text>
-      </Screen>
-    );
-  }
   return (
     <Screen>
       {Object.keys(accounts).length === 0 ? (

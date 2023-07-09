@@ -1,26 +1,30 @@
 import { StatusBar } from "expo-status-bar";
 import {
-  View,
-  useColorScheme,
-  StyleSheet,
   ColorValue,
   Linking,
+  StyleSheet,
+  View,
+  useColorScheme,
 } from "react-native";
+import * as semver from "semver";
 import {
   Drawer as RNPDrawer,
   IconButton,
   MD3DarkTheme,
   MD3LightTheme,
   PaperProvider,
+  ActivityIndicator,
+  Text,
 } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect, useState } from "react";
+import { getConfig } from "../lib/config";
 import {
   AccountContextProvider,
   AppInfo,
   CategorySelectProvider,
 } from "../components";
 import { CredentialProvider } from "../hooks/use-credential";
-import { getConfig } from "../lib/config";
 import { useTranslation } from "../lib/i18n";
 import {
   DrawerNavigationOptions,
@@ -30,8 +34,21 @@ import {
   createDrawerNavigator,
   useTypedDrawerNavigation,
 } from "../lib/navigation";
+import { getMinAppVersion } from "../lib/api";
 import { UserMe } from "./users/me";
 import { AccountLayout } from "./accounts/_layout";
+
+const useMinAppVersion = (): string | null => {
+  const [minAppVersion, setMinAppVersion] = useState<string | null>(null);
+  useEffect(() => {
+    // no await
+    void (async () => {
+      const version = await getMinAppVersion();
+      setMinAppVersion(version);
+    })();
+  }, []);
+  return minAppVersion;
+};
 
 const Drawer = createDrawerNavigator();
 
@@ -103,7 +120,44 @@ type DrawerNavigatorProps = {
 };
 
 function DrawerNavigator({ isDark }: DrawerNavigatorProps): JSX.Element {
+  const minAppVersion = useMinAppVersion();
   const { t } = useTranslation();
+
+  const { packageName, version } = getConfig();
+  if (minAppVersion === null || semver.lt(version, minAppVersion)) {
+    const url = `https://play.google.com/store/apps/details?id=${packageName}`;
+    return (
+      <View
+        style={{
+          alignItems: "center",
+          flex: 1,
+          justifyContent: "center",
+          backgroundColor: isDark
+            ? NavigationDarkTheme.colors.background
+            : NavigationDefaultTheme.colors.background,
+        }}
+      >
+        {minAppVersion === null ? (
+          <ActivityIndicator size="large" style={{ flex: 1 }} />
+        ) : (
+          <Text
+            onPress={() => {
+              // no await
+              void Linking.openURL(url);
+            }}
+            style={{
+              color: "#6699ff",
+              marginHorizontal: 16,
+              textDecorationLine: "underline",
+            }}
+          >
+            {t("system.update")}
+          </Text>
+        )}
+      </View>
+    );
+  }
+
   return (
     <Drawer.Navigator
       initialRouteName="AccountLayout"
