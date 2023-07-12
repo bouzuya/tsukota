@@ -90,6 +90,29 @@ export const accountEventDocumentConverter: FirestoreDataConverter<AccountEventD
     },
   };
 
+// `/deleted_users/${uid}
+export type DeletedUserDocument = {
+  authenticationDeletedAt: string | null;
+  createdAt: string;
+  firestoreDeletedAt: string | null;
+  id: string;
+};
+
+export const deletedUserDocumentConverter: FirestoreDataConverter<DeletedUserDocument> =
+  {
+    fromFirestore: function fromFirestore(
+      snapshot: QueryDocumentSnapshot
+    ): DeletedUserDocument {
+      // 怪しい
+      return snapshot.data() as DeletedUserDocument;
+    },
+    toFirestore: function (
+      modelObject: WithFieldValue<DeletedUserDocument>
+    ): DocumentData {
+      return modelObject;
+    },
+  };
+
 // `/users/${user_id}`
 export type UserDocument = {
   id: string;
