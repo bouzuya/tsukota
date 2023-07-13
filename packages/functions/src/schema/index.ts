@@ -115,6 +115,16 @@ export const deletedUserDocumentConverter: FirestoreDataConverter<DeletedUserDoc
     },
   };
 
+export function getDeletedUserDocumentRef(
+  db: Firestore,
+  userId: string
+): DocumentReference<DeletedUserDocument> {
+  return db
+    .collection("deleted_users")
+    .doc(userId)
+    .withConverter(deletedUserDocumentConverter);
+}
+
 // /devices/${device_id}
 export type DeviceDocument = {
   encryptedSecret: string;

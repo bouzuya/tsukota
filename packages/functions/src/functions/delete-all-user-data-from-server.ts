@@ -1,7 +1,7 @@
 import { App } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import * as functions from "firebase-functions";
-import { deletedUserDocumentConverter } from "../schema";
+import { getDeletedUserDocumentRef } from "../schema";
 
 export function buildDeleteAllUserDataFromServer(
   app: App,
@@ -20,10 +20,7 @@ export function buildDeleteAllUserDataFromServer(
           "unauthenticated"
         );
 
-      const deletedUserDocRef = db
-        .collection("deleted_users")
-        .doc(uid)
-        .withConverter(deletedUserDocumentConverter);
+      const deletedUserDocRef = getDeletedUserDocumentRef(db, uid);
       await deletedUserDocRef.create({
         authenticationDeletedAt: null,
         createdAt: new Date().toISOString(),
