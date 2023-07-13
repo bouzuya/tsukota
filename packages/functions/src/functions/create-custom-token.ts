@@ -1,13 +1,10 @@
 import { compare, hash } from "bcryptjs";
 import { App } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
-import {
-  DocumentData,
-  getFirestore,
-  QueryDocumentSnapshot,
-} from "firebase-admin/firestore";
+import { getFirestore } from "firebase-admin/firestore";
 import * as functions from "firebase-functions";
 import { v4 as uuidv4 } from "uuid";
+import { deviceDocumentConverter, userDocumentConverter } from "../schema";
 
 export function buildCreateCustomToken(
   app: App,
@@ -36,23 +33,11 @@ export function buildCreateCustomToken(
         );
       }
 
-      type Device = {
-        encryptedSecret: string;
-        id: string;
-        uid: string;
-      };
       const db = getFirestore(app);
       const deviceSnapshot = await db
         .collection("devices")
         .doc(deviceId)
-        .withConverter({
-          fromFirestore: (snapshot: QueryDocumentSnapshot): Device => {
-            return snapshot.data() as Device;
-          },
-          toFirestore: (device: Device): DocumentData => {
-            return device;
-          },
-        })
+        .withConverter(deviceDocumentConverter)
         .get();
       const device = deviceSnapshot.data();
       const uid =
@@ -69,21 +54,10 @@ export function buildCreateCustomToken(
       });
 
       // create user document
-      type UserDocument = {
-        id: string;
-        account_ids: string[];
-      };
       const userSnapshot = await db
         .collection("users")
         .doc(uid)
-        .withConverter({
-          fromFirestore: (snapshot: QueryDocumentSnapshot): UserDocument => {
-            return snapshot.data() as UserDocument;
-          },
-          toFirestore: (user: UserDocument): DocumentData => {
-            return user;
-          },
-        })
+        .withConverter(userDocumentConverter)
         .get();
       if (!userSnapshot.exists) {
         await userSnapshot.ref.create({ account_ids: [], id: uid });

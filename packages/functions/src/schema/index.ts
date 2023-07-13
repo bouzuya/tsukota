@@ -113,6 +113,22 @@ export const deletedUserDocumentConverter: FirestoreDataConverter<DeletedUserDoc
     },
   };
 
+// /devices/${device_id}
+export type DeviceDocument = {
+  encryptedSecret: string;
+  id: string;
+  uid: string;
+};
+
+export const deviceDocumentConverter: FirestoreDataConverter<DeviceDocument> = {
+  fromFirestore: (snapshot: QueryDocumentSnapshot): DeviceDocument => {
+    return snapshot.data() as DeviceDocument;
+  },
+  toFirestore: (device: DeviceDocument): DocumentData => {
+    return device;
+  },
+};
+
 // `/users/${user_id}`
 export type UserDocument = {
   id: string;
