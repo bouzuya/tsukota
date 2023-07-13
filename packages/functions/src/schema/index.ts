@@ -32,6 +32,16 @@ export const accountDocumentForQueryConverter: FirestoreDataConverter<AccountDoc
     },
   };
 
+export function getAccountDocumentForQueryRef(
+  db: Firestore,
+  accountId: string
+): DocumentReference<AccountDocumentForQuery> {
+  return db
+    .collection("accounts")
+    .doc(accountId)
+    .withConverter(accountDocumentForQueryConverter);
+}
+
 // `/accounts/${account_id}/events/${event_id}`
 export type AccountEventDocumentForQuery = AccountEvent;
 
@@ -49,6 +59,27 @@ export const accountEventDocumentForQueryConverter: FirestoreDataConverter<Accou
       return modelObject;
     },
   };
+
+export function getAccountEventDocumentForQueryRefFromParentRef(
+  parent: DocumentReference<AccountDocumentForQuery>,
+  eventId: string
+): DocumentReference<AccountEventDocumentForQuery> {
+  return parent
+    .collection("events")
+    .doc(eventId)
+    .withConverter(accountEventDocumentForQueryConverter);
+}
+
+export function getAccountEventDocumentForQueryRef(
+  db: Firestore,
+  accountId: string,
+  eventId: string
+): DocumentReference<AccountEventDocumentForQuery> {
+  return getAccountEventDocumentForQueryRefFromParentRef(
+    getAccountDocumentForQueryRef(db, accountId),
+    eventId
+  );
+}
 
 // `/aggregates/account/event_streams/${event_stream_id}`
 export type AccountEventStreamDocument = {
@@ -74,6 +105,18 @@ export const accountEventStreamDocumentConverter: FirestoreDataConverter<Account
     },
   };
 
+export function getAccountEventStreamDocumentRef(
+  db: Firestore,
+  accountId: string
+): DocumentReference<AccountEventStreamDocument> {
+  return db
+    .collection("aggregates")
+    .doc("account")
+    .collection("event_streams")
+    .doc(accountId)
+    .withConverter(accountEventStreamDocumentConverter);
+}
+
 // `/aggregates/account/event_streams/${event_stream_id}/events/${event_id}`
 export type AccountEventDocument = AccountEvent;
 
@@ -91,6 +134,27 @@ export const accountEventDocumentConverter: FirestoreDataConverter<AccountEventD
       return modelObject;
     },
   };
+
+export function getAccountEventDocumentRefFromParentRef(
+  parent: DocumentReference<AccountEventStreamDocument>,
+  eventId: string
+): DocumentReference<AccountEventDocument> {
+  return parent
+    .collection("events")
+    .doc(eventId)
+    .withConverter(accountEventDocumentConverter);
+}
+
+export function getAccountEventDocumentRef(
+  db: Firestore,
+  accountId: string,
+  eventId: string
+): DocumentReference<AccountEventDocument> {
+  return getAccountEventDocumentRefFromParentRef(
+    getAccountEventStreamDocumentRef(db, accountId),
+    eventId
+  );
+}
 
 // `/deleted_users/${uid}
 export type DeletedUserDocument = {

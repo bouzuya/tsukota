@@ -3,11 +3,11 @@ import { App } from "firebase-admin/app";
 import { FieldValue, Firestore, getFirestore } from "firebase-admin/firestore";
 import * as functions from "firebase-functions";
 import {
-  accountDocumentForQueryConverter,
-  accountEventDocumentConverter,
-  accountEventDocumentForQueryConverter,
-  accountEventStreamDocumentConverter,
-  userDocumentConverter,
+  getAccountDocumentForQueryRef,
+  getAccountEventDocumentForQueryRefFromParentRef,
+  getAccountEventDocumentRefFromParentRef,
+  getAccountEventStreamDocumentRef,
+  getUserDocumentRef,
   validateStoreAccountEventBody,
 } from "../schema";
 
@@ -61,24 +61,23 @@ function storeAccountEvent(
 ): Promise<void> {
   return db.runTransaction(
     async (transaction: FirebaseFirestore.Transaction): Promise<void> => {
-      const eventStreamDocRef = db
-        .collection("aggregates")
-        .doc("account")
-        .collection("event_streams")
-        .doc(event.accountId)
-        .withConverter(accountEventStreamDocumentConverter);
-      const eventDocRef = eventStreamDocRef
-        .collection("events")
-        .doc(event.id)
-        .withConverter(accountEventDocumentConverter);
-      const accountForQueryDocRef = db
-        .collection("accounts")
-        .doc(event.accountId)
-        .withConverter(accountDocumentForQueryConverter);
-      const accountEventForQueryDocRef = accountForQueryDocRef
-        .collection("events")
-        .doc(event.id)
-        .withConverter(accountEventDocumentForQueryConverter);
+      const eventStreamDocRef = getAccountEventStreamDocumentRef(
+        db,
+        event.accountId
+      );
+      const eventDocRef = getAccountEventDocumentRefFromParentRef(
+        eventStreamDocRef,
+        event.id
+      );
+      const accountForQueryDocRef = getAccountDocumentForQueryRef(
+        db,
+        event.accountId
+      );
+      const accountEventForQueryDocRef =
+        getAccountEventDocumentForQueryRefFromParentRef(
+          accountForQueryDocRef,
+          event.id
+        );
 
       // create or update account
       const esDocSnapshot = await transaction.get(eventStreamDocRef);
@@ -163,10 +162,7 @@ function storeAccountEvent(
       // update the `accounts` field of the `users/{uid}`
       switch (event.type) {
         case "accountCreated": {
-          const userRef = db
-            .collection("users")
-            .doc(uid)
-            .withConverter(userDocumentConverter);
+          const userRef = getUserDocumentRef(db, uid);
           transaction.update(userRef, {
             id: uid,
             account_ids: FieldValue.arrayUnion(event.accountId),
@@ -174,10 +170,7 @@ function storeAccountEvent(
           break;
         }
         case "ownerAdded": {
-          const userRef = db
-            .collection("users")
-            .doc(event.owner)
-            .withConverter(userDocumentConverter);
+          const userRef = getUserDocumentRef(db, event.owner);
           transaction.update(userRef, {
             id: event.owner,
             account_ids: FieldValue.arrayUnion(event.accountId),
@@ -185,10 +178,7 @@ function storeAccountEvent(
           break;
         }
         case "ownerRemoved": {
-          const userRef = db
-            .collection("users")
-            .doc(event.owner)
-            .withConverter(userDocumentConverter);
+          const userRef = getUserDocumentRef(db, event.owner);
           transaction.update(userRef, {
             id: event.owner,
             account_ids: FieldValue.arrayRemove(event.accountId),
