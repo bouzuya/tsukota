@@ -4,7 +4,7 @@ import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import * as functions from "firebase-functions";
 import { v4 as uuidv4 } from "uuid";
-import { deviceDocumentConverter, userDocumentConverter } from "../schema";
+import { getDeviceDocumentRef, getUserDocumentRef } from "../schema";
 
 export function buildCreateCustomToken(
   app: App,
@@ -34,11 +34,7 @@ export function buildCreateCustomToken(
       }
 
       const db = getFirestore(app);
-      const deviceSnapshot = await db
-        .collection("devices")
-        .doc(deviceId)
-        .withConverter(deviceDocumentConverter)
-        .get();
+      const deviceSnapshot = await getDeviceDocumentRef(db, deviceId).get();
       const device = deviceSnapshot.data();
       const uid =
         device !== undefined &&
@@ -54,11 +50,7 @@ export function buildCreateCustomToken(
       });
 
       // create user document
-      const userSnapshot = await db
-        .collection("users")
-        .doc(uid)
-        .withConverter(userDocumentConverter)
-        .get();
+      const userSnapshot = await getUserDocumentRef(db, uid).get();
       if (!userSnapshot.exists) {
         await userSnapshot.ref.create({ account_ids: [], id: uid });
       }

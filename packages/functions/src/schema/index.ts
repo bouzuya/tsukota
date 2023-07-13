@@ -1,6 +1,8 @@
 import { AccountEvent } from "@bouzuya/tsukota-account-events";
 import {
   DocumentData,
+  DocumentReference,
+  Firestore,
   FirestoreDataConverter,
   QueryDocumentSnapshot,
   WithFieldValue,
@@ -129,6 +131,16 @@ export const deviceDocumentConverter: FirestoreDataConverter<DeviceDocument> = {
   },
 };
 
+export function getDeviceDocumentRef(
+  db: Firestore,
+  deviceId: string
+): DocumentReference<DeviceDocument> {
+  return db
+    .collection("devices")
+    .doc(deviceId)
+    .withConverter(deviceDocumentConverter);
+}
+
 // `/users/${user_id}`
 export type UserDocument = {
   id: string;
@@ -148,3 +160,13 @@ export const userDocumentConverter: FirestoreDataConverter<UserDocument> = {
     return modelObject;
   },
 };
+
+export function getUserDocumentRef(
+  db: Firestore,
+  userId: string
+): DocumentReference<UserDocument> {
+  return db
+    .collection("users")
+    .doc(userId)
+    .withConverter(userDocumentConverter);
+}
