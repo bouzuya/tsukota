@@ -1,40 +1,13 @@
-import {
-  DocumentData,
-  FirestoreDataConverter,
-  QueryDocumentSnapshot,
-  SnapshotOptions,
-  WithFieldValue,
-  doc,
-  getDoc,
-  getDocs,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
+import { getDoc, getDocs, orderBy, query, where } from "firebase/firestore";
 import { ResultAsync } from "neverthrow";
 import { AccountEvent } from "./account";
 import { db, storeAccountEvent as firebaseStoreAccountEvent } from "./firebase";
-import { getAccountEventCollectionRef, getUserDocumentRef } from "./schema";
+import {
+  getAccountEventCollectionRef,
+  getSystemStatusDocumentRef,
+  getUserDocumentRef,
+} from "./schema";
 import { timeSpan } from "./time-span";
-
-type SystemStatusDocument = {
-  minAppVersion: string | null;
-};
-
-const systemStatusDocumentConverter: FirestoreDataConverter<SystemStatusDocument> =
-  {
-    fromFirestore: function (
-      snapshot: QueryDocumentSnapshot<SystemStatusDocument>,
-      options?: SnapshotOptions | undefined
-    ): SystemStatusDocument {
-      return snapshot.data(options);
-    },
-    toFirestore: function (
-      modelObject: WithFieldValue<SystemStatusDocument>
-    ): DocumentData {
-      return modelObject;
-    },
-  };
 
 export function storeAccountEvent(
   lastEventId: string | null,
@@ -77,9 +50,6 @@ export async function loadEventsFromRemote(
 }
 
 export const getMinAppVersion = async (): Promise<string> => {
-  const systemStatusDocRef = doc(db, "system", "status").withConverter(
-    systemStatusDocumentConverter
-  );
-  const systemStatusDocSnapshot = await getDoc(systemStatusDocRef);
+  const systemStatusDocSnapshot = await getDoc(getSystemStatusDocumentRef(db));
   return systemStatusDocSnapshot.data()?.minAppVersion ?? "0.0.0";
 };

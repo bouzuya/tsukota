@@ -39,6 +39,34 @@ export function getAccountEventCollectionRef(
   );
 }
 
+// `/system/status`
+type SystemStatusDocument = {
+  minAppVersion: string | null;
+};
+
+const systemStatusDocumentConverter: FirestoreDataConverter<SystemStatusDocument> =
+  {
+    fromFirestore: function (
+      snapshot: QueryDocumentSnapshot<SystemStatusDocument>,
+      options?: SnapshotOptions | undefined
+    ): SystemStatusDocument {
+      return snapshot.data(options);
+    },
+    toFirestore: function (
+      modelObject: WithFieldValue<SystemStatusDocument>
+    ): DocumentData {
+      return modelObject;
+    },
+  };
+
+export function getSystemStatusDocumentRef(
+  db: Firestore
+): DocumentReference<SystemStatusDocument> {
+  return doc(db, "system", "status").withConverter(
+    systemStatusDocumentConverter
+  );
+}
+
 // `/users/${userId}`
 type UserDocument = {
   id: string;
