@@ -16,6 +16,7 @@ import { ResultAsync } from "neverthrow";
 import { AccountEvent } from "./account";
 import { db, storeAccountEvent as firebaseStoreAccountEvent } from "./firebase";
 import { timeSpan } from "./time-span";
+import { getUserDocumentRef } from "./schema";
 
 type EventDocument = AccountEvent;
 
@@ -53,26 +54,6 @@ const systemStatusDocumentConverter: FirestoreDataConverter<SystemStatusDocument
     },
   };
 
-type UserDocument = {
-  id: string;
-  account_ids: string[];
-};
-
-const userDocumentConverter: FirestoreDataConverter<UserDocument> = {
-  fromFirestore: function (
-    // 怪しい
-    snapshot: QueryDocumentSnapshot<UserDocument>,
-    options?: SnapshotOptions | undefined
-  ): UserDocument {
-    return snapshot.data(options);
-  },
-  toFirestore: function (
-    modelObject: WithFieldValue<UserDocument>
-  ): DocumentData {
-    return modelObject;
-  },
-};
-
 export function storeAccountEvent(
   lastEventId: string | null,
   event: AccountEvent
@@ -88,9 +69,7 @@ export function storeAccountEvent(
 
 export async function loadAccountIds(currentUserId: string): Promise<string[]> {
   const uid = currentUserId;
-  const userSnapshot = await getDoc(
-    doc(db, `users/${uid}`).withConverter(userDocumentConverter)
-  );
+  const userSnapshot = await getDoc(getUserDocumentRef(db, uid));
   const data = userSnapshot.data();
   if (data === undefined) return [];
   return data.account_ids;
