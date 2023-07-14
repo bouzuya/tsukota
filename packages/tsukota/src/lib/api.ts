@@ -4,7 +4,6 @@ import {
   QueryDocumentSnapshot,
   SnapshotOptions,
   WithFieldValue,
-  collection,
   doc,
   getDoc,
   getDocs,
@@ -15,25 +14,8 @@ import {
 import { ResultAsync } from "neverthrow";
 import { AccountEvent } from "./account";
 import { db, storeAccountEvent as firebaseStoreAccountEvent } from "./firebase";
+import { getAccountEventCollectionRef, getUserDocumentRef } from "./schema";
 import { timeSpan } from "./time-span";
-import { getUserDocumentRef } from "./schema";
-
-type EventDocument = AccountEvent;
-
-const eventDocumentConverter: FirestoreDataConverter<EventDocument> = {
-  fromFirestore: function (
-    // 怪しい
-    snapshot: QueryDocumentSnapshot<EventDocument>,
-    options?: SnapshotOptions | undefined
-  ): EventDocument {
-    return snapshot.data(options);
-  },
-  toFirestore: function (
-    modelObject: WithFieldValue<EventDocument>
-  ): DocumentData {
-    return modelObject;
-  },
-};
 
 type SystemStatusDocument = {
   minAppVersion: string | null;
@@ -80,14 +62,8 @@ export async function loadEventsFromRemote(
   since: string | null
 ): Promise<AccountEvent[]> {
   return await timeSpan(`loadEventsFromRemote ${accountId}`, async () => {
-    const eventsCollection = collection(
-      db,
-      "accounts",
-      accountId,
-      "events"
-    ).withConverter(eventDocumentConverter);
     const q = query(
-      eventsCollection,
+      getAccountEventCollectionRef(db, accountId),
       where("at", ">", since !== null ? since : "1970-01-01T00:00:00Z"),
       orderBy("at")
     );

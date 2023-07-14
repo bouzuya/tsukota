@@ -1,4 +1,6 @@
+import { AccountEvent } from "@bouzuya/tsukota-account-events";
 import {
+  CollectionReference,
   DocumentData,
   DocumentReference,
   Firestore,
@@ -6,8 +8,36 @@ import {
   QueryDocumentSnapshot,
   SnapshotOptions,
   WithFieldValue,
+  collection,
   doc,
 } from "firebase/firestore";
+
+// `/accounts/${accountId}/events/${eventId}`
+type EventDocument = AccountEvent;
+
+const eventDocumentConverter: FirestoreDataConverter<EventDocument> = {
+  fromFirestore: function (
+    // 怪しい
+    snapshot: QueryDocumentSnapshot<EventDocument>,
+    options?: SnapshotOptions | undefined
+  ): EventDocument {
+    return snapshot.data(options);
+  },
+  toFirestore: function (
+    modelObject: WithFieldValue<EventDocument>
+  ): DocumentData {
+    return modelObject;
+  },
+};
+
+export function getAccountEventCollectionRef(
+  db: Firestore,
+  accountId: string
+): CollectionReference<EventDocument> {
+  return collection(db, "accounts", accountId, "events").withConverter(
+    eventDocumentConverter
+  );
+}
 
 // `/users/${userId}`
 type UserDocument = {
