@@ -16,19 +16,30 @@ async function ensureAccountEventsDir(): Promise<string> {
   return accountEventsDir;
 }
 
+function getAccountEventsFile(dir: string, accountId: string): string {
+  return dir + accountId + ".json";
+}
+
+async function readJsonAsync<T>(file: string): Promise<T> {
+  const json = await readAsStringAsync(file, { encoding: "utf8" });
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const data: T = JSON.parse(json);
+  return data;
+}
+
+async function writeJsonAsync<T>(file: string, data: T): Promise<void> {
+  const json = JSON.stringify(data);
+  await writeAsStringAsync(file, json, { encoding: "utf8" });
+}
+
 export async function loadEventsFromLocal(
   accountId: string
 ): Promise<AccountEvent[]> {
   return await timeSpan(`loadEventsFromLocal  ${accountId}`, async () => {
     const accountEventsDir = await ensureAccountEventsDir();
-    const accountEventFile = accountEventsDir + accountId + ".json";
+    const accountEventFile = getAccountEventsFile(accountEventsDir, accountId);
     if (!(await getInfoAsync(accountEventFile)).exists) return [];
-    const data = await readAsStringAsync(accountEventFile, {
-      encoding: "utf8",
-    });
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const accountEvents: AccountEvent[] = JSON.parse(data);
-    return accountEvents;
+    return readJsonAsync<AccountEvent[]>(accountEventFile);
   });
 }
 
@@ -37,9 +48,6 @@ export async function storeEventsToLocal(
   accountEvents: AccountEvent[]
 ): Promise<void> {
   const accountEventsDir = await ensureAccountEventsDir();
-  const accountEventFile = accountEventsDir + accountId + ".json";
-  const data = JSON.stringify(accountEvents);
-  await writeAsStringAsync(accountEventFile, data, {
-    encoding: "utf8",
-  });
+  const accountEventFile = getAccountEventsFile(accountEventsDir, accountId);
+  return writeJsonAsync<AccountEvent[]>(accountEventFile, accountEvents);
 }
