@@ -17,7 +17,7 @@ export type AccountDocumentForQuery = {
   owners: string[];
 };
 
-export const accountDocumentForQueryConverter: FirestoreDataConverter<AccountDocumentForQuery> =
+const accountDocumentForQueryConverter: FirestoreDataConverter<AccountDocumentForQuery> =
   {
     fromFirestore: function fromFirestore(
       snapshot: QueryDocumentSnapshot
@@ -45,7 +45,7 @@ export function getAccountDocumentForQueryRef(
 // `/accounts/${account_id}/events/${event_id}`
 export type AccountEventDocumentForQuery = AccountEvent;
 
-export const accountEventDocumentForQueryConverter: FirestoreDataConverter<AccountEventDocumentForQuery> =
+const accountEventDocumentForQueryConverter: FirestoreDataConverter<AccountEventDocumentForQuery> =
   {
     fromFirestore: function fromFirestore(
       snapshot: QueryDocumentSnapshot
@@ -90,7 +90,7 @@ export type AccountEventStreamDocument = {
   updatedAt: string;
 };
 
-export const accountEventStreamDocumentConverter: FirestoreDataConverter<AccountEventStreamDocument> =
+const accountEventStreamDocumentConverter: FirestoreDataConverter<AccountEventStreamDocument> =
   {
     fromFirestore: function fromFirestore(
       snapshot: QueryDocumentSnapshot
@@ -120,7 +120,7 @@ export function getAccountEventStreamDocumentRef(
 // `/aggregates/account/event_streams/${event_stream_id}/events/${event_id}`
 export type AccountEventDocument = AccountEvent;
 
-export const accountEventDocumentConverter: FirestoreDataConverter<AccountEventDocument> =
+const accountEventDocumentConverter: FirestoreDataConverter<AccountEventDocument> =
   {
     fromFirestore: function fromFirestore(
       snapshot: QueryDocumentSnapshot
@@ -164,7 +164,7 @@ export type DeletedUserDocument = {
   id: string;
 };
 
-export const deletedUserDocumentConverter: FirestoreDataConverter<DeletedUserDocument> =
+const deletedUserDocumentConverter: FirestoreDataConverter<DeletedUserDocument> =
   {
     fromFirestore: function fromFirestore(
       snapshot: QueryDocumentSnapshot
@@ -196,7 +196,7 @@ export type DeviceDocument = {
   uid: string;
 };
 
-export const deviceDocumentConverter: FirestoreDataConverter<DeviceDocument> = {
+const deviceDocumentConverter: FirestoreDataConverter<DeviceDocument> = {
   fromFirestore: (snapshot: QueryDocumentSnapshot): DeviceDocument => {
     return snapshot.data() as DeviceDocument;
   },
@@ -221,7 +221,7 @@ export type UserDocument = {
   account_ids: string[];
 };
 
-export const userDocumentConverter: FirestoreDataConverter<UserDocument> = {
+const userDocumentConverter: FirestoreDataConverter<UserDocument> = {
   fromFirestore: function (
     snapshot: QueryDocumentSnapshot
     // 怪しい
