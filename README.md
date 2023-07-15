@@ -23,11 +23,33 @@ $ cp packages/tsukota/_env packages/tsukota/.env
 $ vi packages/tsukota/.env
 
 $ # VS Code "Dev Containers: Reopen in Container"
-$ cd packages/tsukota
+$ cd /home/node/packages/functions
+$ npm run build
+$ cd /home/node/packages/tsukota
 $ npm start
 ```
 
 `compose.yaml` に指定されている通り Firebase Emulator が実行されます。
+
+## システム構成図
+
+```mermaid
+graph LR
+  android["Android\n(React Native)"]
+
+  subgraph "Firebase"
+    auth["Authentication"]
+    firestore["Firestore"]
+    functions["Functions"]
+  end
+
+  android -- "call" --> functions
+  android -- "read only" --> firestore
+  android -- "use\n(sign in with custom token)" --> auth
+  firestore -- "use\n(security rules)" --> auth
+  functions -- "use\n(create custom token)" --> auth
+  functions -- "read/write" --> firestore
+```
 
 ## Models
 
