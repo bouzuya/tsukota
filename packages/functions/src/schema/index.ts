@@ -156,7 +156,7 @@ export function getAccountEventDocumentRef(
   );
 }
 
-// `/deleted_users/${uid}
+// `/deleted_users/${user_id}`
 export type DeletedUserDocument = {
   authenticationDeletedAt: string | null;
   createdAt: string;
@@ -189,7 +189,7 @@ export function getDeletedUserDocumentRef(
     .withConverter(deletedUserDocumentConverter);
 }
 
-// /devices/${device_id}
+// `/devices/${device_id}`
 export type DeviceDocument = {
   encryptedSecret: string;
   id: string;
@@ -214,6 +214,14 @@ export function getDeviceDocumentRef(
     .doc(deviceId)
     .withConverter(deviceDocumentConverter);
 }
+
+// `/system/status`
+export type SystemStatusDocumentForQuery = {
+  minAppVersion: string | null;
+};
+
+// TODO: Converter
+// TODO: Ref Helper
 
 // `/users/${user_id}`
 export type UserDocument = {

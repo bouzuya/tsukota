@@ -51,6 +51,41 @@ graph LR
   functions -- "read/write" --> firestore
 ```
 
+## 永続化先
+
+- Android (React Native)
+  - [npm:@react-native-async-storage/async-storage]
+    - 実装
+      - SQLite
+      - `android.database.sqlite.SQLiteOpenHelper`
+      - <https://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper>
+      - <https://developer.android.com/training/data-storage/sqlite?hl=ja>
+    - DeviceCredential
+      - `device` key: `DeviceCredential`
+    - Persistene (Firebase Authentication)
+      - `__sak` key: `number`
+      - `firebase:authUser:${API_KEY}:${appName}` key: JSON
+      - (unknown) key: (unknown)
+  - [npm:expo-file-system] の documentDirectory
+    - 実装
+      - <https://developer.android.com/reference/android/content/Context#getFilesDir()>
+      - <https://developer.android.com/training/data-storage> の App-specific files の getFilesDir()
+    - AccountEvent
+      - `${documentDirectory}tsukota-account-events/${accountId}.json` に AccountEvent のローカルキャッシュを `AccountEvent[]` の JSON 表現で保存
+- Firestore
+  - See: [`packages/functions/src/schema/index.ts`](packages/functions/src/schema/index.ts)
+  - See: [`packages/firebase/filestore.rules`](packages/firebase/filestore.rules)
+  - `/accounts/${account_id}` (query)
+  - `/accounts/${account_id}/events/${event_id}` (query)
+  - `/aggregates/account/event_streams/${event_stream_id}`
+  - `/aggregates/account/event_streams/${event_stream_id}/events/${event_id}`
+  - `/deleted_users/${user_id}`
+  - `/devices/${device_id}`
+  - `/system/status` (query)
+  - `/users/${user_id}` (command & query)
+- Authentication
+  - uid
+
 ## Models
 
 ```mermaid
@@ -61,3 +96,6 @@ erDiagram
   Account ||--o{ Category : ""
   Category ||--o{ Transaction : ""
 ```
+
+[npm:@react-native-async-storage/async-storage]: https://www.npmjs.com/package/@react-native-async-storage/async-storage
+[npm:expo-file-system]: https://www.npmjs.com/package/expo-file-system

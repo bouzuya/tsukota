@@ -12,7 +12,7 @@ import {
   doc,
 } from "firebase/firestore";
 
-// `/accounts/${accountId}/events/${eventId}`
+// `/accounts/${account_id}/events/${event_id}`
 type EventDocument = AccountEvent;
 
 const eventDocumentConverter: FirestoreDataConverter<EventDocument> = {
@@ -67,7 +67,7 @@ export function getSystemStatusDocumentRef(
   );
 }
 
-// `/users/${userId}`
+// `/users/${user_id}`
 type UserDocument = {
   id: string;
   account_ids: string[];
