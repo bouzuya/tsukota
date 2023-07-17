@@ -1,4 +1,3 @@
-import { AccountEvent } from "@bouzuya/tsukota-account-events";
 import {
   DocumentData,
   DocumentReference,
@@ -8,14 +7,9 @@ import {
   WithFieldValue,
 } from "firebase-admin/firestore";
 export { validateStoreAccountEventBody } from "./validate-store-account-event-body";
+import * as schema from "@bouzuya/tsukota-schema";
 
-// `/accounts/${account_id}`
-export type AccountDocumentForQuery = {
-  deletedAt: string | null;
-  id: string;
-  name: string;
-  owners: string[];
-};
+export type AccountDocumentForQuery = schema.AccountDocumentForQuery;
 
 const accountDocumentForQueryConverter: FirestoreDataConverter<AccountDocumentForQuery> =
   {
@@ -42,8 +36,7 @@ export function getAccountDocumentForQueryRef(
     .withConverter(accountDocumentForQueryConverter);
 }
 
-// `/accounts/${account_id}/events/${event_id}`
-export type AccountEventDocumentForQuery = AccountEvent;
+export type AccountEventDocumentForQuery = schema.AccountEventDocumentForQuery;
 
 const accountEventDocumentForQueryConverter: FirestoreDataConverter<AccountEventDocumentForQuery> =
   {
@@ -81,14 +74,7 @@ export function getAccountEventDocumentForQueryRef(
   );
 }
 
-// `/aggregates/account/event_streams/${event_stream_id}`
-export type AccountEventStreamDocument = {
-  id: string;
-  lastEventId: string;
-  owners: string[];
-  protocolVersion: number;
-  updatedAt: string;
-};
+export type AccountEventStreamDocument = schema.AccountEventStreamDocument;
 
 const accountEventStreamDocumentConverter: FirestoreDataConverter<AccountEventStreamDocument> =
   {
@@ -117,8 +103,7 @@ export function getAccountEventStreamDocumentRef(
     .withConverter(accountEventStreamDocumentConverter);
 }
 
-// `/aggregates/account/event_streams/${event_stream_id}/events/${event_id}`
-export type AccountEventDocument = AccountEvent;
+export type AccountEventDocument = schema.AccountEventDocument;
 
 const accountEventDocumentConverter: FirestoreDataConverter<AccountEventDocument> =
   {
@@ -156,13 +141,7 @@ export function getAccountEventDocumentRef(
   );
 }
 
-// `/deleted_users/${user_id}`
-export type DeletedUserDocument = {
-  authenticationDeletedAt: string | null;
-  createdAt: string;
-  firestoreDeletedAt: string | null;
-  id: string;
-};
+export type DeletedUserDocument = schema.DeletedUserDocument;
 
 const deletedUserDocumentConverter: FirestoreDataConverter<DeletedUserDocument> =
   {
@@ -189,12 +168,7 @@ export function getDeletedUserDocumentRef(
     .withConverter(deletedUserDocumentConverter);
 }
 
-// `/devices/${device_id}`
-export type DeviceDocument = {
-  encryptedSecret: string;
-  id: string;
-  uid: string;
-};
+export type DeviceDocument = schema.DeviceDocument;
 
 const deviceDocumentConverter: FirestoreDataConverter<DeviceDocument> = {
   fromFirestore: (snapshot: QueryDocumentSnapshot): DeviceDocument => {
@@ -215,19 +189,12 @@ export function getDeviceDocumentRef(
     .withConverter(deviceDocumentConverter);
 }
 
-// `/system/status`
-export type SystemStatusDocumentForQuery = {
-  minAppVersion: string | null;
-};
+export type SystemStatusDocumentForQuery = schema.SystemStatusDocumentForQuery;
 
 // TODO: Converter
 // TODO: Ref Helper
 
-// `/users/${user_id}`
-export type UserDocument = {
-  id: string;
-  account_ids: string[];
-};
+export type UserDocument = schema.UserDocument;
 
 const userDocumentConverter: FirestoreDataConverter<UserDocument> = {
   fromFirestore: function (
