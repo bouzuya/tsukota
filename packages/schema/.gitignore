@@ -1,2 +1,4 @@
+/*.tgz
+/.env*
 /lib/
 /node_modules/
