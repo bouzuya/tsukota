@@ -6,7 +6,7 @@ import {
   getAccountEventCollectionRef,
   getSystemStatusDocumentRef,
   getUserDocumentRef,
-} from "./schema";
+} from "./ref-helpers";
 import { timeSpan } from "./time-span";
 
 export function storeAccountEvent(
