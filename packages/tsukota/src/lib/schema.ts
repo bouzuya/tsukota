@@ -1,4 +1,8 @@
-import { AccountEvent } from "@bouzuya/tsukota-account-events";
+import {
+  AccountEventDocumentForQuery,
+  SystemStatusDocumentForQuery,
+  UserDocument,
+} from "@bouzuya/tsukota-schema";
 import {
   CollectionReference,
   DocumentData,
@@ -12,8 +16,7 @@ import {
   doc,
 } from "firebase/firestore";
 
-// `/accounts/${account_id}/events/${event_id}`
-type EventDocument = AccountEvent;
+type EventDocument = AccountEventDocumentForQuery;
 
 const eventDocumentConverter: FirestoreDataConverter<EventDocument> = {
   fromFirestore: function (
@@ -39,10 +42,7 @@ export function getAccountEventCollectionRef(
   );
 }
 
-// `/system/status`
-type SystemStatusDocument = {
-  minAppVersion: string | null;
-};
+type SystemStatusDocument = SystemStatusDocumentForQuery;
 
 const systemStatusDocumentConverter: FirestoreDataConverter<SystemStatusDocument> =
   {
@@ -66,12 +66,6 @@ export function getSystemStatusDocumentRef(
     systemStatusDocumentConverter
   );
 }
-
-// `/users/${user_id}`
-type UserDocument = {
-  id: string;
-  account_ids: string[];
-};
 
 const userDocumentConverter: FirestoreDataConverter<UserDocument> = {
   fromFirestore: function (
