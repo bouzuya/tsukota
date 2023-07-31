@@ -1,0 +1,20 @@
+name: ci-models
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - .github/workflows/ci-models.yaml
+      - "packages/models/**"
+jobs:
+  build:
+    defaults:
+      run:
+        working-directory: packages/models
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - run: npm install
