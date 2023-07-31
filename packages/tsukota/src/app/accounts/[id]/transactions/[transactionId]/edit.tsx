@@ -10,7 +10,7 @@ import {
   TransactionFormValues,
   useAccount,
 } from "../../../../../components";
-import { updateTransaction } from "../../../../../lib/account";
+import { deps, updateTransaction } from "../../../../../lib/account";
 import {
   useTypedNavigation,
   useTypedRoute,
@@ -61,7 +61,7 @@ export function TransactionEdit(): JSX.Element {
     await handleAccountCommand(account.id, (oldAccount) =>
       oldAccount === null
         ? err("account not found")
-        : updateTransaction(oldAccount, transactionId, {
+        : updateTransaction(deps, oldAccount, transactionId, {
             amount,
             categoryId,
             comment,

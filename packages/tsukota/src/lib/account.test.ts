@@ -2,6 +2,7 @@ import { getRandomValues } from "node:crypto";
 import { describe, expect, it } from "@jest/globals";
 import { v4 as uuidv4 } from "uuid";
 import {
+  Dependencies,
   addOwner,
   createAccount,
   createCategory,
@@ -14,6 +15,11 @@ import {
   updateCategory,
   updateTransaction,
 } from "./account";
+
+export const deps: Dependencies = {
+  now: () => new Date(),
+  uuid: generateUuidV4,
+};
 
 function generateUuidV4(): string {
   return uuidv4({
@@ -29,9 +35,13 @@ describe("addOwner", () => {
   describe("happy path", () => {
     it("works", () => {
       const uid = generateUuidV4();
-      const before = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
+      const before = createAccount(
+        deps,
+        uid,
+        "account name 1"
+      )._unsafeUnwrap()[0];
       const owner = generateUuidV4();
-      const result = addOwner(before, owner);
+      const result = addOwner(deps, before, owner);
       if (result.isErr()) throw new Error(result.error);
       const [account, event] = result.value;
       if (event.type !== "ownerAdded") throw new Error();
@@ -51,10 +61,10 @@ describe("addOwner", () => {
   describe("when owner already exists", () => {
     it("returns err", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
       const owner = generateUuidV4();
-      const v2 = addOwner(v1, owner)._unsafeUnwrap()[0];
-      const result = addOwner(v2, owner);
+      const v2 = addOwner(deps, v1, owner)._unsafeUnwrap()[0];
+      const result = addOwner(deps, v2, owner);
       expect(result.isErr()).toBe(true);
     });
   });
@@ -65,7 +75,7 @@ describe("createAccount", () => {
     it("works", () => {
       const uid = generateUuidV4();
       const name = "account name 1";
-      const result = createAccount(uid, name);
+      const result = createAccount(deps, uid, name);
       if (result.isErr()) throw new Error();
       const [account, event] = result.value;
       expect(account.categories).toStrictEqual([]);
@@ -84,7 +94,7 @@ describe("createAccount", () => {
     it("returns err", () => {
       const uid = generateUuidV4();
       const name = "";
-      const result = createAccount(uid, name);
+      const result = createAccount(deps, uid, name);
       expect(result.isErr()).toBe(true);
     });
   });
@@ -94,9 +104,13 @@ describe("createCategory", () => {
   describe("happy path", () => {
     it("works", () => {
       const uid = generateUuidV4();
-      const before = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
+      const before = createAccount(
+        deps,
+        uid,
+        "account name 1"
+      )._unsafeUnwrap()[0];
       const name = "category name 1";
-      const result = createCategory(before, name);
+      const result = createCategory(deps, before, name);
       if (result.isErr()) throw new Error();
       const [account, event] = result.value;
       if (event.type !== "categoryAdded") throw new Error();
@@ -118,9 +132,13 @@ describe("createCategory", () => {
   describe("when name is empty", () => {
     it("returns err", () => {
       const uid = generateUuidV4();
-      const before = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
+      const before = createAccount(
+        deps,
+        uid,
+        "account name 1"
+      )._unsafeUnwrap()[0];
       const name = "";
-      const result = createCategory(before, name);
+      const result = createCategory(deps, before, name);
       expect(result.isErr()).toBe(true);
     });
   });
@@ -130,15 +148,15 @@ describe("createTransaction", () => {
   describe("happy path", () => {
     it("works", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
-      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(deps, v1, "category name 1")._unsafeUnwrap()[0];
       const category = v2.categories[0];
       if (category === undefined) throw new Error();
       const amount = "123";
       const categoryId = category.id;
       const comment = "comment1";
       const date = "2023-01-02";
-      const result = createTransaction(v2, {
+      const result = createTransaction(deps, v2, {
         amount,
         categoryId,
         comment,
@@ -181,14 +199,14 @@ describe("createTransaction", () => {
   describe("when amount is invalid", () => {
     const f = (amount: string) => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
-      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(deps, v1, "category name 1")._unsafeUnwrap()[0];
       const category = v2.categories[0];
       if (category === undefined) throw new Error();
       const categoryId = category.id;
       const comment = "comment1";
       const date = "2023-01-02";
-      const result = createTransaction(v2, {
+      const result = createTransaction(deps, v2, {
         amount,
         categoryId,
         comment,
@@ -206,15 +224,15 @@ describe("createTransaction", () => {
   describe("when categoryId is invalid", () => {
     it("returns err", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
-      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(deps, v1, "category name 1")._unsafeUnwrap()[0];
       const category = v2.categories[0];
       if (category === undefined) throw new Error();
       const amount = "123";
       const categoryId = category.id + "s"; // invalid
       const comment = "comment1";
       const date = "2023-01-02";
-      const result = createTransaction(v2, {
+      const result = createTransaction(deps, v2, {
         amount,
         categoryId,
         comment,
@@ -227,14 +245,14 @@ describe("createTransaction", () => {
   describe("when date is invalid", () => {
     const f = (date: string) => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
-      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(deps, v1, "category name 1")._unsafeUnwrap()[0];
       const category = v2.categories[0];
       if (category === undefined) throw new Error();
       const amount = "123";
       const categoryId = category.id;
       const comment = "comment1";
-      const result = createTransaction(v2, {
+      const result = createTransaction(deps, v2, {
         amount,
         categoryId,
         comment,
@@ -255,9 +273,9 @@ describe("deleteAccount", () => {
   describe("happy path", () => {
     it("works", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
-      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
-      const result = deleteAccount(v2);
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(deps, v1, "category name 1")._unsafeUnwrap()[0];
+      const result = deleteAccount(deps, v2);
       if (result.isErr()) throw new Error();
       const [v3, event] = result.value;
 
@@ -280,10 +298,10 @@ describe("deleteAccount", () => {
   describe("when account is deleted", () => {
     it("returns err", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
-      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
-      const v3 = deleteAccount(v2)._unsafeUnwrap()[0];
-      const result = deleteAccount(v3);
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(deps, v1, "category name 1")._unsafeUnwrap()[0];
+      const v3 = deleteAccount(deps, v2)._unsafeUnwrap()[0];
+      const result = deleteAccount(deps, v3);
       expect(result.isErr()).toBe(true);
     });
   });
@@ -293,12 +311,12 @@ describe("deleteCategory", () => {
   describe("happy path", () => {
     it("works", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
-      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(deps, v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
       const categoryId = selectedCategory.id;
-      const result = deleteCategory(v2, categoryId);
+      const result = deleteCategory(deps, v2, categoryId);
       if (result.isErr()) throw new Error();
       const [v3, event] = result.value;
 
@@ -328,12 +346,12 @@ describe("deleteCategory", () => {
   describe("when categoryId is invalid", () => {
     it("returns err", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
-      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(deps, v1, "category name 1")._unsafeUnwrap()[0];
       const category = v2.categories[0];
       if (category === undefined) throw new Error();
       const categoryId = category.id + "s"; // invalid
-      const result = deleteCategory(v2, categoryId);
+      const result = deleteCategory(deps, v2, categoryId);
       expect(result.isErr()).toBe(true);
     });
   });
@@ -343,11 +361,11 @@ describe("deleteTransaction", () => {
   describe("happy path", () => {
     it("works", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
-      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(deps, v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
-      const v3 = createTransaction(v2, {
+      const v3 = createTransaction(deps, v2, {
         amount: "123",
         categoryId: selectedCategory.id,
         comment: "comment1",
@@ -356,7 +374,7 @@ describe("deleteTransaction", () => {
       const selectedTransaction = v3.transactions[0];
       if (selectedTransaction === undefined) throw new Error();
       const transactionId = selectedTransaction.id;
-      const result = deleteTransaction(v3, transactionId);
+      const result = deleteTransaction(deps, v3, transactionId);
       if (result.isErr()) throw new Error();
       const [v4, event] = result.value;
 
@@ -381,11 +399,11 @@ describe("deleteTransaction", () => {
   describe("when transactionId is invalid", () => {
     it("returns err", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
-      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(deps, v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
-      const v3 = createTransaction(v2, {
+      const v3 = createTransaction(deps, v2, {
         amount: "123",
         categoryId: selectedCategory.id,
         comment: "comment1",
@@ -394,7 +412,7 @@ describe("deleteTransaction", () => {
       const selectedTransaction = v3.transactions[0];
       if (selectedTransaction === undefined) throw new Error();
       const transactionId = selectedTransaction.id + "s"; // invalid
-      const result = deleteTransaction(v2, transactionId);
+      const result = deleteTransaction(deps, v2, transactionId);
       expect(result.isErr()).toBe(true);
     });
   });
@@ -409,10 +427,10 @@ describe("removeOwner", () => {
   describe("happy path", () => {
     it("works", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
       const owner = generateUuidV4();
-      const before = addOwner(v1, owner)._unsafeUnwrap()[0];
-      const result = removeOwner(before, owner);
+      const before = addOwner(deps, v1, owner)._unsafeUnwrap()[0];
+      const result = removeOwner(deps, before, owner);
       if (result.isErr()) throw new Error(result.error);
       const [account, event] = result.value;
       if (event.type !== "ownerRemoved") throw new Error();
@@ -432,11 +450,11 @@ describe("removeOwner", () => {
   describe("when owner not found", () => {
     it("returns err", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
       const owner = generateUuidV4();
-      const before = addOwner(v1, owner)._unsafeUnwrap()[0];
+      const before = addOwner(deps, v1, owner)._unsafeUnwrap()[0];
       const owner2 = generateUuidV4();
-      const result = removeOwner(before, owner2);
+      const result = removeOwner(deps, before, owner2);
       expect(result.isErr()).toBe(true);
     });
   });
@@ -444,10 +462,14 @@ describe("removeOwner", () => {
   describe("when owner is the last owner", () => {
     it("returns err", () => {
       const uid = generateUuidV4();
-      const before = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
+      const before = createAccount(
+        deps,
+        uid,
+        "account name 1"
+      )._unsafeUnwrap()[0];
       const owner = before.owners[0];
       if (owner === undefined) throw new Error();
-      const result = removeOwner(before, owner);
+      const result = removeOwner(deps, before, owner);
       expect(result.isErr()).toBe(true);
     });
   });
@@ -457,13 +479,13 @@ describe("updateCategory", () => {
   describe("happy path", () => {
     it("works", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
-      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(deps, v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
 
       const name = "category name 2";
-      const result = updateCategory(v2, selectedCategory.id, name);
+      const result = updateCategory(deps, v2, selectedCategory.id, name);
       if (result.isErr()) throw new Error();
       const [v3, event] = result.value;
 
@@ -496,12 +518,12 @@ describe("updateCategory", () => {
   describe("when categoryId is invalid", () => {
     it("returns err", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
-      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(deps, v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
       const categoryId = selectedCategory.id + "s";
-      const result = updateCategory(v2, categoryId, "category name 2");
+      const result = updateCategory(deps, v2, categoryId, "category name 2");
       expect(result.isErr()).toBe(true);
     });
   });
@@ -509,11 +531,11 @@ describe("updateCategory", () => {
   describe("when name is invalid", () => {
     it("returns err", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
-      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(deps, v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
-      const result = updateCategory(v2, selectedCategory.id, "");
+      const result = updateCategory(deps, v2, selectedCategory.id, "");
       expect(result.isErr()).toBe(true);
     });
   });
@@ -523,10 +545,10 @@ describe("updateAccount", () => {
   describe("happy path", () => {
     it("works", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
 
       const name = "account name 2";
-      const result = updateAccount(v1, name);
+      const result = updateAccount(deps, v1, name);
       if (result.isErr()) throw new Error();
       const [v2, event] = result.value;
 
@@ -551,8 +573,8 @@ describe("updateAccount", () => {
   describe("when name is invalid", () => {
     it("returns err", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
-      const result = updateAccount(v1, "");
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
+      const result = updateAccount(deps, v1, "");
       expect(result.isErr()).toBe(true);
     });
   });
@@ -562,11 +584,11 @@ describe("updateTransaction", () => {
   describe("happy path", () => {
     it("works", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
-      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(deps, v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
-      const v3 = createTransaction(v2, {
+      const v3 = createTransaction(deps, v2, {
         amount: "123",
         categoryId: selectedCategory.id,
         comment: "comment1",
@@ -579,7 +601,7 @@ describe("updateTransaction", () => {
       const categoryId = selectedCategory.id;
       const comment = "comment2";
       const date = "2023-01-03";
-      const result = updateTransaction(v3, selectedTransaction.id, {
+      const result = updateTransaction(deps, v3, selectedTransaction.id, {
         amount,
         categoryId,
         comment,
@@ -622,11 +644,11 @@ describe("updateTransaction", () => {
   describe("when amount is invalid", () => {
     it("returns err", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
-      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(deps, v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
-      const v3 = createTransaction(v2, {
+      const v3 = createTransaction(deps, v2, {
         amount: "123",
         categoryId: selectedCategory.id,
         comment: "comment1",
@@ -639,7 +661,7 @@ describe("updateTransaction", () => {
       const categoryId = selectedCategory.id;
       const comment = "comment2";
       const date = "2023-01-03";
-      const result = updateTransaction(v3, selectedTransaction.id, {
+      const result = updateTransaction(deps, v3, selectedTransaction.id, {
         amount,
         categoryId,
         comment,
@@ -652,11 +674,11 @@ describe("updateTransaction", () => {
   describe("when categoryId is invalid", () => {
     it("returns err", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
-      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(deps, v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
-      const v3 = createTransaction(v2, {
+      const v3 = createTransaction(deps, v2, {
         amount: "123",
         categoryId: selectedCategory.id,
         comment: "comment1",
@@ -669,7 +691,7 @@ describe("updateTransaction", () => {
       const categoryId = selectedCategory.id + "s"; // invalid
       const comment = "comment2";
       const date = "2023-01-03";
-      const result = updateTransaction(v3, selectedTransaction.id, {
+      const result = updateTransaction(deps, v3, selectedTransaction.id, {
         amount,
         categoryId,
         comment,
@@ -682,11 +704,11 @@ describe("updateTransaction", () => {
   describe("when date is invalid", () => {
     it("returns err", () => {
       const uid = generateUuidV4();
-      const v1 = createAccount(uid, "account name 1")._unsafeUnwrap()[0];
-      const v2 = createCategory(v1, "category name 1")._unsafeUnwrap()[0];
+      const v1 = createAccount(deps, uid, "account name 1")._unsafeUnwrap()[0];
+      const v2 = createCategory(deps, v1, "category name 1")._unsafeUnwrap()[0];
       const selectedCategory = v2.categories[0];
       if (selectedCategory === undefined) throw new Error();
-      const v3 = createTransaction(v2, {
+      const v3 = createTransaction(deps, v2, {
         amount: "123",
         categoryId: selectedCategory.id,
         comment: "comment1",
@@ -699,7 +721,7 @@ describe("updateTransaction", () => {
       const categoryId = selectedCategory.id;
       const comment = "comment2";
       const date = "2023-13-03"; // invalid
-      const result = updateTransaction(v3, selectedTransaction.id, {
+      const result = updateTransaction(deps, v3, selectedTransaction.id, {
         amount,
         categoryId,
         comment,

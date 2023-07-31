@@ -10,7 +10,7 @@ import {
   useAccount,
 } from "../../../../components";
 import { TransactionFormValues } from "../../../../components/TransactionForm";
-import { createTransaction } from "../../../../lib/account";
+import { createTransaction, deps } from "../../../../lib/account";
 import { useTypedNavigation, useTypedRoute } from "../../../../lib/navigation";
 import { showErrorMessage } from "../../../../lib/show-error-message";
 
@@ -57,7 +57,7 @@ export function TransactionNew(): JSX.Element {
     await handleAccountCommand(account.id, (oldAccount) =>
       oldAccount === null
         ? err("account not found")
-        : createTransaction(oldAccount, {
+        : createTransaction(deps, oldAccount, {
             amount,
             categoryId,
             comment,

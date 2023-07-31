@@ -11,7 +11,7 @@ import {
 } from "../../components";
 import { useAccounts } from "../../components/AccountContext";
 import { useCurrentUserId } from "../../hooks/use-credential";
-import { deleteAccount } from "../../lib/account";
+import { deleteAccount, deps } from "../../lib/account";
 import { loadAccountIds } from "../../lib/api";
 import { useTranslation } from "../../lib/i18n";
 import { useFocusEffect, useTypedNavigation } from "../../lib/navigation";
@@ -76,7 +76,7 @@ export function AccountIndex(): JSX.Element {
             void handleAccountCommand(accountId, (oldAccount) =>
               oldAccount === null
                 ? err("account not found")
-                : deleteAccount(oldAccount)
+                : deleteAccount(deps, oldAccount)
             ).match(() => {
               // do nothing
             }, showErrorMessage);

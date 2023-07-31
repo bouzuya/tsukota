@@ -10,7 +10,7 @@ import {
   View,
   useAccount,
 } from "../../../../../components";
-import { updateCategory } from "../../../../../lib/account";
+import { deps, updateCategory } from "../../../../../lib/account";
 import {
   useTypedNavigation,
   useTypedRoute,
@@ -56,7 +56,7 @@ export function CategoryEdit(): JSX.Element {
     await handleAccountCommand(account.id, (oldAccount) =>
       oldAccount === null
         ? err("account not found")
-        : updateCategory(oldAccount, categoryId, name)
+        : updateCategory(deps, oldAccount, categoryId, name)
     ).match(() => navigation.goBack(), showErrorMessage);
   };
 

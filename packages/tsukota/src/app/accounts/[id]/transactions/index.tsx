@@ -12,6 +12,7 @@ import {
 } from "../../../../components";
 import {
   deleteTransaction,
+  deps,
   listCategory,
   Transaction,
 } from "../../../../lib/account";
@@ -107,7 +108,7 @@ export function TransactionIndex(): JSX.Element {
           void handleAccountCommand(account.id, (oldAccount) =>
             oldAccount === null
               ? err("account not found")
-              : deleteTransaction(oldAccount, transactionId)
+              : deleteTransaction(deps, oldAccount, transactionId)
           ).match(() => {
             // do nothing
           }, showErrorMessage);

@@ -9,7 +9,7 @@ import {
   List,
   useAccount,
 } from "../../../../components";
-import { removeOwner } from "../../../../lib/account";
+import { deps, removeOwner } from "../../../../lib/account";
 import { useTranslation } from "../../../../lib/i18n";
 import { useTypedNavigation, useTypedRoute } from "../../../../lib/navigation";
 import { showErrorMessage } from "../../../../lib/show-error-message";
@@ -69,7 +69,7 @@ export function OwnerIndex(): JSX.Element {
           void handleAccountCommand(accountId, (oldAccount) =>
             oldAccount === null
               ? err("account not found")
-              : removeOwner(oldAccount, ownerId)
+              : removeOwner(deps, oldAccount, ownerId)
           ).match(() => {
             // do nothing
           }, showErrorMessage);

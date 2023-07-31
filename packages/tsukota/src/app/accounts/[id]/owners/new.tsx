@@ -9,7 +9,7 @@ import {
   View,
   useAccount,
 } from "../../../../components";
-import { addOwner } from "../../../../lib/account";
+import { addOwner, deps } from "../../../../lib/account";
 import { useTranslation } from "../../../../lib/i18n";
 import { useTypedNavigation, useTypedRoute } from "../../../../lib/navigation";
 import { showErrorMessage } from "../../../../lib/show-error-message";
@@ -50,7 +50,9 @@ export function OwnerNew(): JSX.Element {
 
   const onClickOk = async ({ uid }: Form): Promise<void> => {
     await handleAccountCommand(account.id, (oldAccount) =>
-      oldAccount === null ? err("account not found") : addOwner(oldAccount, uid)
+      oldAccount === null
+        ? err("account not found")
+        : addOwner(deps, oldAccount, uid)
     ).match(() => navigation.goBack(), showErrorMessage);
   };
 

@@ -10,7 +10,7 @@ import {
 } from "../../components";
 import { useAccounts } from "../../components/AccountContext";
 import { useCurrentUserId } from "../../hooks/use-credential";
-import { createAccount } from "../../lib/account";
+import { createAccount, deps } from "../../lib/account";
 import { useTypedNavigation } from "../../lib/navigation";
 import { showErrorMessage } from "../../lib/show-error-message";
 
@@ -50,7 +50,7 @@ export function AccountNew(): JSX.Element {
     await handleAccountCommand(null, (oldAccount) =>
       oldAccount !== null
         ? err("account already exists")
-        : createAccount(currentUserId, name)
+        : createAccount(deps, currentUserId, name)
     ).match(() => navigation.goBack(), showErrorMessage);
   };
   return (

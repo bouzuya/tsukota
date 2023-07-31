@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
   HeaderRightSaveButton,
 } from "../../../components";
-import { updateAccount } from "../../../lib/account";
+import { deps, updateAccount } from "../../../lib/account";
 import { useTranslation } from "../../../lib/i18n";
 import { useTypedNavigation, useTypedRoute } from "../../../lib/navigation";
 import { showErrorMessage } from "../../../lib/show-error-message";
@@ -53,7 +53,7 @@ export function AccountEdit(): JSX.Element {
     await handleAccountCommand(account.id, (oldAccount) =>
       oldAccount === null
         ? err("account not found")
-        : updateAccount(oldAccount, name)
+        : updateAccount(deps, oldAccount, name)
     ).match(() => navigation.goBack(), showErrorMessage);
   };
 

@@ -16,8 +16,12 @@ import {
   OwnerRemoved,
 } from "@bouzuya/tsukota-account-events";
 import { Result, err, ok } from "neverthrow";
-import { generate as generateUuidV4 } from "./uuid";
+import { generate } from "./uuid";
 
+export const deps: Dependencies = {
+  now: () => new Date(),
+  uuid: () => generate(),
+};
 export const protocolVersion = 3;
 
 // re-export
@@ -68,63 +72,72 @@ export type Account = {
   transactions: Transaction[];
 };
 
-export const addOwner = (
+export type Dependencies = {
+  now: () => Date;
+  uuid: () => string;
+};
+
+export function addOwner(
+  { now, uuid }: Dependencies,
   self: Account,
   owner: string
-): Result<[Account, AccountEvent], AccountError> => {
+): Result<[Account, AccountEvent], AccountError> {
   if (self.owners.includes(owner)) return err("owner already exists");
   const event: OwnerAdded = {
     accountId: self.id,
-    at: new Date().toISOString(),
-    id: generateUuidV4(),
+    at: now().toISOString(),
+    id: uuid(),
     owner,
     protocolVersion,
     type: "ownerAdded",
   };
   return ok([applyEvent(self, event), event]);
-};
+}
 
-export const createAccount = (
+export function createAccount(
+  { now, uuid }: Dependencies,
   uid: string,
   name: string
-): Result<[Account, AccountEvent], AccountError> => {
+): Result<[Account, AccountEvent], AccountError> {
   if (name.length === 0) return err("name is empty");
   const event: AccountCreated = {
-    accountId: generateUuidV4(),
-    at: new Date().toISOString(),
-    id: generateUuidV4(),
+    accountId: uuid(),
+    at: now().toISOString(),
+    id: uuid(),
     name,
     owners: [uid],
     protocolVersion,
     type: "accountCreated",
   };
   return ok([applyEvent(null, event), event]);
-};
+}
 
-export const createCategory = (
+export function createCategory(
+  { now, uuid }: Dependencies,
   self: Account,
   name: string
-): Result<[Account, AccountEvent], AccountError> => {
+): Result<[Account, AccountEvent], AccountError> {
   if (getLastEvent(self).protocolVersion > protocolVersion)
     return err("protocolVersion is invalid");
   if (self.deletedAt !== null) return err("account is deleted");
   if (name.length === 0) return err("name is empty");
   const event: CategoryAdded = {
     accountId: self.id,
-    at: new Date().toISOString(),
-    categoryId: generateUuidV4(),
-    id: generateUuidV4(),
+    at: now().toISOString(),
+    categoryId: uuid(),
+    id: uuid(),
     name,
     protocolVersion,
     type: "categoryAdded",
   };
   return ok([applyEvent(self, event), event]);
-};
+}
 
-export const createTransaction = (
+export function createTransaction(
+  { now, uuid }: Dependencies,
   self: Account,
   { amount, categoryId, comment, date }: TransactionProps
-): Result<[Account, AccountEvent], AccountError> => {
+): Result<[Account, AccountEvent], AccountError> {
   if (getLastEvent(self).protocolVersion > protocolVersion)
     return err("protocolVersion is invalid");
   if (self.deletedAt !== null) return err("account is deleted");
@@ -149,38 +162,40 @@ export const createTransaction = (
   const event: TransactionAdded = {
     accountId: self.id,
     amount,
-    at: new Date().toISOString(),
+    at: now().toISOString(),
     categoryId,
     comment,
     date,
-    id: generateUuidV4(),
+    id: uuid(),
     protocolVersion,
-    transactionId: generateUuidV4(),
+    transactionId: uuid(),
     type: "transactionAdded",
   };
   return ok([applyEvent(self, event), event]);
-};
+}
 
-export const deleteAccount = (
+export function deleteAccount(
+  { now, uuid }: Dependencies,
   self: Account
-): Result<[Account, AccountEvent], AccountError> => {
+): Result<[Account, AccountEvent], AccountError> {
   if (getLastEvent(self).protocolVersion > protocolVersion)
     return err("protocolVersion is invalid");
   if (self.deletedAt !== null) return err("account is deleted");
   const event: AccountDeleted = {
     accountId: self.id,
-    at: new Date().toISOString(),
-    id: generateUuidV4(),
+    at: now().toISOString(),
+    id: uuid(),
     protocolVersion,
     type: "accountDeleted",
   };
   return ok([applyEvent(self, event), event]);
-};
+}
 
-export const deleteCategory = (
+export function deleteCategory(
+  { now, uuid }: Dependencies,
   self: Account,
   categoryId: string
-): Result<[Account, AccountEvent], AccountError> => {
+): Result<[Account, AccountEvent], AccountError> {
   if (getLastEvent(self).protocolVersion > protocolVersion)
     return err("protocolVersion is invalid");
   if (self.deletedAt !== null) return err("account is deleted");
@@ -188,19 +203,20 @@ export const deleteCategory = (
     return err("categoryId not found");
   const event: CategoryDeleted = {
     accountId: self.id,
-    at: new Date().toISOString(),
+    at: now().toISOString(),
     categoryId,
-    id: generateUuidV4(),
+    id: uuid(),
     protocolVersion,
     type: "categoryDeleted",
   };
   return ok([applyEvent(self, event), event]);
-};
+}
 
-export const deleteTransaction = (
+export function deleteTransaction(
+  { now, uuid }: Dependencies,
   self: Account,
   transactionId: string
-): Result<[Account, AccountEvent], AccountError> => {
+): Result<[Account, AccountEvent], AccountError> {
   if (getLastEvent(self).protocolVersion > protocolVersion)
     return err("protocolVersion is invalid");
   if (self.deletedAt !== null) return err("account is deleted");
@@ -208,14 +224,14 @@ export const deleteTransaction = (
     return err("transactionId not found");
   const event: TransactionDeleted = {
     accountId: self.id,
-    at: new Date().toISOString(),
-    id: generateUuidV4(),
+    at: now().toISOString(),
+    id: uuid(),
     transactionId,
     protocolVersion,
     type: "transactionDeleted",
   };
   return ok([applyEvent(self, event), event]);
-};
+}
 
 // query
 export function getLastEvent(self: Account): AccountEvent {
@@ -225,15 +241,12 @@ export function getLastEvent(self: Account): AccountEvent {
 }
 
 // query
-export const getLastEventId = (self: Account): string => {
+export function getLastEventId(self: Account): string {
   return getLastEvent(self).id;
-};
+}
 
 // query
-export const listCategory = (
-  self: Account,
-  withDeleted: boolean
-): Category[] => {
+export function listCategory(self: Account, withDeleted: boolean): Category[] {
   return self.categories
     .filter(({ deletedAt }) => deletedAt === null)
     .concat(
@@ -241,26 +254,27 @@ export const listCategory = (
         ? self.categories.filter(({ deletedAt }) => deletedAt !== null)
         : []
     );
-};
+}
 
-export const removeOwner = (
+export function removeOwner(
+  { now, uuid }: Dependencies,
   self: Account,
   owner: string
-): Result<[Account, AccountEvent], AccountError> => {
+): Result<[Account, AccountEvent], AccountError> {
   if (self.owners.every((it) => it !== owner)) return err("owner not found");
   if (self.owners.length === 1) return err("owner is the last owner");
   const event: OwnerRemoved = {
     accountId: self.id,
-    at: new Date().toISOString(),
-    id: generateUuidV4(),
+    at: now().toISOString(),
+    id: uuid(),
     owner,
     protocolVersion,
     type: "ownerRemoved",
   };
   return ok([applyEvent(self, event), event]);
-};
+}
 
-export const restoreAccount = (events: AccountEvent[]): Account => {
+export function restoreAccount(events: AccountEvent[]): Account {
   if (events.length === 0) throw new Error("events is empty");
   const firstEvent = events[0];
   if (firstEvent === undefined) throw new Error("assertion error");
@@ -270,32 +284,34 @@ export const restoreAccount = (events: AccountEvent[]): Account => {
       (state, event) => applyEvent(state, event),
       applyEvent(null, firstEvent)
     );
-};
+}
 
-export const updateAccount = (
+export function updateAccount(
+  { now, uuid }: Dependencies,
   self: Account,
   name: string
-): Result<[Account, AccountEvent], AccountError> => {
+): Result<[Account, AccountEvent], AccountError> {
   if (getLastEvent(self).protocolVersion > protocolVersion)
     return err("protocolVersion is invalid");
   if (self.deletedAt !== null) return err("account is deleted");
   if (name.length === 0) return err("name is empty");
   const event: AccountUpdated = {
     accountId: self.id,
-    at: new Date().toISOString(),
-    id: generateUuidV4(),
+    at: now().toISOString(),
+    id: uuid(),
     name,
     protocolVersion,
     type: "accountUpdated",
   };
   return ok([applyEvent(self, event), event]);
-};
+}
 
-export const updateCategory = (
+export function updateCategory(
+  { now, uuid }: Dependencies,
   self: Account,
   categoryId: string,
   name: string
-): Result<[Account, AccountEvent], AccountError> => {
+): Result<[Account, AccountEvent], AccountError> {
   if (getLastEvent(self).protocolVersion > protocolVersion)
     return err("protocolVersion is invalid");
   if (self.deletedAt !== null) return err("account is deleted");
@@ -304,21 +320,22 @@ export const updateCategory = (
   if (name.length === 0) return err("name is empty");
   const event: CategoryUpdated = {
     accountId: self.id,
-    at: new Date().toISOString(),
+    at: now().toISOString(),
     categoryId,
-    id: generateUuidV4(),
+    id: uuid(),
     name,
     protocolVersion,
     type: "categoryUpdated",
   };
   return ok([applyEvent(self, event), event]);
-};
+}
 
-export const updateTransaction = (
+export function updateTransaction(
+  { now, uuid }: Dependencies,
   self: Account,
   transactionId: string,
   { amount, categoryId, comment, date }: TransactionProps
-): Result<[Account, AccountEvent], AccountError> => {
+): Result<[Account, AccountEvent], AccountError> {
   if (getLastEvent(self).protocolVersion > protocolVersion)
     return err("protocolVersion is invalid");
   if (self.deletedAt !== null) return err("account is deleted");
@@ -345,19 +362,19 @@ export const updateTransaction = (
   const event: TransactionUpdated = {
     accountId: self.id,
     amount,
-    at: new Date().toISOString(),
+    at: now().toISOString(),
     categoryId,
     comment,
     date,
-    id: generateUuidV4(),
+    id: uuid(),
     protocolVersion,
     transactionId,
     type: "transactionUpdated",
   };
   return ok([applyEvent(self, event), event]);
-};
+}
 
-const applyEvent = (self: Account | null, event: AccountEvent): Account => {
+function applyEvent(self: Account | null, event: AccountEvent): Account {
   if (self === null) {
     if (event.type !== "accountCreated")
       throw new Error("Account is not created");
@@ -527,4 +544,4 @@ const applyEvent = (self: Account | null, event: AccountEvent): Account => {
       };
     }
   }
-};
+}

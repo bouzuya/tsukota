@@ -9,7 +9,7 @@ import {
   View,
   useAccount,
 } from "../../../../components";
-import { createCategory } from "../../../../lib/account";
+import { createCategory, deps } from "../../../../lib/account";
 import { useTranslation } from "../../../../lib/i18n";
 import { useTypedNavigation, useTypedRoute } from "../../../../lib/navigation";
 import { showErrorMessage } from "../../../../lib/show-error-message";
@@ -52,7 +52,7 @@ export function CategoryNew(): JSX.Element {
     await handleAccountCommand(account.id, (oldAccount) =>
       oldAccount === null
         ? err("account not found")
-        : createCategory(oldAccount, name)
+        : createCategory(deps, oldAccount, name)
     ).match(() => navigation.goBack(), showErrorMessage);
   };
 

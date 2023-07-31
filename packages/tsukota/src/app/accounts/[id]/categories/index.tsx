@@ -11,7 +11,7 @@ import {
   Text,
   useAccount,
 } from "../../../../components";
-import { deleteCategory, listCategory } from "../../../../lib/account";
+import { deleteCategory, deps, listCategory } from "../../../../lib/account";
 import { useTypedNavigation, useTypedRoute } from "../../../../lib/navigation";
 import { showErrorMessage } from "../../../../lib/show-error-message";
 
@@ -91,7 +91,7 @@ export function CategoryIndex(): JSX.Element {
           void handleAccountCommand(account.id, (oldAccount) =>
             oldAccount === null
               ? err("account not found")
-              : deleteCategory(oldAccount, categoryId)
+              : deleteCategory(deps, oldAccount, categoryId)
           ).match(() => {
             // do nothing
           }, showErrorMessage);
