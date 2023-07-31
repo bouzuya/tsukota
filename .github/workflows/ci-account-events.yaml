@@ -2,12 +2,17 @@ name: ci-account-events
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - .github/workflows/ci-account-events.yaml
       - "packages/account-events/**"
 jobs:
   build:
+    defaults:
+    run:
+      working-directory: packages/account-events
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
