@@ -8,10 +8,10 @@
     "url": "https://bouzuya.net/"
   },
   "dependencies": {
+    "@bouzuya/tsukota-account-events": "^4.0.0",
     "neverthrow": "^6.0.0"
   },
   "devDependencies": {
-    "@bouzuya/tsukota-account-events": "^4.0.0",
     "@jest/globals": "^29.6.2",
     "@tsconfig/strictest": "^2.0.1",
     "@types/uuid": "^9.0.2",
