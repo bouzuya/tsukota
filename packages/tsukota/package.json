@@ -2,6 +2,7 @@
   "name": "tsukota",
   "version": "0.3.2",
   "dependencies": {
+    "@bouzuya/tsukota-models": "^0.1.1",
     "@expo/vector-icons": "^13.0.0",
     "@hookform/error-message": "^2.0.1",
     "@react-native-async-storage/async-storage": "1.17.11",
@@ -39,8 +40,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "@bouzuya/tsukota-account-events": "^4.0.0",
-    "@bouzuya/tsukota-models": "^0.1.0",
     "@bouzuya/tsukota-schema": "^1.0.1",
     "@jest/globals": "^29.5.0",
     "@types/react": "~18.0.14",
