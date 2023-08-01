@@ -9,8 +9,8 @@ on:
 jobs:
   build:
     defaults:
-    run:
-      working-directory: packages/account-events
+      run:
+        working-directory: packages/account-events
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     runs-on: ubuntu-latest
