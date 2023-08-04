@@ -5,6 +5,6 @@ export type AccountEventStore = {
   store(
     uid: string,
     lastEventId: string | null,
-    event: AccountEvent
+    event: AccountEvent,
   ): Promise<void>;
 };
