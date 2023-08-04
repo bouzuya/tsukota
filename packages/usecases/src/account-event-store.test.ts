@@ -6,7 +6,8 @@ describe("AccountEventStore", () => {
     const accountEventStore = {
       store: jest.fn().mockReturnValue(Promise.resolve()),
     } as unknown as AccountEventStore;
-    await accountEventStore.store(null, {
+    const uid = "9fc3429c-9952-4cd5-9fe0-ab600169f189";
+    await accountEventStore.store(uid, null, {
       accountId: "a7538bdd-ab22-4666-91ca-8284b8f2b671",
       at: "2020-01-02T03:04:05Z",
       id: "5f6a6518-c349-4c52-8b01-83611a49aaf9",
