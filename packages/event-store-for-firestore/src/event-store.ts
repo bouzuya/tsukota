@@ -53,7 +53,10 @@ async function loadAccountEvents(
     getAccountEventCollectionForQueryRefFromParentRef(
       getAccountDocumentForQueryRef(db, accountId),
     );
-  const snapshot = await accountEventCollectionForQueryRef.get();
+  const snapshot = await accountEventCollectionForQueryRef
+    .where("at", ">", "1970-01-01T00:00:00Z")
+    .orderBy("at")
+    .get();
   const events = snapshot.docs.map((doc) => doc.data());
   const account = restoreAccount(events);
   if (!account.owners.includes(uid))
