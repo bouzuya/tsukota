@@ -4,6 +4,7 @@ import type { AccountEventStore } from "./account-event-store";
 describe("AccountEventStore", () => {
   it("works", async () => {
     const accountEventStore = {
+      load: jest.fn().mockReturnValue(Promise.resolve()),
       store: jest.fn().mockReturnValue(Promise.resolve()),
     } as unknown as AccountEventStore;
     const uid = "9fc3429c-9952-4cd5-9fe0-ab600169f189";
