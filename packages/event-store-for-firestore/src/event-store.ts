@@ -3,12 +3,12 @@ import type { AccountEventStore } from "@bouzuya/tsukota-usecases";
 import { FieldValue, type Firestore } from "firebase-admin/firestore";
 import {
   getAccountDocumentForQueryRef,
+  getAccountEventCollectionForQueryRefFromParentRef,
   getAccountEventDocumentForQueryRefFromParentRef,
   getAccountEventDocumentRefFromParentRef,
   getAccountEventStreamDocumentRef,
   getUserDocumentRef,
-} from "./schema";
-import { getAccountEventCollectionForQueryRefFromParentRef } from "./schema/ref-helpers";
+} from "./schema/ref-helpers";
 
 type Self = {
   firestore: Firestore;

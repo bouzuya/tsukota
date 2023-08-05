@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/consistent-type-imports */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import type {
   AccountDocumentForQuery,
   AccountEventDocument,
@@ -11,7 +7,7 @@ import type {
   DeviceDocument,
   UserDocument,
 } from "@bouzuya/tsukota-schema";
-import {
+import type {
   CollectionReference,
   DocumentData,
   DocumentReference,
