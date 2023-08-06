@@ -16,12 +16,12 @@ const deps = {
 export async function handle(
   actAs: string,
   accountId: string,
-  userId: string
+  userId: string,
 ): Promise<void> {
   const projectId = process.env["PROJECT_ID"];
   if (projectId === undefined) throw new Error("PROJECT_ID is required");
   console.log(
-    `add-owner: actAs=${actAs} accountId=${accountId} userId=${userId} projectId=${projectId}`
+    `add-owner: actAs=${actAs} accountId=${accountId} userId=${userId} projectId=${projectId}`,
   );
   const app = initializeApp({ projectId });
   const db = getFirestore(app);
@@ -32,11 +32,11 @@ export async function handle(
   const [_newAccount, newAccountEvent] = addOwner(
     deps,
     account,
-    userId
+    userId,
   )._unsafeUnwrap();
   await accountEventStore.store(
     actAs,
     getLastEventId(account),
-    newAccountEvent
+    newAccountEvent,
   );
 }
