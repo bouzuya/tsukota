@@ -65,7 +65,6 @@ export type Account = {
   name: string;
   owners: string[];
   transactions: Transaction[];
-  transactionsByYearMonth: Record<string, Transaction[]>; // YYYY-MM
 };
 
 export type Dependencies = {
@@ -383,7 +382,6 @@ function applyEvent(self: Account | null, event: AccountEvent): Account {
       name,
       owners,
       transactions: [],
-      transactionsByYearMonth: {},
     };
   }
   switch (event.type) {
@@ -504,17 +502,10 @@ function applyEvent(self: Account | null, event: AccountEvent): Account {
           ? 1
           : 0;
       });
-      const yearMonth = transaction.date.slice(0, 7);
       return {
         ...self,
         events: self.events.concat([event]),
         transactions,
-        transactionsByYearMonth: {
-          ...self.transactionsByYearMonth,
-          [yearMonth]: (self.transactionsByYearMonth[yearMonth] ?? []).concat([
-            transaction,
-          ]),
-        },
       };
     }
     case "transactionDeleted": {
@@ -523,24 +514,16 @@ function applyEvent(self: Account | null, event: AccountEvent): Account {
         (it) => it.id === transactionId,
       );
       if (transaction === undefined) throw new Error("assertion error");
-      const yearMonth = transaction.date.slice(0, 7);
       return {
         ...self,
         events: self.events.concat([event]),
         transactions: self.transactions.filter(
           (old) => old.id !== transactionId,
         ),
-        transactionsByYearMonth: {
-          ...self.transactionsByYearMonth,
-          [yearMonth]: (self.transactionsByYearMonth[yearMonth] ?? []).filter(
-            (old) => old.id !== transactionId,
-          ),
-        },
       };
     }
     case "transactionUpdated": {
       const { transactionId, amount, categoryId, comment, date } = event;
-      const yearMonth = date.slice(0, 7);
       return {
         ...self,
         events: self.events.concat([event]),
@@ -557,24 +540,6 @@ function applyEvent(self: Account | null, event: AccountEvent): Account {
                 createdAt: old.createdAt,
               };
         }),
-        transactionsByYearMonth: {
-          ...self.transactionsByYearMonth,
-          [yearMonth]: (self.transactionsByYearMonth[yearMonth] ?? []).map(
-            (old): Transaction => {
-              return old.id !== transactionId
-                ? old
-                : {
-                    id: old.id,
-                    accountId: old.accountId,
-                    categoryId,
-                    date,
-                    amount,
-                    comment,
-                    createdAt: old.createdAt,
-                  };
-            },
-          ),
-        },
       };
     }
   }

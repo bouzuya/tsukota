@@ -193,12 +193,6 @@ describe("createTransaction", () => {
       expect(transaction.createdAt).toStrictEqual(transactionAdded.at);
       expect(transaction.date).toStrictEqual(date);
       expect(transaction.id).toStrictEqual(transactionAdded.transactionId);
-
-      expect(Object.keys(v3.transactionsByYearMonth).length).toBe(1);
-      const transactionsByYearMonth = v3.transactionsByYearMonth["2023-01"];
-      if (transactionsByYearMonth === undefined) throw new Error();
-      expect(transactionsByYearMonth.length).toBe(1);
-      expect(transactionsByYearMonth[0]).toStrictEqual(transaction);
     });
   });
 
@@ -399,10 +393,6 @@ describe("deleteTransaction", () => {
       expect(transactionDeleted.transactionId).toStrictEqual(transactionId);
 
       expect(v4.transactions.length).toBe(0);
-
-      const transactionsByYearMonth = v4.transactionsByYearMonth["2023-01"];
-      if (transactionsByYearMonth === undefined) throw new Error();
-      expect(transactionsByYearMonth.length).toBe(0);
     });
   });
 
@@ -431,6 +421,7 @@ describe("deleteTransaction", () => {
 // TODO: Add getLastEvent tests
 // TODO: Add getLastEventId tests
 // TODO: Add listCategory tests
+
 // TODO: Add restoreAccount tests
 
 describe("removeOwner", () => {
@@ -652,11 +643,6 @@ describe("updateTransaction", () => {
       expect(transaction.createdAt).toStrictEqual(prevEvent.at);
       expect(transaction.date).toStrictEqual(date);
       expect(transaction.id).toStrictEqual(transactionUpdated.transactionId);
-
-      const transactionsByYearMonth = v4.transactionsByYearMonth["2023-01"];
-      if (transactionsByYearMonth === undefined) throw new Error();
-      expect(transactionsByYearMonth.length).toBe(1);
-      expect(transactionsByYearMonth[0]).toStrictEqual(transaction);
     });
   });
 
