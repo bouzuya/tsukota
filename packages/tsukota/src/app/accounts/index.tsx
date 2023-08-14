@@ -1,5 +1,5 @@
 import { err } from "neverthrow";
-import React, { useCallback, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import {
   AccountList,
@@ -14,7 +14,7 @@ import { useCurrentUserId } from "../../hooks/use-credential";
 import { deleteAccount, deps } from "../../lib/account";
 import { loadAccountIds } from "../../lib/api";
 import { useTranslation } from "../../lib/i18n";
-import { useFocusEffect, useTypedNavigation } from "../../lib/navigation";
+import { useTypedNavigation } from "../../lib/navigation";
 import { showErrorMessage } from "../../lib/show-error-message";
 
 export function AccountIndex(): JSX.Element {
@@ -23,19 +23,23 @@ export function AccountIndex(): JSX.Element {
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const [accountName, setAccountName] = useState<string | null>(null);
   const [accountId, setAccountId] = useState<string | null>(null);
+  const [fetching, setFetching] = useState<boolean>(false);
   const currentUserId = useCurrentUserId();
   const { accounts, fetchAccounts, handleAccountCommand } = useAccounts();
-  useFocusEffect(
-    useCallback(() => {
-      if (currentUserId === null) return;
-      // no await
-      void loadAccountIds(currentUserId).then((accountIds) =>
-        fetchAccounts(...accountIds)
-      );
-    }, [currentUserId])
-  );
+  useEffect(() => {
+    if (currentUserId === null) return;
+    setFetching(true);
+    // no await
+    void loadAccountIds(currentUserId)
+      .then((accountIds) =>
+        fetchAccounts(...accountIds.filter((id) => !(id in accounts)))
+      )
+      .finally(() => {
+        setFetching(false);
+      });
+  }, [currentUserId]);
 
-  if (currentUserId === null)
+  if (currentUserId === null || fetching)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
 
   return (
