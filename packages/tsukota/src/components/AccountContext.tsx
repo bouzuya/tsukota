@@ -14,14 +14,17 @@ import {
   Account,
   AccountError,
   AccountEvent,
+  getLastEvent,
   getLastEventId,
   restoreAccount,
+  unsafeApplyEvent,
 } from "../lib/account";
 import { loadEventsFromRemote, storeAccountEvent } from "../lib/api";
 import {
   loadEventsFromLocal,
   storeEventsToLocal,
 } from "../lib/local-event-store";
+import { timeSpan } from "../lib/time-span";
 
 type Accounts = Record<string, Account>;
 
@@ -45,7 +48,7 @@ const AccountContext = createContext<ContextValue>({
   },
 });
 
-async function fetchAccount(accountId: string): Promise<Account> {
+async function fetchAccountEvents(accountId: string): Promise<AccountEvent[]> {
   const localEvents = await loadEventsFromLocal(accountId);
   const remoteEvents = await loadEventsFromRemote(
     accountId,
@@ -63,18 +66,41 @@ async function fetchAccount(accountId: string): Promise<Account> {
 
   await storeEventsToLocal(accountId, events);
 
-  return restoreAccount(events);
+  return events;
 }
 
 function buildFetchAccounts(
   context: ContextValue
 ): (...accountIds: string[]) => Promise<void> {
-  const { setAccounts } = context;
+  const { accounts, setAccounts } = context;
   return async (...accountIds: string[]): Promise<void> => {
-    const newAccounts = await Promise.all(accountIds.map(fetchAccount));
+    const newAccountEvents = await Promise.all(
+      accountIds.map(fetchAccountEvents)
+    );
     const updated: Accounts = {};
-    for (const newAccount of newAccounts) {
-      updated[newAccount.id] = newAccount;
+    for (const events of newAccountEvents) {
+      const accountId = events[0]?.accountId ?? null;
+      if (accountId === null) throw new Error("account id is null");
+
+      const account = await timeSpan("restoreAccount", () => {
+        const account = ((): Account => {
+          const account = accounts[accountId] ?? null;
+          if (account === null) {
+            return restoreAccount(events);
+          } else {
+            const lastEventAt = getLastEvent(account).at;
+            let acc = account;
+            for (const event of events) {
+              if (event.at <= lastEventAt) continue;
+              acc = unsafeApplyEvent(acc, event);
+            }
+            return acc;
+          }
+        })();
+        return Promise.resolve(account);
+      });
+
+      updated[accountId] = account;
     }
     setAccounts((accounts) => ({ ...accounts, ...updated }));
     return;
