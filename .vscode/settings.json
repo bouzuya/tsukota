@@ -3,5 +3,7 @@
     "packages/account-events",
     "packages/functions",
     "packages/tsukota"
-  ]
+  ],
+  "prettier.configPath": "./packages/models/.prettierrc.json",
+  "prettier.prettierPath": "./packages/models/node_modules/prettier"
 }
