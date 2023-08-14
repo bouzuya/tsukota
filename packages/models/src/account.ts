@@ -86,7 +86,7 @@ export function addOwner(
     protocolVersion,
     type: "ownerAdded",
   };
-  return ok([applyEvent(self, event), event]);
+  return ok([unsafeApplyEvent(self, event), event]);
 }
 
 export function createAccount(
@@ -104,7 +104,7 @@ export function createAccount(
     protocolVersion,
     type: "accountCreated",
   };
-  return ok([applyEvent(null, event), event]);
+  return ok([unsafeApplyEvent(null, event), event]);
 }
 
 export function createCategory(
@@ -125,7 +125,7 @@ export function createCategory(
     protocolVersion,
     type: "categoryAdded",
   };
-  return ok([applyEvent(self, event), event]);
+  return ok([unsafeApplyEvent(self, event), event]);
 }
 
 export function createTransaction(
@@ -166,7 +166,7 @@ export function createTransaction(
     transactionId: uuid(),
     type: "transactionAdded",
   };
-  return ok([applyEvent(self, event), event]);
+  return ok([unsafeApplyEvent(self, event), event]);
 }
 
 export function deleteAccount(
@@ -183,7 +183,7 @@ export function deleteAccount(
     protocolVersion,
     type: "accountDeleted",
   };
-  return ok([applyEvent(self, event), event]);
+  return ok([unsafeApplyEvent(self, event), event]);
 }
 
 export function deleteCategory(
@@ -204,7 +204,7 @@ export function deleteCategory(
     protocolVersion,
     type: "categoryDeleted",
   };
-  return ok([applyEvent(self, event), event]);
+  return ok([unsafeApplyEvent(self, event), event]);
 }
 
 export function deleteTransaction(
@@ -225,7 +225,7 @@ export function deleteTransaction(
     protocolVersion,
     type: "transactionDeleted",
   };
-  return ok([applyEvent(self, event), event]);
+  return ok([unsafeApplyEvent(self, event), event]);
 }
 
 // query
@@ -266,7 +266,7 @@ export function removeOwner(
     protocolVersion,
     type: "ownerRemoved",
   };
-  return ok([applyEvent(self, event), event]);
+  return ok([unsafeApplyEvent(self, event), event]);
 }
 
 export function restoreAccount(events: AccountEvent[]): Account {
@@ -276,100 +276,15 @@ export function restoreAccount(events: AccountEvent[]): Account {
   return events
     .slice(1)
     .reduce(
-      (state, event) => applyEvent(state, event),
-      applyEvent(null, firstEvent),
+      (state, event) => unsafeApplyEvent(state, event),
+      unsafeApplyEvent(null, firstEvent),
     );
 }
 
-export function updateAccount(
-  { now, uuid }: Dependencies,
-  self: Account,
-  name: string,
-): Result<[Account, AccountEvent], AccountError> {
-  if (getLastEvent(self).protocolVersion > protocolVersion)
-    return err("protocolVersion is invalid");
-  if (self.deletedAt !== null) return err("account is deleted");
-  if (name.length === 0) return err("name is empty");
-  const event: AccountUpdated = {
-    accountId: self.id,
-    at: now().toISOString(),
-    id: uuid(),
-    name,
-    protocolVersion,
-    type: "accountUpdated",
-  };
-  return ok([applyEvent(self, event), event]);
-}
-
-export function updateCategory(
-  { now, uuid }: Dependencies,
-  self: Account,
-  categoryId: string,
-  name: string,
-): Result<[Account, AccountEvent], AccountError> {
-  if (getLastEvent(self).protocolVersion > protocolVersion)
-    return err("protocolVersion is invalid");
-  if (self.deletedAt !== null) return err("account is deleted");
-  if (!self.categories.some((category) => category.id === categoryId))
-    return err("categoryId not found");
-  if (name.length === 0) return err("name is empty");
-  const event: CategoryUpdated = {
-    accountId: self.id,
-    at: now().toISOString(),
-    categoryId,
-    id: uuid(),
-    name,
-    protocolVersion,
-    type: "categoryUpdated",
-  };
-  return ok([applyEvent(self, event), event]);
-}
-
-export function updateTransaction(
-  { now, uuid }: Dependencies,
-  self: Account,
-  transactionId: string,
-  { amount, categoryId, comment, date }: TransactionProps,
-): Result<[Account, AccountEvent], AccountError> {
-  if (getLastEvent(self).protocolVersion > protocolVersion)
-    return err("protocolVersion is invalid");
-  if (self.deletedAt !== null) return err("account is deleted");
-  if (!self.transactions.some(({ id }) => id === transactionId))
-    return err("transactionId not found");
-  if (amount.length === 0) return err("amount is empty");
-  if (categoryId.length === 0) return err("categoryId is empty");
-  if (date.length === 0) return err("date is empty");
-  const parsedAmount = Number.parseInt(amount, 10);
-  if (
-    amount.match(/^[+-]?[0-9]+\.?[0-9]*$/) === null ||
-    Number.isNaN(parsedAmount) ||
-    parsedAmount.toString() !== amount
-  )
-    return err("amount is invalid");
-  if (!self.categories.some((category) => category.id === categoryId))
-    return err("categoryId not found");
-  const parsedDate = new Date(date);
-  if (
-    date.match(/^[0-9]{4}-[01][0-9]-[0-3][0-9]$/) === null ||
-    Number.isNaN(parsedDate.getTime())
-  )
-    return err("date is invalid");
-  const event: TransactionUpdated = {
-    accountId: self.id,
-    amount,
-    at: now().toISOString(),
-    categoryId,
-    comment,
-    date,
-    id: uuid(),
-    protocolVersion,
-    transactionId,
-    type: "transactionUpdated",
-  };
-  return ok([applyEvent(self, event), event]);
-}
-
-function applyEvent(self: Account | null, event: AccountEvent): Account {
+export function unsafeApplyEvent(
+  self: Account | null,
+  event: AccountEvent,
+): Account {
   if (self === null) {
     if (event.type !== "accountCreated")
       throw new Error("Account is not created");
@@ -543,4 +458,92 @@ function applyEvent(self: Account | null, event: AccountEvent): Account {
       };
     }
   }
+}
+
+export function updateAccount(
+  { now, uuid }: Dependencies,
+  self: Account,
+  name: string,
+): Result<[Account, AccountEvent], AccountError> {
+  if (getLastEvent(self).protocolVersion > protocolVersion)
+    return err("protocolVersion is invalid");
+  if (self.deletedAt !== null) return err("account is deleted");
+  if (name.length === 0) return err("name is empty");
+  const event: AccountUpdated = {
+    accountId: self.id,
+    at: now().toISOString(),
+    id: uuid(),
+    name,
+    protocolVersion,
+    type: "accountUpdated",
+  };
+  return ok([unsafeApplyEvent(self, event), event]);
+}
+
+export function updateCategory(
+  { now, uuid }: Dependencies,
+  self: Account,
+  categoryId: string,
+  name: string,
+): Result<[Account, AccountEvent], AccountError> {
+  if (getLastEvent(self).protocolVersion > protocolVersion)
+    return err("protocolVersion is invalid");
+  if (self.deletedAt !== null) return err("account is deleted");
+  if (!self.categories.some((category) => category.id === categoryId))
+    return err("categoryId not found");
+  if (name.length === 0) return err("name is empty");
+  const event: CategoryUpdated = {
+    accountId: self.id,
+    at: now().toISOString(),
+    categoryId,
+    id: uuid(),
+    name,
+    protocolVersion,
+    type: "categoryUpdated",
+  };
+  return ok([unsafeApplyEvent(self, event), event]);
+}
+
+export function updateTransaction(
+  { now, uuid }: Dependencies,
+  self: Account,
+  transactionId: string,
+  { amount, categoryId, comment, date }: TransactionProps,
+): Result<[Account, AccountEvent], AccountError> {
+  if (getLastEvent(self).protocolVersion > protocolVersion)
+    return err("protocolVersion is invalid");
+  if (self.deletedAt !== null) return err("account is deleted");
+  if (!self.transactions.some(({ id }) => id === transactionId))
+    return err("transactionId not found");
+  if (amount.length === 0) return err("amount is empty");
+  if (categoryId.length === 0) return err("categoryId is empty");
+  if (date.length === 0) return err("date is empty");
+  const parsedAmount = Number.parseInt(amount, 10);
+  if (
+    amount.match(/^[+-]?[0-9]+\.?[0-9]*$/) === null ||
+    Number.isNaN(parsedAmount) ||
+    parsedAmount.toString() !== amount
+  )
+    return err("amount is invalid");
+  if (!self.categories.some((category) => category.id === categoryId))
+    return err("categoryId not found");
+  const parsedDate = new Date(date);
+  if (
+    date.match(/^[0-9]{4}-[01][0-9]-[0-3][0-9]$/) === null ||
+    Number.isNaN(parsedDate.getTime())
+  )
+    return err("date is invalid");
+  const event: TransactionUpdated = {
+    accountId: self.id,
+    amount,
+    at: now().toISOString(),
+    categoryId,
+    comment,
+    date,
+    id: uuid(),
+    protocolVersion,
+    transactionId,
+    type: "transactionUpdated",
+  };
+  return ok([unsafeApplyEvent(self, event), event]);
 }

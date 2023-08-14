@@ -14,6 +14,7 @@ import {
   updateAccount,
   updateCategory,
   updateTransaction,
+  unsafeApplyEvent,
 } from "./account";
 
 export const deps: Dependencies = {
@@ -472,6 +473,36 @@ describe("removeOwner", () => {
       if (owner === undefined) throw new Error();
       const result = removeOwner(deps, before, owner);
       expect(result.isErr()).toBe(true);
+    });
+  });
+});
+
+describe("unsafeApplyEvent", () => {
+  describe("happy path", () => {
+    it("works", () => {
+      const uid = generateUuidV4();
+      const [v1, event1] = createAccount(
+        deps,
+        uid,
+        "account name 1",
+      )._unsafeUnwrap();
+      const [v2, event2] = createCategory(
+        deps,
+        v1,
+        "category name 1",
+      )._unsafeUnwrap();
+      const selectedCategory = v2.categories[0];
+      if (selectedCategory === undefined) throw new Error();
+      const [v3, event3] = createTransaction(deps, v2, {
+        amount: "123",
+        categoryId: selectedCategory.id,
+        comment: "comment1",
+        date: "2023-01-02",
+      })._unsafeUnwrap();
+
+      expect(unsafeApplyEvent(null, event1)).toStrictEqual(v1);
+      expect(unsafeApplyEvent(v1, event2)).toStrictEqual(v2);
+      expect(unsafeApplyEvent(v2, event3)).toStrictEqual(v3);
     });
   });
 });
