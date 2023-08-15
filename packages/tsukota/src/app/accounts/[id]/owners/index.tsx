@@ -69,7 +69,7 @@ export function OwnerIndex(): JSX.Element {
           void handleAccountCommand(accountId, (oldAccount) =>
             oldAccount === null
               ? err("account not found")
-              : removeOwner(deps, oldAccount, ownerId)
+              : removeOwner(deps, oldAccount, ownerId),
           ).match(() => {
             // do nothing
           }, showErrorMessage);

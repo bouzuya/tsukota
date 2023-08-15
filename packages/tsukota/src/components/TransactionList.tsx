@@ -25,7 +25,7 @@ export function TransactionList({
     categories.map(({ id, name, deletedAt }) => [
       id,
       name + (deletedAt === null ? "" : t("transaction.deleted")),
-    ])
+    ]),
   );
   return (
     <FlatList

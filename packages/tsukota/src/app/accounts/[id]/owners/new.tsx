@@ -52,7 +52,7 @@ export function OwnerNew(): JSX.Element {
     await handleAccountCommand(account.id, (oldAccount) =>
       oldAccount === null
         ? err("account not found")
-        : addOwner(deps, oldAccount, uid)
+        : addOwner(deps, oldAccount, uid),
     ).match(() => navigation.goBack(), showErrorMessage);
   };
 

@@ -53,7 +53,7 @@ export function AccountEdit(): JSX.Element {
     await handleAccountCommand(account.id, (oldAccount) =>
       oldAccount === null
         ? err("account not found")
-        : updateAccount(deps, oldAccount, name)
+        : updateAccount(deps, oldAccount, name),
     ).match(() => navigation.goBack(), showErrorMessage);
   };
 

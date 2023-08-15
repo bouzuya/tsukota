@@ -32,7 +32,7 @@ export function AccountIndex(): JSX.Element {
     // no await
     void loadAccountIds(currentUserId)
       .then((accountIds) =>
-        fetchAccounts(...accountIds.filter((id) => !(id in accounts)))
+        fetchAccounts(...accountIds.filter((id) => !(id in accounts))),
       )
       .finally(() => {
         setFetching(false);
@@ -80,7 +80,7 @@ export function AccountIndex(): JSX.Element {
             void handleAccountCommand(accountId, (oldAccount) =>
               oldAccount === null
                 ? err("account not found")
-                : deleteAccount(deps, oldAccount)
+                : deleteAccount(deps, oldAccount),
             ).match(() => {
               // do nothing
             }, showErrorMessage);

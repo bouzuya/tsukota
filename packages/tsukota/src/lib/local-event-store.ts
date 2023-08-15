@@ -33,7 +33,7 @@ async function writeJsonAsync<T>(file: string, data: T): Promise<void> {
 }
 
 export async function loadEventsFromLocal(
-  accountId: string
+  accountId: string,
 ): Promise<AccountEvent[]> {
   return await timeSpan(`loadEventsFromLocal  ${accountId}`, async () => {
     const accountEventsDir = await ensureAccountEventsDir();
@@ -45,7 +45,7 @@ export async function loadEventsFromLocal(
 
 export async function storeEventsToLocal(
   accountId: string,
-  accountEvents: AccountEvent[]
+  accountEvents: AccountEvent[],
 ): Promise<void> {
   const accountEventsDir = await ensureAccountEventsDir();
   const accountEventFile = getAccountEventsFile(accountEventsDir, accountId);

@@ -34,11 +34,11 @@ type ContextValue = {
 };
 
 type HandleAccountCommandCallback<T> = (
-  account: T
+  account: T,
 ) => Result<[Account, AccountEvent], AccountError>;
 type HandleAccountCommand = (
   accountId: string | null,
-  callback: HandleAccountCommandCallback<Account | null>
+  callback: HandleAccountCommandCallback<Account | null>,
 ) => ResultAsync<void, AccountError | "server error">;
 
 const AccountContext = createContext<ContextValue>({
@@ -52,7 +52,7 @@ async function fetchAccountEvents(accountId: string): Promise<AccountEvent[]> {
   const localEvents = await loadEventsFromLocal(accountId);
   const remoteEvents = await loadEventsFromRemote(
     accountId,
-    localEvents.at(localEvents.length - 1)?.at ?? null
+    localEvents.at(localEvents.length - 1)?.at ?? null,
   );
 
   // remove duplicates and sort
@@ -70,12 +70,12 @@ async function fetchAccountEvents(accountId: string): Promise<AccountEvent[]> {
 }
 
 function buildFetchAccounts(
-  context: ContextValue
+  context: ContextValue,
 ): (...accountIds: string[]) => Promise<void> {
   const { accounts, setAccounts } = context;
   return async (...accountIds: string[]): Promise<void> => {
     const newAccountEvents = await Promise.all(
-      accountIds.map(fetchAccountEvents)
+      accountIds.map(fetchAccountEvents),
     );
     const updated: Accounts = {};
     for (const events of newAccountEvents) {
@@ -108,12 +108,12 @@ function buildFetchAccounts(
 }
 
 function buildHandleAccountCommand(
-  context: ContextValue
+  context: ContextValue,
 ): HandleAccountCommand {
   const { accounts, setAccounts } = context;
   return (
     accountId: string | null,
-    callback: HandleAccountCommandCallback<Account | null>
+    callback: HandleAccountCommandCallback<Account | null>,
   ): ResultAsync<void, AccountError | "server error"> => {
     const oldAccount = accountId === null ? null : accounts[accountId] ?? null;
     const result = callback(oldAccount);
@@ -122,14 +122,14 @@ function buildHandleAccountCommand(
     setAccounts((accounts) => ({ ...accounts, [newAccount.id]: newAccount }));
     return storeAccountEvent(
       oldAccount === null ? null : getLastEventId(oldAccount),
-      event
+      event,
     ).mapErr((_) => {
       setAccounts((accounts) =>
         oldAccount === null
           ? Object.fromEntries(
-              Object.entries(accounts).filter(([id, _]) => id !== accountId)
+              Object.entries(accounts).filter(([id, _]) => id !== accountId),
             )
-          : { ...accounts, [newAccount.id]: oldAccount }
+          : { ...accounts, [newAccount.id]: oldAccount },
       );
       return "server error";
     });
@@ -151,7 +151,7 @@ export function AccountContextProvider({ children }: Props): JSX.Element {
 
 export function useAccount(
   accountId: string,
-  deps: DependencyList
+  deps: DependencyList,
 ): {
   account: Account | null;
   fetchAccount: () => Promise<void>;
@@ -161,7 +161,7 @@ export function useAccount(
   const { accounts } = context;
   const fetchAccount = useCallback(
     () => buildFetchAccounts(context)(accountId),
-    [accountId]
+    [accountId],
   );
   const handleAccountCommand = useCallback(buildHandleAccountCommand(context), [
     context,

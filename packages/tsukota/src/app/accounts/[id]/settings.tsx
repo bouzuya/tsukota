@@ -108,7 +108,7 @@ export function Settings(): JSX.Element {
             void handleAccountCommand(accountId, (oldAccount) =>
               oldAccount === null
                 ? err("account not found")
-                : deleteAccount(deps, oldAccount)
+                : deleteAccount(deps, oldAccount),
             ).match(() => navigation.goBack(), showErrorMessage);
           }}
           visible={deleteModalVisible}

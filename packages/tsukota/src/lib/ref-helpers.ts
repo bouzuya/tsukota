@@ -22,12 +22,12 @@ const eventDocumentConverter: FirestoreDataConverter<EventDocument> = {
   fromFirestore: function (
     // 怪しい
     snapshot: QueryDocumentSnapshot<EventDocument>,
-    options?: SnapshotOptions | undefined
+    options?: SnapshotOptions | undefined,
   ): EventDocument {
     return snapshot.data(options);
   },
   toFirestore: function (
-    modelObject: WithFieldValue<EventDocument>
+    modelObject: WithFieldValue<EventDocument>,
   ): DocumentData {
     return modelObject;
   },
@@ -35,10 +35,10 @@ const eventDocumentConverter: FirestoreDataConverter<EventDocument> = {
 
 export function getAccountEventCollectionRef(
   db: Firestore,
-  accountId: string
+  accountId: string,
 ): CollectionReference<EventDocument> {
   return collection(db, "accounts", accountId, "events").withConverter(
-    eventDocumentConverter
+    eventDocumentConverter,
   );
 }
 
@@ -48,22 +48,22 @@ const systemStatusDocumentConverter: FirestoreDataConverter<SystemStatusDocument
   {
     fromFirestore: function (
       snapshot: QueryDocumentSnapshot<SystemStatusDocument>,
-      options?: SnapshotOptions | undefined
+      options?: SnapshotOptions | undefined,
     ): SystemStatusDocument {
       return snapshot.data(options);
     },
     toFirestore: function (
-      modelObject: WithFieldValue<SystemStatusDocument>
+      modelObject: WithFieldValue<SystemStatusDocument>,
     ): DocumentData {
       return modelObject;
     },
   };
 
 export function getSystemStatusDocumentRef(
-  db: Firestore
+  db: Firestore,
 ): DocumentReference<SystemStatusDocument> {
   return doc(db, "system", "status").withConverter(
-    systemStatusDocumentConverter
+    systemStatusDocumentConverter,
   );
 }
 
@@ -71,12 +71,12 @@ const userDocumentConverter: FirestoreDataConverter<UserDocument> = {
   fromFirestore: function (
     // 怪しい
     snapshot: QueryDocumentSnapshot<UserDocument>,
-    options?: SnapshotOptions | undefined
+    options?: SnapshotOptions | undefined,
   ): UserDocument {
     return snapshot.data(options);
   },
   toFirestore: function (
-    modelObject: WithFieldValue<UserDocument>
+    modelObject: WithFieldValue<UserDocument>,
   ): DocumentData {
     return modelObject;
   },
@@ -84,7 +84,7 @@ const userDocumentConverter: FirestoreDataConverter<UserDocument> = {
 
 export function getUserDocumentRef(
   db: Firestore,
-  userId: string
+  userId: string,
 ): DocumentReference<UserDocument> {
   return doc(db, "users", userId).withConverter(userDocumentConverter);
 }

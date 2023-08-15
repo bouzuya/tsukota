@@ -20,7 +20,7 @@ import {
 
 export function TextInput<
   TFieldValues extends FieldValues,
-  TName extends FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues>,
 >({
   control,
   label,

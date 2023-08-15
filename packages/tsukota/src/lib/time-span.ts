@@ -2,7 +2,7 @@ import { getConfig } from "./config";
 
 export async function timeSpan<T>(
   label: string,
-  callback: () => Promise<T>
+  callback: () => Promise<T>,
 ): Promise<T> {
   if (!getConfig().enableDebugLogging) return await callback();
   const start = new Date();
@@ -13,7 +13,7 @@ export async function timeSpan<T>(
     `${label}   end`,
     end.toISOString(),
     end.getTime() - start.getTime(),
-    "ms"
+    "ms",
   );
   return result;
 }

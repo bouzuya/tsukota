@@ -22,7 +22,7 @@ export function CategoryIndex(): JSX.Element {
   const { accountId } = route.params;
   const { account, fetchAccount, handleAccountCommand } = useAccount(
     accountId,
-    [pathname]
+    [pathname],
   );
   const [name, setName] = useState<string>("");
   const [categoryId, setCategoryId] = useState<string | null>(null);
@@ -91,7 +91,7 @@ export function CategoryIndex(): JSX.Element {
           void handleAccountCommand(account.id, (oldAccount) =>
             oldAccount === null
               ? err("account not found")
-              : deleteCategory(deps, oldAccount, categoryId)
+              : deleteCategory(deps, oldAccount, categoryId),
           ).match(() => {
             // do nothing
           }, showErrorMessage);

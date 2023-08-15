@@ -41,7 +41,7 @@ export function getConfig(): Config {
 
   const getStringOrNull = (
     record: Record<string, unknown>,
-    key: string
+    key: string,
   ): string | null => {
     const s = record[key];
     if (s === undefined) return null;

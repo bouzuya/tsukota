@@ -29,12 +29,12 @@ export function TransactionIndex(): JSX.Element {
   const [amount, setAmount] = useState<string>("");
   const [comment, setComment] = useState<string>("");
   const [date, setDate] = useState<string>(
-    new Date().toISOString().substring(0, 10)
+    new Date().toISOString().substring(0, 10),
   );
   const [transactionId, setTransactionId] = useState<string | null>(null);
   const { account, fetchAccount, handleAccountCommand } = useAccount(
     accountId,
-    [pathname]
+    [pathname],
   );
   const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -108,7 +108,7 @@ export function TransactionIndex(): JSX.Element {
           void handleAccountCommand(account.id, (oldAccount) =>
             oldAccount === null
               ? err("account not found")
-              : deleteTransaction(deps, oldAccount, transactionId)
+              : deleteTransaction(deps, oldAccount, transactionId),
           ).match(() => {
             // do nothing
           }, showErrorMessage);

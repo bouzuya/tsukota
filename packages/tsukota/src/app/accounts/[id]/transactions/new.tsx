@@ -62,7 +62,7 @@ export function TransactionNew(): JSX.Element {
             categoryId,
             comment,
             date,
-          })
+          }),
     ).match(() => navigation.goBack(), showErrorMessage);
   };
 

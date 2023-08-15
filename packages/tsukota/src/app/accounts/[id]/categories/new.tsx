@@ -52,7 +52,7 @@ export function CategoryNew(): JSX.Element {
     await handleAccountCommand(account.id, (oldAccount) =>
       oldAccount === null
         ? err("account not found")
-        : createCategory(deps, oldAccount, name)
+        : createCategory(deps, oldAccount, name),
     ).match(() => navigation.goBack(), showErrorMessage);
   };
 

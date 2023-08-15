@@ -20,7 +20,7 @@ export type Props = {
 
 export function CategorySelectProvider({ children }: Props): JSX.Element {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null
+    null,
   );
   return (
     <CategorySelectContext.Provider
@@ -37,12 +37,12 @@ export function useCategorySelect(accountId: string): {
   setSelectedCategory: (category: Category | null) => void;
 } {
   const { selectedCategory, setSelectedCategory } = useContext(
-    CategorySelectContext
+    CategorySelectContext,
   );
   const { account } = useAccount(accountId, []);
   const categoriesWithDeleted = useMemo(
     () => (account === null ? null : listCategory(account, true)),
-    [account]
+    [account],
   );
   return {
     categoriesWithDeleted,

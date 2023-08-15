@@ -90,7 +90,7 @@ function DrawerContent({ backgroundColor }: DrawerContentProps): JSX.Element {
           label={t("legal.privacy_policy")}
           onPress={() =>
             void Linking.openURL(
-              "https://github.com/bouzuya/tsukota/blob/master/docs/PRIVACY.md"
+              "https://github.com/bouzuya/tsukota/blob/master/docs/PRIVACY.md",
             )
           }
         />
@@ -99,7 +99,7 @@ function DrawerContent({ backgroundColor }: DrawerContentProps): JSX.Element {
           label={t("legal.license")}
           onPress={() =>
             void Linking.openURL(
-              "https://github.com/bouzuya/tsukota/blob/master/docs/LICENSE.md"
+              "https://github.com/bouzuya/tsukota/blob/master/docs/LICENSE.md",
             )
           }
         />

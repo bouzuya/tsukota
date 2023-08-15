@@ -50,7 +50,7 @@ export function AccountNew(): JSX.Element {
     await handleAccountCommand(null, (oldAccount) =>
       oldAccount !== null
         ? err("account already exists")
-        : createAccount(deps, currentUserId, name)
+        : createAccount(deps, currentUserId, name),
     ).match(() => navigation.goBack(), showErrorMessage);
   };
   return (

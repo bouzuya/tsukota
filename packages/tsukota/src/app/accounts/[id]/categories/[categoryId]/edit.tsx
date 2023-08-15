@@ -56,7 +56,7 @@ export function CategoryEdit(): JSX.Element {
     await handleAccountCommand(account.id, (oldAccount) =>
       oldAccount === null
         ? err("account not found")
-        : updateCategory(deps, oldAccount, categoryId, name)
+        : updateCategory(deps, oldAccount, categoryId, name),
     ).match(() => navigation.goBack(), showErrorMessage);
   };
 

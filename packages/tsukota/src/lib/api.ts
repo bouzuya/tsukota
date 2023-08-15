@@ -11,14 +11,14 @@ import { timeSpan } from "./time-span";
 
 export function storeAccountEvent(
   lastEventId: string | null,
-  event: AccountEvent
+  event: AccountEvent,
 ): ResultAsync<void, string> {
   return ResultAsync.fromPromise(
     firebaseStoreAccountEvent({
       last_event_id: lastEventId,
       event,
     }).then((result) => void result),
-    String
+    String,
   );
 }
 
@@ -32,13 +32,13 @@ export async function loadAccountIds(currentUserId: string): Promise<string[]> {
 
 export async function loadEventsFromRemote(
   accountId: string,
-  since: string | null
+  since: string | null,
 ): Promise<AccountEvent[]> {
   return await timeSpan(`loadEventsFromRemote ${accountId}`, async () => {
     const q = query(
       getAccountEventCollectionRef(db, accountId),
       where("at", ">", since !== null ? since : "1970-01-01T00:00:00Z"),
-      orderBy("at")
+      orderBy("at"),
     );
     const eventsSnapshot = await getDocs(q);
     return eventsSnapshot.docs

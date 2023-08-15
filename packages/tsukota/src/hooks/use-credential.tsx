@@ -25,7 +25,7 @@ const getFirebaseAuthCurrentUser = (): Promise<User | null> => {
     }),
   ]).then(
     (user) => user,
-    (_) => null
+    (_) => null,
   );
 };
 
