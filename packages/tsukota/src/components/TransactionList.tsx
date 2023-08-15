@@ -20,6 +20,7 @@ export function TransactionList({
   transactions,
   ...props
 }: Props): JSX.Element {
+  const rev = transactions.slice().reverse();
   const { t } = useTranslation();
   const categoryNames = Object.fromEntries(
     categories.map(({ id, name, deletedAt }) => [
@@ -30,7 +31,7 @@ export function TransactionList({
   return (
     <FlatList
       {...props}
-      data={transactions}
+      data={rev}
       keyExtractor={(item) => item.id}
       renderItem={({ item: transaction }) => (
         <TransactionListItem
