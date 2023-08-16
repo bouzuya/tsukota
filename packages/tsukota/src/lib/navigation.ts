@@ -39,6 +39,7 @@ export type ParamList = {
   OwnerIndex: { accountId: string };
   OwnerNew: { accountId: string };
   Settings: { accountId: string };
+  Statistics: { accountId: string };
   TransactionEdit: { accountId: string; transactionId: string } & {
     categoryId: string;
     date: string;

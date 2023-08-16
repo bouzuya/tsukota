@@ -68,6 +68,10 @@ export const resources = {
         number_of_events: "Number of events",
         number_of_transactions: "Number of transactions",
       },
+      statistics: {
+        income: "Income",
+        outgo: "Outgo",
+      },
       system: {
         update: "Please update to the latest version of the app",
       },
@@ -93,6 +97,9 @@ export const resources = {
         },
         setting: {
           index: "Settings",
+        },
+        statistics: {
+          index: "Statistics",
         },
         transaction: {
           delete: "Delete Transaction",
@@ -183,6 +190,10 @@ export const resources = {
         number_of_events: "イベント数",
         number_of_transactions: "取引数",
       },
+      statistics: {
+        income: "収入",
+        outgo: "支出",
+      },
       system: {
         update: "最新のアプリにアップデートしてください",
       },
@@ -208,6 +219,9 @@ export const resources = {
         },
         setting: {
           index: "設定",
+        },
+        statistics: {
+          index: "収支一覧",
         },
         transaction: {
           delete: "取引削除",

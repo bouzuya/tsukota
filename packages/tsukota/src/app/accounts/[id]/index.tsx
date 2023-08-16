@@ -2,8 +2,9 @@ import { useState } from "react";
 import { BottomNavigation } from "../../../components";
 import { useTranslation } from "../../../lib/i18n";
 import { CategoryIndex } from "./categories/index";
-import { TransactionIndex } from "./transactions/index";
 import { Settings } from "./settings";
+import { Statistics } from "./statistics";
+import { TransactionIndex } from "./transactions/index";
 
 export function AccountShow(): JSX.Element {
   const { t } = useTranslation();
@@ -13,6 +14,11 @@ export function AccountShow(): JSX.Element {
       focusedIcon: "cash-multiple",
       key: "transactions",
       title: t("title.transaction.index"),
+    },
+    {
+      focusedIcon: "scale-balance",
+      key: "statistics",
+      title: t("title.statistics.index"),
     },
     {
       focusedIcon: "shape",
@@ -29,6 +35,7 @@ export function AccountShow(): JSX.Element {
   const renderScene = BottomNavigation.SceneMap({
     categories: CategoryIndex,
     settings: Settings,
+    statistics: Statistics,
     transactions: TransactionIndex,
   });
 
