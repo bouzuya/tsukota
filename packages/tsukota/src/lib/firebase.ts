@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FirebaseOptions, initializeApp } from "firebase/app";
 import {
   Firestore,
@@ -11,12 +10,7 @@ import {
   getFunctions,
   httpsCallable,
 } from "firebase/functions";
-import {
-  connectAuthEmulator,
-  getReactNativePersistence,
-  initializeAuth,
-} from "firebase/auth/react-native";
-import { Auth } from "firebase/auth";
+import { connectAuthEmulator, initializeAuth, Auth } from "firebase/auth";
 import { getConfig } from "./config";
 
 function initializeFirebaseInstances(): {
@@ -36,10 +30,7 @@ function initializeFirebaseInstances(): {
   };
 
   const app = initializeApp(firebaseOptions);
-  const auth = initializeAuth(app, {
-    persistence: getReactNativePersistence(AsyncStorage),
-    popupRedirectResolver: undefined,
-  });
+  const auth = initializeAuth(app);
   const db = getFirestore(app);
   const functions = getFunctions(app, "asia-northeast2");
 
