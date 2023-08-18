@@ -30,8 +30,14 @@ type Props = {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
-    flex: 1,
-    justifyContent: "center",
+    alignContent: "flex-start",
+    alignItems: "stretch",
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
+    justifyContent: "flex-start",
+    margin: 0,
+    padding: 0,
+    width: "100%",
   },
 });
