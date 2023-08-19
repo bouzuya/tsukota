@@ -249,12 +249,18 @@ export const resources = {
   },
 } as const;
 
-// no await
-void use(initReactI18next).init({
-  compatibilityJSON: "v3",
-  debug: false,
-  lng: Localization.locale,
-  resources,
-});
+let translation: ReturnType<typeof useTranslation>["t"] | null = null;
 
-export { useTranslation };
+// no await
+void use(initReactI18next)
+  .init({
+    compatibilityJSON: "v3",
+    debug: false,
+    lng: Localization.locale,
+    resources,
+  })
+  .then((t) => {
+    translation = t;
+  });
+
+export { translation, useTranslation };
