@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import { List, Text } from "react-native-paper";
 import { useMemo } from "react";
-import { Transaction } from "../../../lib/account";
+import { Transaction } from "@/lib/account";
 
 type Props = {
   categoryNames: Record<string, string>;

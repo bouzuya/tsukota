@@ -1,14 +1,14 @@
 import { err } from "neverthrow";
 import { useCallback, useEffect, useState } from "react";
-import { AccountListItem } from "../../../../components";
-import { useAccounts } from "../../../../components/AccountContext";
-import { useCurrentUserId } from "../../../../hooks/use-credential";
-import { deleteAccount, deps } from "../../../../lib/account";
-import { loadAccountIds } from "../../../../lib/api";
-import { useTranslation } from "../../../../lib/i18n";
-import { useTypedNavigation } from "../../../../lib/navigation";
-import { showErrorMessage } from "../../../../lib/show-error-message";
-import { LongPressedAccount } from "../types";
+import { AccountListItem } from "@/components";
+import { useAccounts } from "@/components/AccountContext";
+import { LongPressedAccount } from "@/components/pages/AccountIndex/types";
+import { deleteAccount, deps } from "@/lib/account";
+import { loadAccountIds } from "@/lib/api";
+import { useTranslation } from "@/lib/i18n";
+import { useTypedNavigation } from "@/lib/navigation";
+import { showErrorMessage } from "@/lib/show-error-message";
+import { useCurrentUserId } from "@/hooks/use-credential";
 
 export function useAccountIndex(): {
   account: LongPressedAccount | null;
