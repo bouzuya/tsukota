@@ -1,4 +1,4 @@
-import { TFunction, use } from "i18next";
+import { use } from "i18next";
 import { initReactI18next, useTranslation } from "react-i18next";
 import * as Localization from "expo-localization";
 
@@ -247,20 +247,14 @@ export const resources = {
       },
     },
   },
-};
+} as const;
 
 // no await
-let translation: TFunction<"translation", undefined, "translation"> | null =
-  null;
-void use(initReactI18next)
-  .init({
-    compatibilityJSON: "v3",
-    debug: false,
-    lng: Localization.locale,
-    resources,
-  })
-  .then((t) => {
-    translation = t;
-  });
+void use(initReactI18next).init({
+  compatibilityJSON: "v3",
+  debug: false,
+  lng: Localization.locale,
+  resources,
+});
 
-export { translation, useTranslation };
+export { useTranslation };
