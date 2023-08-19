@@ -14,7 +14,7 @@ export function HeaderRightSaveButton({
     <ActivityIndicator />
   ) : (
     <IconButton
-      accessibilityLabel={t("button.save") ?? ""}
+      accessibilityLabel={t("button.save")}
       icon="check"
       onPress={() =>
         // no wait

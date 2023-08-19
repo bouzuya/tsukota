@@ -20,9 +20,7 @@ export function CategoryList(props: Props): JSX.Element {
           onLongPress={() => onLongPressCategory(item)}
           onPress={() => onPressCategory(item)}
           title={item.name}
-          description={
-            item.deletedAt !== null ? t("category.deleted") ?? "" : ""
-          }
+          description={item.deletedAt !== null ? t("category.deleted") : ""}
         />
       )}
       style={{ flex: 1, width: "100%" }}

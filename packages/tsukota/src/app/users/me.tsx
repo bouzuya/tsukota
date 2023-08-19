@@ -15,7 +15,7 @@ export function UserMe(): JSX.Element {
         <List.Item
           description={currentUserId}
           style={{ width: "100%" }}
-          title={t("user.id") ?? ""}
+          title={t("user.id")}
           right={() => (
             <IconButton
               icon="clipboard-text"

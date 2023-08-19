@@ -129,7 +129,7 @@ export function TransactionForm({
         <ReactNativePaperTextInput
           editable={false}
           error={errors.categoryId !== undefined}
-          label={t("transaction.category") ?? ""}
+          label={t("transaction.category")}
           mode="outlined"
           onChangeText={() => {
             // do nothing

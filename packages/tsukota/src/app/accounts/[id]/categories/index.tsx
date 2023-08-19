@@ -68,7 +68,7 @@ export function CategoryIndex(): JSX.Element {
         />
       )}
       <FAB
-        accessibilityLabel={t("category.new") ?? ""}
+        accessibilityLabel={t("category.new")}
         icon="plus"
         style={styles.fab}
         onPress={() => {

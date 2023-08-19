@@ -86,7 +86,7 @@ export function TransactionIndex(): JSX.Element {
       )}
       {account.categories.length === 0 ? null : (
         <FAB
-          accessibilityLabel={t("transaction.new") ?? ""}
+          accessibilityLabel={t("transaction.new")}
           icon="plus"
           style={styles.fab}
           onPress={() => {

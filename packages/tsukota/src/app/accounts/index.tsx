@@ -35,7 +35,7 @@ export function AccountIndex(): JSX.Element {
         onPressAccount={handleAccountListPress}
       />
       <FAB
-        accessibilityLabel={t("account.new") ?? ""}
+        accessibilityLabel={t("account.new")}
         icon="plus"
         onPress={handleFABPress}
         style={styles.fab}

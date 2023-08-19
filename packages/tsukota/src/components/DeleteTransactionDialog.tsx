@@ -23,7 +23,7 @@ export function DeleteTransactionDialog({
   const { t } = useTranslation();
   return id === null ? null : (
     <Dialog visible={visible}>
-      <Dialog.Title>{t("title.transaction.delete") ?? ""}</Dialog.Title>
+      <Dialog.Title>{t("title.transaction.delete")}</Dialog.Title>
       <Dialog.Content>
         <Text>{t("message.confirm_transaction_deletion")}</Text>
         <Text>
@@ -37,8 +37,8 @@ export function DeleteTransactionDialog({
         </Text>
       </Dialog.Content>
       <Dialog.Actions>
-        <Button onPress={onClickCancel}>{t("button.cancel") ?? ""}</Button>
-        <Button onPress={onClickOk}>{t("button.ok") ?? ""}</Button>
+        <Button onPress={onClickCancel}>{t("button.cancel")}</Button>
+        <Button onPress={onClickOk}>{t("button.ok")}</Button>
       </Dialog.Actions>
     </Dialog>
   );

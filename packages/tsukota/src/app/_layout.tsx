@@ -197,7 +197,7 @@ function DrawerNavigator({ isDark }: DrawerNavigatorProps): JSX.Element {
               }}
             >
               <IconButton
-                accessibilityLabel={t("button.menu") ?? ""}
+                accessibilityLabel={t("button.menu")}
                 icon="menu"
                 onPress={() => {
                   navigation.openDrawer();
@@ -205,7 +205,7 @@ function DrawerNavigator({ isDark }: DrawerNavigatorProps): JSX.Element {
               />
             </View>
           ),
-          headerTitle: t("title.user.me") ?? "",
+          headerTitle: t("title.user.me"),
         })}
       />
     </Drawer.Navigator>

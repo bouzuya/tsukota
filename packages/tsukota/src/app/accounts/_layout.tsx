@@ -31,7 +31,7 @@ export function AccountLayout(): JSX.Element {
         component={AccountEdit}
         name="AccountEdit"
         options={{
-          headerTitle: t("title.account.edit") ?? "",
+          headerTitle: t("title.account.edit"),
         }}
       />
       <Stack.Screen
@@ -48,7 +48,7 @@ export function AccountLayout(): JSX.Element {
               }}
             >
               <IconButton
-                accessibilityLabel={t("button.menu") ?? ""}
+                accessibilityLabel={t("button.menu")}
                 icon="menu"
                 onPress={() => {
                   navigation.openDrawer();
@@ -56,68 +56,68 @@ export function AccountLayout(): JSX.Element {
               />
             </View>
           ),
-          headerTitle: t("title.account.index") ?? "",
+          headerTitle: t("title.account.index"),
         }}
       />
       <Stack.Screen
         component={AccountNew}
         name="AccountNew"
-        options={{ headerTitle: t("title.account.new") ?? "" }}
+        options={{ headerTitle: t("title.account.new") }}
       />
       <Stack.Screen
         component={AccountShow}
         name="AccountShow"
-        options={{ headerTitle: t("title.account.show") ?? "" }}
+        options={{ headerTitle: t("title.account.show") }}
       />
       <Stack.Screen
         component={CategoryEdit}
         name="CategoryEdit"
-        options={{ headerTitle: t("title.category.edit") ?? "" }}
+        options={{ headerTitle: t("title.category.edit") }}
       />
       <Stack.Screen
         component={CategoryIndex}
         name="CategoryIndex"
-        options={{ headerTitle: t("title.category.index") ?? "" }}
+        options={{ headerTitle: t("title.category.index") }}
       />
       <Stack.Screen
         component={CategoryNew}
         name="CategoryNew"
-        options={{ headerTitle: t("title.category.new") ?? "" }}
+        options={{ headerTitle: t("title.category.new") }}
       />
       <Stack.Screen
         component={CategorySelect}
         name="CategorySelect"
-        options={{ headerTitle: t("title.category.select") ?? "" }}
+        options={{ headerTitle: t("title.category.select") }}
       />
       <Stack.Screen
         component={OwnerIndex}
         name="OwnerIndex"
-        options={{ headerTitle: t("title.owner.index") ?? "" }}
+        options={{ headerTitle: t("title.owner.index") }}
       />
       <Stack.Screen
         component={OwnerNew}
         name="OwnerNew"
-        options={{ headerTitle: t("title.owner.new") ?? "" }}
+        options={{ headerTitle: t("title.owner.new") }}
       />
       <Stack.Screen
         component={Settings}
         name="Settings"
-        options={{ headerTitle: t("title.setting.index") ?? "" }}
+        options={{ headerTitle: t("title.setting.index") }}
       />
       <Stack.Screen
         component={TransactionEdit}
         name="TransactionEdit"
-        options={{ headerTitle: t("title.transaction.edit") ?? "" }}
+        options={{ headerTitle: t("title.transaction.edit") }}
       />
       <Stack.Screen
         component={TransactionIndex}
         name="TransactionIndex"
-        options={{ headerTitle: t("title.transaction.index") ?? "" }}
+        options={{ headerTitle: t("title.transaction.index") }}
       />
       <Stack.Screen
         component={TransactionNew}
         name="TransactionNew"
-        options={{ headerTitle: t("title.transaction.new") ?? "" }}
+        options={{ headerTitle: t("title.transaction.new") }}
       />
     </Stack.Navigator>
   );

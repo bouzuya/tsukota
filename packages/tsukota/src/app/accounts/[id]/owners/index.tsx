@@ -48,7 +48,7 @@ export function OwnerIndex(): JSX.Element {
         style={[{ flex: 1, width: "100%" }]}
       />
       <FAB
-        accessibilityLabel={t("owner.new") ?? ""}
+        accessibilityLabel={t("owner.new")}
         icon="plus"
         style={styles.fab}
         onPress={() => {

@@ -17,16 +17,16 @@ export function DeleteAccountDialog({
   const { t } = useTranslation();
   return (
     <Dialog visible={visible}>
-      <Dialog.Title>{t("title.account.delete") ?? ""}</Dialog.Title>
+      <Dialog.Title>{t("title.account.delete")}</Dialog.Title>
       <Dialog.Content>
-        <Text>{t("message.confirm_account_deletion") ?? ""}</Text>
+        <Text>{t("message.confirm_account_deletion")}</Text>
         <Text>
           {t("account.name")}: {name}
         </Text>
       </Dialog.Content>
       <Dialog.Actions>
-        <Button onPress={onClickCancel}>{t("button.cancel") ?? ""}</Button>
-        <Button onPress={onClickOk}>{t("button.ok") ?? ""}</Button>
+        <Button onPress={onClickCancel}>{t("button.cancel")}</Button>
+        <Button onPress={onClickOk}>{t("button.ok")}</Button>
       </Dialog.Actions>
     </Dialog>
   );
