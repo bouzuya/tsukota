@@ -7,7 +7,6 @@ import {
   DeleteAccountDialog,
   FAB,
   Screen,
-  Text,
 } from "../../components";
 import { useAccounts } from "../../components/AccountContext";
 import { useCurrentUserId } from "../../hooks/use-credential";
@@ -44,26 +43,22 @@ export function AccountIndex(): JSX.Element {
 
   return (
     <Screen>
-      {Object.keys(accounts).length === 0 ? (
-        <Text>{t("account.empty")}</Text>
-      ) : (
-        <AccountList
-          data={Object.entries(accounts)
-            .filter(([_, { deletedAt }]) => deletedAt === null)
-            .map(([id, account]) => ({
-              id,
-              name: account.name,
-            }))}
-          onLongPressAccount={(account) => {
-            setAccountName(account.name);
-            setAccountId(account.id);
-            setDeleteModalVisible(true);
-          }}
-          onPressAccount={(account) =>
-            navigation.push("AccountShow", { accountId: account.id })
-          }
-        />
-      )}
+      <AccountList
+        data={Object.entries(accounts)
+          .filter(([_, { deletedAt }]) => deletedAt === null)
+          .map(([id, account]) => ({
+            id,
+            name: account.name,
+          }))}
+        onLongPressAccount={(account) => {
+          setAccountName(account.name);
+          setAccountId(account.id);
+          setDeleteModalVisible(true);
+        }}
+        onPressAccount={(account) =>
+          navigation.push("AccountShow", { accountId: account.id })
+        }
+      />
       <FAB
         accessibilityLabel={t("account.new") ?? ""}
         icon="plus"

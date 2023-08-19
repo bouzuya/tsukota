@@ -1,5 +1,6 @@
-import { FlatList, FlatListProps } from "react-native";
+import { FlatList, FlatListProps, StyleSheet, Text, View } from "react-native";
 import { List } from "react-native-paper";
+import { useTranslation } from "../lib/i18n";
 
 export type Item = {
   id: string;
@@ -14,10 +15,16 @@ type Props = Omit<
 };
 
 export function AccountList(props: Props): JSX.Element {
+  const { t } = useTranslation();
   const { onLongPressAccount, onPressAccount, ...p } = props;
   return (
     <FlatList
       {...p}
+      ListEmptyComponent={() => (
+        <View style={styles.empty}>
+          <Text>{t("account.empty")}</Text>
+        </View>
+      )}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
         <List.Item
@@ -28,7 +35,32 @@ export function AccountList(props: Props): JSX.Element {
           title={item.name}
         />
       )}
-      style={[{ flex: 1, width: "100%" }]}
+      contentContainerStyle={styles.container}
     />
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    alignContent: "flex-start",
+    alignItems: "stretch",
+    display: "flex",
+    flex: 1,
+    flexDirection: "column",
+    height: "100%",
+    justifyContent: "flex-start",
+    margin: 0,
+    padding: 0,
+    width: "100%",
+  },
+  empty: {
+    alignItems: "center",
+    flex: 1,
+    margin: 0,
+    padding: 0,
+    flexDirection: "column",
+    justifyContent: "center",
+    height: "100%",
+    width: "100%",
+  },
+});
