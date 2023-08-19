@@ -2,7 +2,6 @@ import { useTranslation } from "react-i18next";
 import { Button, Dialog, Text } from "react-native-paper";
 
 type Props = {
-  id: string;
   name: string;
   onClickCancel: () => void;
   onClickOk: () => void;

@@ -67,7 +67,6 @@ export function AccountIndex(): JSX.Element {
       />
       {accountId !== null && (
         <DeleteAccountDialog
-          id={accountId}
           name={accountName ?? ""}
           onClickCancel={() => setDeleteModalVisible(false)}
           onClickOk={() => {

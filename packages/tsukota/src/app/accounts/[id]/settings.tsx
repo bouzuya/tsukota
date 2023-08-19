@@ -100,7 +100,6 @@ export function Settings(): JSX.Element {
           style={{ width: "100%" }}
         />
         <DeleteAccountDialog
-          id={accountId}
           name={account.name}
           onClickCancel={() => setDeleteModalVisible(false)}
           onClickOk={() => {
