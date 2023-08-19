@@ -20,7 +20,7 @@
     "project": ["tsconfig.json", "tsconfig.dev.json"],
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint", "import"],
+  "plugins": ["@typescript-eslint", "import", "react-hooks"],
   "settings": {
     "import/ignore": ["react-native"]
   },
@@ -36,6 +36,8 @@
     "import/no-unresolved": "off",
     "import/order": "error",
     "operator-linebreak": "off",
+    "react-hooks/exhaustive-deps": "error",
+    "react-hooks/rules-of-hooks": "error",
     "require-jsdoc": "off"
   }
 }
