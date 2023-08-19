@@ -16,12 +16,16 @@ import { useTranslation } from "../../lib/i18n";
 import { useTypedNavigation } from "../../lib/navigation";
 import { showErrorMessage } from "../../lib/show-error-message";
 
+type LongPressedAccount = {
+  id: string;
+  name: string;
+};
+
 export function AccountIndex(): JSX.Element {
   const { t } = useTranslation();
   const navigation = useTypedNavigation();
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
-  const [accountName, setAccountName] = useState<string | null>(null);
-  const [accountId, setAccountId] = useState<string | null>(null);
+  const [account, setAccount] = useState<LongPressedAccount | null>(null);
   const [fetching, setFetching] = useState<boolean>(false);
   const currentUserId = useCurrentUserId();
   const { accounts, fetchAccounts, handleAccountCommand } = useAccounts();
@@ -51,8 +55,7 @@ export function AccountIndex(): JSX.Element {
             name: account.name,
           }))}
         onLongPressAccount={(account) => {
-          setAccountName(account.name);
-          setAccountId(account.id);
+          setAccount({ id: account.id, name: account.name });
           setDeleteModalVisible(true);
         }}
         onPressAccount={(account) =>
@@ -65,13 +68,13 @@ export function AccountIndex(): JSX.Element {
         style={styles.fab}
         onPress={() => navigation.push("AccountNew")}
       />
-      {accountId !== null && (
+      {account !== null && (
         <DeleteAccountDialog
-          name={accountName ?? ""}
+          name={account.name}
           onClickCancel={() => setDeleteModalVisible(false)}
           onClickOk={() => {
             // no await
-            void handleAccountCommand(accountId, (oldAccount) =>
+            void handleAccountCommand(account.id, (oldAccount) =>
               oldAccount === null
                 ? err("account not found")
                 : deleteAccount(deps, oldAccount),
