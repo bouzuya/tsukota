@@ -2,6 +2,9 @@
   "extends": "./node_modules/expo/tsconfig.base",
   "compilerOptions": {
     "noUncheckedIndexedAccess": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "strict": true
   }
 }
