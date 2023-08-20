@@ -51,7 +51,7 @@ export function StatisticsListItem({ data }: Props): JSX.Element {
         )}
       />
     ),
-    [balance, descriptionColor, income, outgo, titleColor, yearMonth],
+    [balance, descriptionColor, income, outgo, t, titleColor, yearMonth],
   );
 }
 
