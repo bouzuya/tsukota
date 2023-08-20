@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "react-native-paper";
-import { NativeStackNavigationOptions } from "../lib/navigation";
+import { NativeStackNavigationOptions } from "@/lib/navigation";
 
 export function Screen({ children }: Props): JSX.Element {
   const theme = useTheme();

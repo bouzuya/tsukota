@@ -10,10 +10,10 @@ import {
   Screen,
   Text,
   useAccount,
-} from "../../../../components";
-import { deleteCategory, deps, listCategory } from "../../../../lib/account";
-import { useTypedNavigation, useTypedRoute } from "../../../../lib/navigation";
-import { showErrorMessage } from "../../../../lib/show-error-message";
+} from "@/components";
+import { deleteCategory, deps, listCategory } from "@/lib/account";
+import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
+import { showErrorMessage } from "@/lib/show-error-message";
 
 export function CategoryIndex(): JSX.Element {
   const navigation = useTypedNavigation();

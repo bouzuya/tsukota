@@ -6,9 +6,9 @@ import {
   useEffect,
   useState,
 } from "react";
-import { auth, createCustomToken } from "../lib/firebase";
-import { storage } from "../lib/storage";
-import { generate as generateUuidV4 } from "../lib/uuid";
+import { auth, createCustomToken } from "@/lib/firebase";
+import { storage } from "@/lib/storage";
+import { generate as generateUuidV4 } from "@/lib/uuid";
 
 const getFirebaseAuthCurrentUser = (): Promise<User | null> => {
   return Promise.race([

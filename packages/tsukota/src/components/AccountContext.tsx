@@ -19,13 +19,13 @@ import {
   getLastEventId,
   restoreAccount,
   unsafeApplyEvent,
-} from "../lib/account";
-import { loadEventsFromRemote, storeAccountEvent } from "../lib/api";
+} from "@/lib/account";
+import { loadEventsFromRemote, storeAccountEvent } from "@/lib/api";
 import {
   loadEventsFromLocal,
   storeEventsToLocal,
-} from "../lib/local-event-store";
-import { timeSpan } from "../lib/time-span";
+} from "@/lib/local-event-store";
+import { timeSpan } from "@/lib/time-span";
 
 type Accounts = Record<string, Account>;
 

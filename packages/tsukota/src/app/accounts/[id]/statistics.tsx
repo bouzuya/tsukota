@@ -1,8 +1,8 @@
 import { FlatList, StyleSheet } from "react-native";
-import { ActivityIndicator, Screen, useAccount } from "../../../components";
-import { StatisticsListItem } from "../../../components/pages/Statistics/StatisticsListItem";
-import { useTypedRoute } from "../../../lib/navigation";
-import { getStatistics, getYearMonths } from "../../../lib/statistics";
+import { ActivityIndicator, Screen, useAccount } from "@/components";
+import { StatisticsListItem } from "@/components/pages/Statistics/StatisticsListItem";
+import { useTypedRoute } from "@/lib/navigation";
+import { getStatistics, getYearMonths } from "@/lib/statistics";
 
 export function Statistics(): JSX.Element {
   const route = useTypedRoute<"Statistics">();

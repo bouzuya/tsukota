@@ -11,7 +11,7 @@ import {
   httpsCallable,
 } from "firebase/functions";
 import { connectAuthEmulator, initializeAuth, Auth } from "firebase/auth";
-import { getConfig } from "./config";
+import { getConfig } from "@/lib/config";
 
 function initializeFirebaseInstances(): {
   auth: Auth;

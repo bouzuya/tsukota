@@ -8,23 +8,29 @@ import {
   List,
   Text,
 } from "react-native-paper";
-import { AccountContextProvider, useAccount } from "./AccountContext";
-import { AccountList, Item as AccountListItem } from "./AccountList";
-import { AppInfo } from "./AppInfo";
-import { CategoryList } from "./CategoryList";
+import {
+  AccountContextProvider,
+  useAccount,
+} from "@/components/AccountContext";
+import { AccountList, Item as AccountListItem } from "@/components/AccountList";
+import { AppInfo } from "@/components/AppInfo";
+import { CategoryList } from "@/components/CategoryList";
 import {
   CategorySelectProvider,
   useCategorySelect,
-} from "./CategorySelectContext";
-import { DeleteAccountDialog } from "./DeleteAccountDialog";
-import { DeleteCategoryDialog } from "./DeleteCategoryDialog";
-import { DeleteOwnerDialog } from "./DeleteOwnerDialog";
-import { DeleteTransactionDialog } from "./DeleteTransactionDialog";
-import { HeaderRightSaveButton } from "./HeaderRightSaveButton";
-import { Screen } from "./Screen";
-import { TextInput } from "./TextInput";
-import { TransactionForm, TransactionFormValues } from "./TransactionForm";
-import { TransactionList } from "./TransactionList";
+} from "@/components/CategorySelectContext";
+import { DeleteAccountDialog } from "@/components/DeleteAccountDialog";
+import { DeleteCategoryDialog } from "@/components/DeleteCategoryDialog";
+import { DeleteOwnerDialog } from "@/components/DeleteOwnerDialog";
+import { DeleteTransactionDialog } from "@/components/DeleteTransactionDialog";
+import { HeaderRightSaveButton } from "@/components/HeaderRightSaveButton";
+import { Screen } from "@/components/Screen";
+import { TextInput } from "@/components/TextInput";
+import {
+  TransactionForm,
+  TransactionFormValues,
+} from "@/components/TransactionForm";
+import { TransactionList } from "@/components/TransactionList";
 
 export {
   AccountContextProvider,

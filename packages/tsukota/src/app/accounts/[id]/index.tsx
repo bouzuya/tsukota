@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { BottomNavigation } from "../../../components";
-import { useTranslation } from "../../../lib/i18n";
-import { CategoryIndex } from "./categories/index";
-import { Settings } from "./settings";
-import { Statistics } from "./statistics";
-import { TransactionIndex } from "./transactions/index";
+import { CategoryIndex } from "@/app/accounts/[id]/categories/index";
+import { Settings } from "@/app/accounts/[id]/settings";
+import { Statistics } from "@/app/accounts/[id]/statistics";
+import { TransactionIndex } from "@/app/accounts/[id]/transactions/index";
+import { useTranslation } from "@/lib/i18n";
+import { BottomNavigation } from "@/components";
 
 export function AccountShow(): JSX.Element {
   const { t } = useTranslation();

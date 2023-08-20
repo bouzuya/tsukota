@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { FlatList, FlatListProps } from "react-native";
 import { List } from "react-native-paper";
-import { Category } from "../lib/account";
+import { Category } from "@/lib/account";
 
 type Props = Omit<FlatListProps<Category>, "renderItem" | "style"> & {
   onLongPressCategory: (category: Category) => void;

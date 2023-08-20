@@ -13,11 +13,11 @@ import {
   UseFormSetValue,
   useFormState,
 } from "react-hook-form";
-import { Category } from "../lib/account";
-import { useTranslation } from "../lib/i18n";
-import { useTypedNavigation } from "../lib/navigation";
-import { useCategorySelect } from "./CategorySelectContext";
-import { TextInput } from "./TextInput";
+import { useCategorySelect } from "@/components/CategorySelectContext";
+import { TextInput } from "@/components/TextInput";
+import { Category } from "@/lib/account";
+import { useTranslation } from "@/lib/i18n";
+import { useTypedNavigation } from "@/lib/navigation";
 
 export type TransactionFormValues = {
   amount: string;

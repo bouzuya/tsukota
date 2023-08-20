@@ -1,6 +1,6 @@
 import { FlatList, FlatListProps, StyleSheet, Text, View } from "react-native";
 import { List } from "react-native-paper";
-import { useTranslation } from "../lib/i18n";
+import { useTranslation } from "@/lib/i18n";
 
 export type Item = {
   id: string;

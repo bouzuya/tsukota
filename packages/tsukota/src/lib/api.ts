@@ -1,13 +1,16 @@
 import { getDoc, getDocs, orderBy, query, where } from "firebase/firestore";
 import { ResultAsync } from "neverthrow";
-import { AccountEvent } from "./account";
-import { db, storeAccountEvent as firebaseStoreAccountEvent } from "./firebase";
+import { AccountEvent } from "@/lib/account";
+import {
+  db,
+  storeAccountEvent as firebaseStoreAccountEvent,
+} from "@/lib/firebase";
 import {
   getAccountEventCollectionRef,
   getSystemStatusDocumentRef,
   getUserDocumentRef,
-} from "./ref-helpers";
-import { timeSpan } from "./time-span";
+} from "@/lib/ref-helpers";
+import { timeSpan } from "@/lib/time-span";
 
 export function storeAccountEvent(
   lastEventId: string | null,

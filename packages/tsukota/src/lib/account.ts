@@ -1,7 +1,7 @@
 // Account Aggregate
 
 import { type Dependencies } from "@bouzuya/tsukota-models";
-import { generate } from "./uuid";
+import { generate } from "@/lib/uuid";
 
 export * from "@bouzuya/tsukota-models";
 

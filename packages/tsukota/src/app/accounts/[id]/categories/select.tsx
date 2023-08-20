@@ -5,8 +5,8 @@ import {
   CategoryList,
   Screen,
   useCategorySelect,
-} from "../../../../components";
-import { useTypedNavigation, useTypedRoute } from "../../../../lib/navigation";
+} from "@/components";
+import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
 
 export function CategorySelect(): JSX.Element {
   const navigation = useTypedNavigation();

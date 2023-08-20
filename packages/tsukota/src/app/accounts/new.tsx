@@ -1,6 +1,6 @@
 import React from "react";
-import { Screen, TextInput, View } from "../../components";
-import { useAccountNew } from "../../components/pages/AccountNew/hooks";
+import { Screen, TextInput, View } from "@/components";
+import { useAccountNew } from "@/components/pages/AccountNew/hooks";
 
 export function AccountNew(): JSX.Element {
   const { control, currentUserId, t } = useAccountNew();

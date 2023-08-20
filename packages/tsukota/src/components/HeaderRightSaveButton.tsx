@@ -1,5 +1,5 @@
 import { ActivityIndicator, IconButton } from "react-native-paper";
-import { useTranslation } from "../lib/i18n";
+import { useTranslation } from "@/lib/i18n";
 
 export type Props = {
   isSubmitting: boolean;

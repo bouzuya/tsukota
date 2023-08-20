@@ -6,7 +6,7 @@ import {
   readAsStringAsync,
   writeAsStringAsync,
 } from "expo-file-system";
-import { timeSpan } from "./time-span";
+import { timeSpan } from "@/lib/time-span";
 
 async function ensureAccountEventsDir(): Promise<string> {
   if (documentDirectory === null) throw new Error("document directory is null");

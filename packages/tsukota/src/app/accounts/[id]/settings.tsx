@@ -8,16 +8,11 @@ import {
   Screen,
   View,
   useAccount,
-} from "../../../components";
-import {
-  deleteAccount,
-  deps,
-  getLastEvent,
-  listCategory,
-} from "../../../lib/account";
-import { useTranslation } from "../../../lib/i18n";
-import { useTypedNavigation, useTypedRoute } from "../../../lib/navigation";
-import { showErrorMessage } from "../../../lib/show-error-message";
+} from "@/components";
+import { deleteAccount, deps, getLastEvent, listCategory } from "@/lib/account";
+import { useTranslation } from "@/lib/i18n";
+import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
+import { showErrorMessage } from "@/lib/show-error-message";
 
 export function Settings(): JSX.Element {
   const navigation = useTypedNavigation();

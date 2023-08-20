@@ -18,14 +18,16 @@ import {
 } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useState } from "react";
-import { getConfig } from "../lib/config";
+import { UserMe } from "@/app/users/me";
+import { AccountLayout } from "@/app/accounts/_layout";
+import { getConfig } from "@/lib/config";
 import {
   AccountContextProvider,
   AppInfo,
   CategorySelectProvider,
-} from "../components";
-import { CredentialProvider } from "../hooks/use-credential";
-import { useTranslation } from "../lib/i18n";
+} from "@/components";
+import { CredentialProvider } from "@/hooks/use-credential";
+import { useTranslation } from "@/lib/i18n";
 import {
   DrawerNavigationOptions,
   NavigationContainer,
@@ -33,10 +35,8 @@ import {
   NavigationDefaultTheme,
   createDrawerNavigator,
   useTypedDrawerNavigation,
-} from "../lib/navigation";
-import { getMinAppVersion } from "../lib/api";
-import { UserMe } from "./users/me";
-import { AccountLayout } from "./accounts/_layout";
+} from "@/lib/navigation";
+import { getMinAppVersion } from "@/lib/api";
 
 const useMinAppVersion = (): string | null => {
   const [minAppVersion, setMinAppVersion] = useState<string | null>(null);

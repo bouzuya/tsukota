@@ -6,7 +6,7 @@ import {
   View,
 } from "react-native";
 import { Text } from "react-native-paper";
-import { getConfig } from "../lib/config";
+import { getConfig } from "@/lib/config";
 
 export function AppInfo(): JSX.Element {
   const { name, packageName, version } = getConfig();

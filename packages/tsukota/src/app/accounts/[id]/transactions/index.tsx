@@ -9,16 +9,16 @@ import {
   Text,
   TransactionList,
   useAccount,
-} from "../../../../components";
+} from "@/components";
 import {
   deleteTransaction,
   deps,
   listCategory,
   Transaction,
-} from "../../../../lib/account";
-import { useTranslation } from "../../../../lib/i18n";
-import { useTypedNavigation, useTypedRoute } from "../../../../lib/navigation";
-import { showErrorMessage } from "../../../../lib/show-error-message";
+} from "@/lib/account";
+import { useTranslation } from "@/lib/i18n";
+import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
+import { showErrorMessage } from "@/lib/show-error-message";
 
 export function TransactionIndex(): JSX.Element {
   const navigation = useTypedNavigation();

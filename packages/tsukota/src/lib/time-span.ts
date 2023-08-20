@@ -1,4 +1,4 @@
-import { getConfig } from "./config";
+import { getConfig } from "@/lib/config";
 
 export async function timeSpan<T>(
   label: string,

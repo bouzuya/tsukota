@@ -1,24 +1,24 @@
 import { View } from "react-native";
 import { IconButton } from "react-native-paper";
-import { useTranslation } from "../../lib/i18n";
+import { AccountEdit } from "@/app/accounts/[id]/edit";
+import { AccountNew } from "@/app/accounts/new";
+import { AccountShow } from "@/app/accounts/[id]";
+import { CategoryEdit } from "@/app/accounts/[id]/categories/[categoryId]/edit";
+import { CategoryIndex } from "@/app/accounts/[id]/categories";
+import { CategoryNew } from "@/app/accounts/[id]/categories/new";
+import { CategorySelect } from "@/app/accounts/[id]/categories/select";
+import { OwnerIndex } from "@/app/accounts/[id]/owners/index";
+import { OwnerNew } from "@/app/accounts/[id]/owners/new";
+import { Settings } from "@/app/accounts/[id]/settings";
+import { TransactionEdit } from "@/app/accounts/[id]/transactions/[transactionId]/edit";
+import { TransactionIndex } from "@/app/accounts/[id]/transactions/index";
+import { TransactionNew } from "@/app/accounts/[id]/transactions/new";
+import { AccountIndex } from "@/app/accounts/index";
 import {
   createNativeStackNavigator,
   useTypedDrawerNavigation,
-} from "../../lib/navigation";
-import { AccountEdit } from "./[id]/edit";
-import { AccountNew } from "./new";
-import { AccountShow } from "./[id]";
-import { CategoryEdit } from "./[id]/categories/[categoryId]/edit";
-import { CategoryIndex } from "./[id]/categories";
-import { CategoryNew } from "./[id]/categories/new";
-import { CategorySelect } from "./[id]/categories/select";
-import { OwnerIndex } from "./[id]/owners/index";
-import { OwnerNew } from "./[id]/owners/new";
-import { Settings } from "./[id]/settings";
-import { TransactionEdit } from "./[id]/transactions/[transactionId]/edit";
-import { TransactionIndex } from "./[id]/transactions/index";
-import { TransactionNew } from "./[id]/transactions/new";
-import { AccountIndex } from "./index";
+} from "@/lib/navigation";
+import { useTranslation } from "@/lib/i18n";
 
 const Stack = createNativeStackNavigator();
 

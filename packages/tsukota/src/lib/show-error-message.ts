@@ -1,6 +1,6 @@
 import Toast from "react-native-root-toast";
-import { AccountError } from "./account";
-import { translation } from "./i18n";
+import { AccountError } from "@/lib/account";
+import { translation } from "@/lib/i18n";
 
 function toErrorMessage(e: AccountError | "server error"): string {
   if (translation === null) throw new Error("translation is null");

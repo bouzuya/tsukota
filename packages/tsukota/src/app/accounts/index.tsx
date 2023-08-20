@@ -6,8 +6,8 @@ import {
   DeleteAccountDialog,
   FAB,
   Screen,
-} from "../../components";
-import { useAccountIndex } from "../../components/pages/AccountIndex/hooks";
+} from "@/components";
+import { useAccountIndex } from "@/components/pages/AccountIndex/hooks";
 
 export function AccountIndex(): JSX.Element {
   const {
