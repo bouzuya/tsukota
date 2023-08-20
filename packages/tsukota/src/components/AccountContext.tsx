@@ -8,6 +8,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import {
@@ -161,12 +162,14 @@ export function useAccount(
   const { accounts } = context;
   const fetchAccount = useCallback(
     () => buildFetchAccounts(context)(accountId),
-    [accountId],
+    [accountId, context],
   );
-  const handleAccountCommand = useCallback(buildHandleAccountCommand(context), [
-    context,
-  ]);
+  const handleAccountCommand = useMemo(
+    () => buildHandleAccountCommand(context),
+    [context],
+  );
   // no await
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => void fetchAccount(), deps);
   return {
     account: accounts[accountId] ?? null,
@@ -182,10 +185,11 @@ export function useAccounts(): {
 } {
   const context = useContext(AccountContext);
   const { accounts } = context;
-  const fetchAccounts = useCallback(buildFetchAccounts(context), [context]);
-  const handleAccountCommand = useCallback(buildHandleAccountCommand(context), [
-    context,
-  ]);
+  const fetchAccounts = useMemo(() => buildFetchAccounts(context), [context]);
+  const handleAccountCommand = useMemo(
+    () => buildHandleAccountCommand(context),
+    [context],
+  );
   return {
     accounts,
     fetchAccounts,
