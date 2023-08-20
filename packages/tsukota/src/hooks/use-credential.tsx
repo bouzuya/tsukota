@@ -38,40 +38,36 @@ export function CredentialProvider({
 }: {
   children: ReactNode;
 }): JSX.Element {
-  const [processing, setProcessing] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
+    // TODO: error handling
+    if (user !== null) return;
+
     // no await
     void (async () => {
-      if (processing) return;
-      setProcessing(true);
-      try {
-        const { deviceId, deviceSecret } = await ensureDevice();
-        // TODO: customToken の期限が切れていても Firebase Authentication の
-        // ログイン状態は継続されてしまうが、ひとまず考慮しない。
-        const currentUser = await getFirebaseAuthCurrentUser();
-        if (currentUser !== null) {
-          console.log(`uid : ${currentUser.uid} (cached)`);
-          setUser(currentUser);
-        } else {
-          // TODO: 期限までは customToken を永続化して再利用すると
-          // Cloud Functions の呼び出しを減らせる & 高速化できそう
-          const customTokenResult = await createCustomToken({
-            device_id: deviceId,
-            device_secret: deviceSecret,
-          });
-          const customToken = customTokenResult.data.custom_token;
+      const { deviceId, deviceSecret } = await ensureDevice();
+      // TODO: customToken の期限が切れていても Firebase Authentication の
+      // ログイン状態は継続されてしまうが、ひとまず考慮しない。
+      const currentUser = await getFirebaseAuthCurrentUser();
+      if (currentUser !== null) {
+        console.log(`uid : ${currentUser.uid} (cached)`);
+        setUser(currentUser);
+      } else {
+        // TODO: 期限までは customToken を永続化して再利用すると
+        // Cloud Functions の呼び出しを減らせる & 高速化できそう
+        const customTokenResult = await createCustomToken({
+          device_id: deviceId,
+          device_secret: deviceSecret,
+        });
+        const customToken = customTokenResult.data.custom_token;
 
-          const userCredential = await signInWithCustomToken(auth, customToken);
-          console.log(`uid : ${userCredential.user.uid} (signed in)`);
-          setUser(userCredential.user);
-        }
-      } finally {
-        setProcessing(false);
+        const userCredential = await signInWithCustomToken(auth, customToken);
+        console.log(`uid : ${userCredential.user.uid} (signed in)`);
+        setUser(userCredential.user);
       }
     })();
-  }, []);
+  }, [user]);
 
   return (
     <CredentialContext.Provider value={{ user }}>
