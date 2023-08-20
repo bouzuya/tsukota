@@ -1,20 +1,9 @@
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode } from "react";
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "react-native-paper";
-import {
-  NativeStackNavigationOptions,
-  useTypedNavigation,
-} from "../lib/navigation";
+import { NativeStackNavigationOptions } from "../lib/navigation";
 
-export function Screen({ children, options }: Props): JSX.Element {
-  const navigation = useTypedNavigation();
-
-  useEffect(() => {
-    if (options) {
-      navigation.setOptions(options);
-    }
-  }, [navigation]);
-
+export function Screen({ children }: Props): JSX.Element {
   const theme = useTheme();
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
