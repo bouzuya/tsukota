@@ -1,47 +1,31 @@
-import { err } from "neverthrow";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { StyleSheet } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-import {
-  FAB,
-  DeleteOwnerDialog,
-  Screen,
-  List,
-  useAccount,
-} from "../../../../components";
-import { deps, removeOwner } from "../../../../lib/account";
-import { useTranslation } from "../../../../lib/i18n";
-import { useTypedNavigation, useTypedRoute } from "../../../../lib/navigation";
-import { showErrorMessage } from "../../../../lib/show-error-message";
+import { FAB, DeleteOwnerDialog, Screen, List } from "@/components";
+import { useOwnerIndex } from "@/components/pages/OwnerIndex/hooks";
 
 export function OwnerIndex(): JSX.Element {
-  const navigation = useTypedNavigation();
-  const route = useTypedRoute<"OwnerIndex">();
-  const { accountId } = route.params;
-  const { t } = useTranslation();
-  const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
-  const [ownerId, setOwnerId] = useState<string | null>(null);
-  const { account, handleAccountCommand } = useAccount(accountId, []);
+  const {
+    deleteModalVisible,
+    handleDeleteOwnerClickCancel,
+    handleDeleteOwnerClickOk,
+    handleFABPress,
+    handleOwnerListLongPress,
+    ownerId,
+    owners,
+    t,
+  } = useOwnerIndex();
 
-  useEffect(() => {
-    if (account !== null) return;
-    navigation.goBack();
-  }, [account]);
-
-  if (account === null) return <></>;
-
+  if (owners === null) return <></>;
   return (
     <Screen>
       <FlatList
-        data={account.owners}
+        data={owners}
         keyExtractor={(owner) => owner}
         renderItem={({ item: owner }) => (
           <List.Item
             key={owner}
-            onLongPress={() => {
-              setOwnerId(owner);
-              setDeleteModalVisible(true);
-            }}
+            onLongPress={() => handleOwnerListLongPress(owner)}
             title={owner}
           />
         )}
@@ -50,31 +34,13 @@ export function OwnerIndex(): JSX.Element {
       <FAB
         accessibilityLabel={t("owner.new")}
         icon="plus"
+        onPress={handleFABPress}
         style={styles.fab}
-        onPress={() => {
-          navigation.push("OwnerNew", {
-            accountId,
-          });
-        }}
       />
       <DeleteOwnerDialog
         id={ownerId}
-        onClickCancel={() => {
-          setOwnerId(null);
-          setDeleteModalVisible(false);
-        }}
-        onClickOk={() => {
-          if (ownerId === null) return;
-          // no await
-          void handleAccountCommand(accountId, (oldAccount) =>
-            oldAccount === null
-              ? err("account not found")
-              : removeOwner(deps, oldAccount, ownerId),
-          ).match(() => {
-            // do nothing
-          }, showErrorMessage);
-          setDeleteModalVisible(false);
-        }}
+        onClickCancel={handleDeleteOwnerClickCancel}
+        onClickOk={handleDeleteOwnerClickOk}
         visible={deleteModalVisible}
       />
     </Screen>
