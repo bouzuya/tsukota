@@ -66,7 +66,7 @@ export function TransactionForm({
       });
       setSelectedCategory(null);
     }
-  }, [selectedCategory]);
+  }, [selectedCategory, setSelectedCategory, setValue]);
 
   const categoryId = getValues("categoryId");
   const categoryName =
