@@ -1,60 +1,12 @@
-import { err } from "neverthrow";
-import React, { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import {
-  ActivityIndicator,
-  HeaderRightSaveButton,
-  Screen,
-  TextInput,
-  View,
-  useAccount,
-} from "../../../../components";
-import { createCategory, deps } from "../../../../lib/account";
-import { useTranslation } from "../../../../lib/i18n";
-import { useTypedNavigation, useTypedRoute } from "../../../../lib/navigation";
-import { showErrorMessage } from "../../../../lib/show-error-message";
-
-type Form = {
-  name: string;
-};
+import React from "react";
+import { ActivityIndicator, Screen, TextInput, View } from "@/components";
+import { useCategoryNew } from "@/components/pages/CategoryNew/hooks";
 
 export function CategoryNew(): JSX.Element {
-  const navigation = useTypedNavigation();
-  const route = useTypedRoute<"CategoryNew">();
-  const { accountId } = route.params;
-  const { account, handleAccountCommand } = useAccount(accountId, []);
-  const {
-    control,
-    formState: { isSubmitting },
-    handleSubmit,
-  } = useForm<Form>({
-    defaultValues: {
-      name: "",
-    },
-  });
-  const { t } = useTranslation();
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <HeaderRightSaveButton
-          isSubmitting={isSubmitting}
-          onPress={handleSubmit(onClickOk)}
-        />
-      ),
-    });
-  }, [isSubmitting, navigation]);
+  const { account, control, t } = useCategoryNew();
 
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
-
-  const onClickOk = async ({ name }: Form): Promise<void> => {
-    await handleAccountCommand(account.id, (oldAccount) =>
-      oldAccount === null
-        ? err("account not found")
-        : createCategory(deps, oldAccount, name),
-    ).match(() => navigation.goBack(), showErrorMessage);
-  };
 
   return (
     <Screen>
