@@ -2,14 +2,11 @@ import { errAsync, Result, ResultAsync } from "neverthrow";
 import {
   createContext,
   DependencyList,
-  Dispatch,
   ReactNode,
-  SetStateAction,
   useCallback,
   useContext,
   useEffect,
   useMemo,
-  useState,
 } from "react";
 import {
   Account,
@@ -27,11 +24,10 @@ import {
 } from "@/lib/local-event-store";
 import { timeSpan } from "@/lib/time-span";
 
-type Accounts = Record<string, Account>;
+type Accounts = Map<string, Account>;
 
 type ContextValue = {
   accounts: Accounts;
-  setAccounts: Dispatch<SetStateAction<Accounts>>;
 };
 
 type HandleAccountCommandCallback<T> = (
@@ -42,12 +38,7 @@ type HandleAccountCommand = (
   callback: HandleAccountCommandCallback<Account | null>,
 ) => ResultAsync<void, AccountError | "server error">;
 
-const AccountContext = createContext<ContextValue>({
-  accounts: {},
-  setAccounts: () => {
-    // do nothing
-  },
-});
+const AccountContext = createContext<ContextValue>({ accounts: new Map() });
 
 async function fetchAccountEvents(accountId: string): Promise<AccountEvent[]> {
   const localEvents = await loadEventsFromLocal(accountId);
@@ -73,19 +64,18 @@ async function fetchAccountEvents(accountId: string): Promise<AccountEvent[]> {
 function buildFetchAccounts(
   context: ContextValue,
 ): (...accountIds: string[]) => Promise<void> {
-  const { accounts, setAccounts } = context;
+  const { accounts } = context;
   return async (...accountIds: string[]): Promise<void> => {
     const newAccountEvents = await Promise.all(
       accountIds.map(fetchAccountEvents),
     );
-    const updated: Accounts = {};
     for (const events of newAccountEvents) {
       const accountId = events[0]?.accountId ?? null;
       if (accountId === null) throw new Error("account id is null");
 
       const account = await timeSpan("restoreAccount", () => {
         const account = ((): Account => {
-          const account = accounts[accountId] ?? null;
+          const account = accounts.get(accountId) ?? null;
           if (account === null) {
             return restoreAccount(events);
           } else {
@@ -101,9 +91,8 @@ function buildFetchAccounts(
         return Promise.resolve(account);
       });
 
-      updated[accountId] = account;
+      accounts.set(accountId, account);
     }
-    setAccounts((accounts) => ({ ...accounts, ...updated }));
     return;
   };
 }
@@ -111,27 +100,26 @@ function buildFetchAccounts(
 function buildHandleAccountCommand(
   context: ContextValue,
 ): HandleAccountCommand {
-  const { accounts, setAccounts } = context;
+  const { accounts } = context;
   return (
     accountId: string | null,
     callback: HandleAccountCommandCallback<Account | null>,
   ): ResultAsync<void, AccountError | "server error"> => {
-    const oldAccount = accountId === null ? null : accounts[accountId] ?? null;
+    const oldAccount =
+      accountId === null ? null : accounts.get(accountId) ?? null;
     const result = callback(oldAccount);
     if (result.isErr()) return errAsync(result.error);
     const [newAccount, event] = result.value;
-    setAccounts((accounts) => ({ ...accounts, [newAccount.id]: newAccount }));
+    accounts.set(newAccount.id, newAccount);
     return storeAccountEvent(
       oldAccount === null ? null : getLastEventId(oldAccount),
       event,
     ).mapErr((_) => {
-      setAccounts((accounts) =>
-        oldAccount === null
-          ? Object.fromEntries(
-              Object.entries(accounts).filter(([id, _]) => id !== accountId),
-            )
-          : { ...accounts, [newAccount.id]: oldAccount },
-      );
+      if (oldAccount === null) {
+        accounts.delete(newAccount.id);
+      } else {
+        accounts.set(newAccount.id, oldAccount);
+      }
       return "server error";
     });
   };
@@ -142,9 +130,9 @@ type Props = {
 };
 
 export function AccountContextProvider({ children }: Props): JSX.Element {
-  const [accounts, setAccounts] = useState<Accounts>({});
+  const accounts = new Map<string, Account>();
   return (
-    <AccountContext.Provider value={{ accounts, setAccounts }}>
+    <AccountContext.Provider value={{ accounts }}>
       {children}
     </AccountContext.Provider>
   );
@@ -172,7 +160,7 @@ export function useAccount(
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => void fetchAccount(), deps);
   return {
-    account: accounts[accountId] ?? null,
+    account: accounts.get(accountId) ?? null,
     fetchAccount,
     handleAccountCommand,
   };
