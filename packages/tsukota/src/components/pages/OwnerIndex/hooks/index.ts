@@ -1,6 +1,6 @@
 import { err } from "neverthrow";
 import { useCallback, useEffect, useState } from "react";
-import { useAccount } from "@/components";
+import { useAccount } from "@/hooks/use-account";
 import { Account, deps, removeOwner } from "@/lib/account";
 import { useTranslation } from "@/lib/i18n";
 import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
@@ -22,7 +22,7 @@ export function useOwnerIndex(): {
   const { t } = useTranslation();
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const [ownerId, setOwnerId] = useState<string | null>(null);
-  const { account, handleAccountCommand } = useAccount(accountId, []);
+  const { account, handleAccountCommand } = useAccount(accountId);
 
   const handleDeleteOwnerClickCancel = useCallback(() => {
     setOwnerId(null);

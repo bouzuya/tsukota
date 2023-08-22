@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { AccountListItem } from "@/components";
 import { useAccounts } from "@/components/AccountContext";
 import { LongPressedAccount } from "@/components/pages/AccountIndex/types";
-import { deleteAccount, deps } from "@/lib/account";
+import { Account, deleteAccount, deps } from "@/lib/account";
 import { loadAccountIds } from "@/lib/api";
 import { useTranslation } from "@/lib/i18n";
 import { useTypedNavigation } from "@/lib/navigation";
@@ -36,13 +36,9 @@ export function useAccountIndex(): {
     setFetching(true);
     // no await
     void loadAccountIds(currentUserId)
-      .then((accountIds) =>
-        fetchAccounts(...accountIds.filter((id) => !(id in accounts))),
-      )
-      .finally(() => {
-        setFetching(false);
-      });
-  }, [accounts, currentUserId, fetchAccounts]);
+      .then((accountIds) => fetchAccounts(...accountIds))
+      .finally(() => setFetching(false));
+  }, [currentUserId, fetchAccounts]);
 
   const handleAccountListLongPress = useCallback(
     ({ id, name }: AccountListItem) => {
@@ -81,11 +77,13 @@ export function useAccountIndex(): {
   }, [navigation]);
 
   const accountList = Object.entries(accounts)
+    .filter((value): value is [string, Account] => value[1] !== null)
     .filter(([_, { deletedAt }]) => deletedAt === null)
     .map(([id, account]) => ({
       id,
       name: account.name,
     }));
+
   return {
     account,
     accountList,

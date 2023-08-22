@@ -1,5 +1,5 @@
 import { err } from "neverthrow";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   DeleteAccountDialog,
@@ -7,8 +7,8 @@ import {
   List,
   Screen,
   View,
-  useAccount,
 } from "@/components";
+import { useAccounts } from "@/components/AccountContext";
 import { deleteAccount, deps, getLastEvent, listCategory } from "@/lib/account";
 import { useTranslation } from "@/lib/i18n";
 import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
@@ -17,11 +17,17 @@ import { showErrorMessage } from "@/lib/show-error-message";
 export function Settings(): JSX.Element {
   const navigation = useTypedNavigation();
   const route = useTypedRoute<"Settings">();
-  const pathname = route.path;
-  const { accountId } = route.params;
-  const { account, handleAccountCommand } = useAccount(accountId, [pathname]);
+  const { accounts, fetchAccounts, handleAccountCommand } = useAccounts();
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const { t } = useTranslation();
+
+  const { accountId } = route.params;
+  const account = accounts[accountId] ?? null;
+
+  useEffect(() => {
+    if (account !== null) return;
+    fetchAccounts(accountId).catch(showErrorMessage);
+  }, [account, accountId, fetchAccounts]);
 
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;

@@ -8,10 +8,7 @@ import {
   List,
   Text,
 } from "react-native-paper";
-import {
-  AccountContextProvider,
-  useAccount,
-} from "@/components/AccountContext";
+import { AccountContextProvider } from "@/components/AccountContext";
 import { AccountList, Item as AccountListItem } from "@/components/AccountList";
 import { AppInfo } from "@/components/AppInfo";
 import { CategoryList } from "@/components/CategoryList";
@@ -57,6 +54,5 @@ export {
   TransactionFormValues,
   TransactionList,
   View,
-  useAccount,
   useCategorySelect,
 };

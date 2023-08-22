@@ -1,7 +1,8 @@
 import { err } from "neverthrow";
 import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useAccount, HeaderRightSaveButton } from "@/components";
+import { HeaderRightSaveButton } from "@/components";
+import { useAccount } from "@/hooks/use-account";
 import { deps, updateAccount } from "@/lib/account";
 import { useTranslation } from "@/lib/i18n";
 import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
@@ -20,7 +21,7 @@ export function useAccountEdit(): {
   const route = useTypedRoute<"AccountEdit">();
   const { accountId, name } = route.params;
   const nameDefault = decodeURIComponent(name);
-  const { account, handleAccountCommand } = useAccount(accountId, []);
+  const { account, handleAccountCommand } = useAccount(accountId);
   const {
     control,
     formState: { isSubmitting },

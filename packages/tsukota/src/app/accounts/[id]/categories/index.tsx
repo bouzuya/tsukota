@@ -9,8 +9,8 @@ import {
   FAB,
   Screen,
   Text,
-  useAccount,
 } from "@/components";
+import { useAccount } from "@/hooks/use-account";
 import { deleteCategory, deps, listCategory } from "@/lib/account";
 import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
 import { showErrorMessage } from "@/lib/show-error-message";
@@ -18,18 +18,15 @@ import { showErrorMessage } from "@/lib/show-error-message";
 export function CategoryIndex(): JSX.Element {
   const navigation = useTypedNavigation();
   const route = useTypedRoute<"CategoryIndex">();
-  const pathname = route.path;
   const { accountId } = route.params;
-  const { account, fetchAccount, handleAccountCommand } = useAccount(
-    accountId,
-    [pathname],
-  );
   const [name, setName] = useState<string>("");
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [deleteDialogVisible, setDeleteDialogVisible] =
     useState<boolean>(false);
   const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const { account, fetchAccounts, handleAccountCommand } =
+    useAccount(accountId);
 
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
@@ -58,7 +55,7 @@ export function CategoryIndex(): JSX.Element {
             void (async () => {
               setRefreshing(true);
               try {
-                await fetchAccount();
+                await fetchAccounts(accountId);
               } finally {
                 setRefreshing(false);
               }

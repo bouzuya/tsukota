@@ -1,14 +1,14 @@
 import { FlatList, StyleSheet } from "react-native";
-import { ActivityIndicator, Screen, useAccount } from "@/components";
+import { ActivityIndicator, Screen } from "@/components";
 import { StatisticsListItem } from "@/components/pages/Statistics/StatisticsListItem";
+import { useAccount } from "@/hooks/use-account";
 import { useTypedRoute } from "@/lib/navigation";
 import { getStatistics, getYearMonths } from "@/lib/statistics";
 
 export function Statistics(): JSX.Element {
   const route = useTypedRoute<"Statistics">();
-  const pathname = route.path;
   const { accountId } = route.params;
-  const { account } = useAccount(accountId, [pathname]);
+  const { account } = useAccount(accountId);
 
   if (account === null)
     return <ActivityIndicator size="large" style={styles.activityIndicator} />;

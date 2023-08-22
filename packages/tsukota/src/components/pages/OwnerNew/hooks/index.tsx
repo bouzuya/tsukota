@@ -1,7 +1,8 @@
 import { err } from "neverthrow";
 import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { HeaderRightSaveButton, useAccount } from "@/components";
+import { HeaderRightSaveButton } from "@/components";
+import { useAccount } from "@/hooks/use-account";
 import { addOwner, deps } from "@/lib/account";
 import { useTranslation } from "@/lib/i18n";
 import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
@@ -19,7 +20,7 @@ export function useOwnerNew(): {
   const navigation = useTypedNavigation();
   const route = useTypedRoute<"OwnerNew">();
   const { accountId } = route.params;
-  const { account, handleAccountCommand } = useAccount(accountId, []);
+  const { account, handleAccountCommand } = useAccount(accountId);
   const {
     control,
     formState: { isSubmitting },

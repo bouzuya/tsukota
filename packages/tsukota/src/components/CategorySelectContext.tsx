@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useContext, useMemo, useState } from "react";
-import { useAccount } from "@/components/AccountContext";
+import { useAccount } from "@/hooks/use-account";
 import { Category, listCategory } from "@/lib/account";
 
 type ContextValue = {
@@ -39,7 +39,7 @@ export function useCategorySelect(accountId: string): {
   const { selectedCategory, setSelectedCategory } = useContext(
     CategorySelectContext,
   );
-  const { account } = useAccount(accountId, []);
+  const { account } = useAccount(accountId);
   const categoriesWithDeleted = useMemo(
     () => (account === null ? null : listCategory(account, true)),
     [account],

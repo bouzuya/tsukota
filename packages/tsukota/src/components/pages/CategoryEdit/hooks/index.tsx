@@ -2,7 +2,8 @@ import { err } from "neverthrow";
 import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { HeaderRightSaveButton, useAccount } from "@/components";
+import { HeaderRightSaveButton } from "@/components";
+import { useAccount } from "@/hooks/use-account";
 import { deps, updateCategory } from "@/lib/account";
 import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
 import { showErrorMessage } from "@/lib/show-error-message";
@@ -20,7 +21,7 @@ export function useCategoryEdit(): {
   const route = useTypedRoute<"CategoryEdit">();
   const { accountId, categoryId, name } = route.params;
   const nameDefault = decodeURIComponent(name);
-  const { account, handleAccountCommand } = useAccount(accountId, []);
+  const { account, handleAccountCommand } = useAccount(accountId);
   const {
     control,
     formState: { isSubmitting },

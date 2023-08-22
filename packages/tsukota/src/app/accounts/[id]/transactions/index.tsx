@@ -8,7 +8,6 @@ import {
   Screen,
   Text,
   TransactionList,
-  useAccount,
 } from "@/components";
 import {
   deleteTransaction,
@@ -19,11 +18,11 @@ import {
 import { useTranslation } from "@/lib/i18n";
 import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
 import { showErrorMessage } from "@/lib/show-error-message";
+import { useAccount } from "@/hooks/use-account";
 
 export function TransactionIndex(): JSX.Element {
   const navigation = useTypedNavigation();
   const route = useTypedRoute<"TransactionIndex">();
-  const pathname = route.path;
   const { accountId } = route.params;
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
   const [amount, setAmount] = useState<string>("");
@@ -32,10 +31,8 @@ export function TransactionIndex(): JSX.Element {
     new Date().toISOString().substring(0, 10),
   );
   const [transactionId, setTransactionId] = useState<string | null>(null);
-  const { account, fetchAccount, handleAccountCommand } = useAccount(
-    accountId,
-    [pathname],
-  );
+  const { account, fetchAccounts, handleAccountCommand } =
+    useAccount(accountId);
   const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
@@ -75,7 +72,7 @@ export function TransactionIndex(): JSX.Element {
             void (async () => {
               setRefreshing(true);
               try {
-                await fetchAccount();
+                await fetchAccounts(accountId);
               } finally {
                 setRefreshing(false);
               }
