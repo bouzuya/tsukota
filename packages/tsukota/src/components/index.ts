@@ -27,7 +27,6 @@ import {
   TransactionForm,
   TransactionFormValues,
 } from "@/components/TransactionForm";
-import { TransactionList } from "@/components/TransactionList";
 
 export {
   AccountContextProvider,
@@ -52,7 +51,6 @@ export {
   TextInput,
   TransactionForm,
   TransactionFormValues,
-  TransactionList,
   View,
   useCategorySelect,
 };

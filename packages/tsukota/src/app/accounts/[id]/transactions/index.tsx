@@ -7,8 +7,8 @@ import {
   FAB,
   Screen,
   Text,
-  TransactionList,
 } from "@/components";
+import { TransactionList } from "@/components/pages/TransactionIndex/TransactionList";
 import {
   deleteTransaction,
   deps,
