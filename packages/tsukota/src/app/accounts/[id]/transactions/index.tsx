@@ -8,7 +8,7 @@ import {
   Screen,
   Text,
 } from "@/components";
-import { TransactionList } from "@/components/pages/TransactionIndex/TransactionList";
+import { TransactionList } from "@/components/pages/TransactionIndex/components/TransactionList";
 import {
   deleteTransaction,
   deps,

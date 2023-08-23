@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { FlatList, FlatListProps } from "react-native";
-import { TransactionListItem } from "@/components/pages/TransactionIndex/TransactionListItem";
+import { TransactionListItem } from "@/components/pages/TransactionIndex/components/TransactionListItem";
 import { Category, Transaction } from "@/lib/account";
 
 type Props = Omit<
