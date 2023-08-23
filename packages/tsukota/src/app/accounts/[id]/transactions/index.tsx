@@ -13,10 +13,8 @@ import { listCategory } from "@/lib/account";
 export function TransactionIndex(): JSX.Element {
   const {
     account,
-    amount,
-    comment,
-    date,
-    deleteModalVisible,
+    deleteTransactionDialogData,
+    deleteTransactionDialogVisible,
     handleDeleteTransactionDialogClickCancel,
     handleDeleteTransactionDialogClickOk,
     handleFABPress,
@@ -25,7 +23,6 @@ export function TransactionIndex(): JSX.Element {
     handleTransactionListRefresh,
     refreshing,
     t,
-    transactionId,
   } = useTransactionIndex();
 
   if (account === null)
@@ -57,13 +54,13 @@ export function TransactionIndex(): JSX.Element {
         />
       )}
       <DeleteTransactionDialog
-        amount={amount}
-        comment={comment}
-        date={date}
-        id={transactionId}
+        amount={deleteTransactionDialogData?.amount ?? ""}
+        comment={deleteTransactionDialogData?.comment ?? ""}
+        date={deleteTransactionDialogData?.date ?? ""}
+        id={deleteTransactionDialogData?.id ?? null}
         onClickCancel={handleDeleteTransactionDialogClickCancel}
         onClickOk={handleDeleteTransactionDialogClickOk}
-        visible={deleteModalVisible}
+        visible={deleteTransactionDialogVisible}
       />
     </Screen>
   );

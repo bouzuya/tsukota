@@ -6,12 +6,17 @@ import { useTranslation } from "@/lib/i18n";
 import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
 import { showErrorMessage } from "@/lib/show-error-message";
 
-export function useTransactionIndex(): {
-  account: ReturnType<typeof useAccount>["account"];
+type DeleteTransactionDialogData = {
   amount: string;
   comment: string;
   date: string;
-  deleteModalVisible: boolean;
+  id: string;
+};
+
+export function useTransactionIndex(): {
+  account: ReturnType<typeof useAccount>["account"];
+  deleteTransactionDialogData: DeleteTransactionDialogData | null;
+  deleteTransactionDialogVisible: boolean;
   handleDeleteTransactionDialogClickCancel: () => void;
   handleDeleteTransactionDialogClickOk: () => void;
   handleFABPress: () => void;
@@ -20,40 +25,36 @@ export function useTransactionIndex(): {
   handleTransactionListRefresh: () => void;
   refreshing: boolean;
   t: ReturnType<typeof useTranslation>["t"];
-  transactionId: string | null;
 } {
   const navigation = useTypedNavigation();
   const route = useTypedRoute<"TransactionIndex">();
   const { accountId } = route.params;
-  const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
-  const [amount, setAmount] = useState<string>("");
-  const [comment, setComment] = useState<string>("");
-  const [date, setDate] = useState<string>(
-    new Date().toISOString().substring(0, 10),
-  );
-  const [transactionId, setTransactionId] = useState<string | null>(null);
+  const [deleteTransactionDialogVisible, setDeleteTransactionDialogVisible] =
+    useState<boolean>(false);
+  const [deleteTransactionDialogData, setDeleteTransactionDialogData] =
+    useState<DeleteTransactionDialogData | null>(null);
   const { account, fetchAccounts, handleAccountCommand } =
     useAccount(accountId);
   const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const handleDeleteTransactionDialogClickCancel = useCallback(() => {
-    setDeleteModalVisible(false);
+    setDeleteTransactionDialogVisible(false);
   }, []);
 
   const handleDeleteTransactionDialogClickOk = useCallback(() => {
     if (account === null) throw new Error("assert account !== null");
-    if (transactionId === null) return;
+    if (deleteTransactionDialogData === null) return;
     // no wait
     void handleAccountCommand(account.id, (oldAccount) =>
       oldAccount === null
         ? err("account not found")
-        : deleteTransaction(deps, oldAccount, transactionId),
+        : deleteTransaction(deps, oldAccount, deleteTransactionDialogData.id),
     ).match(() => {
       // do nothing
     }, showErrorMessage);
-    setDeleteModalVisible(false);
-  }, [account, handleAccountCommand, transactionId]);
+    setDeleteTransactionDialogVisible(false);
+  }, [account, handleAccountCommand, deleteTransactionDialogData]);
 
   const handleFABPress = useCallback(() => {
     navigation.push("TransactionNew", {
@@ -63,11 +64,13 @@ export function useTransactionIndex(): {
 
   const handleTransactionListLongPress = useCallback(
     (transaction: Transaction) => {
-      setDate(transaction.date);
-      setAmount(transaction.amount);
-      setComment(transaction.comment);
-      setTransactionId(transaction.id);
-      setDeleteModalVisible(true);
+      setDeleteTransactionDialogData({
+        amount: transaction.amount,
+        comment: transaction.comment,
+        date: transaction.date,
+        id: transaction.id,
+      });
+      setDeleteTransactionDialogVisible(true);
     },
     [],
   );
@@ -100,10 +103,8 @@ export function useTransactionIndex(): {
 
   return {
     account,
-    amount,
-    comment,
-    date,
-    deleteModalVisible,
+    deleteTransactionDialogData,
+    deleteTransactionDialogVisible: deleteTransactionDialogVisible,
     handleDeleteTransactionDialogClickCancel,
     handleDeleteTransactionDialogClickOk,
     handleFABPress,
@@ -112,6 +113,5 @@ export function useTransactionIndex(): {
     handleTransactionListRefresh,
     refreshing,
     t,
-    transactionId,
   };
 }
