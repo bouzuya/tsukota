@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import {
   ActivityIndicator,
   DeleteTransactionDialog,
@@ -30,11 +30,13 @@ export function TransactionIndex(): JSX.Element {
   return (
     <Screen>
       {account.transactions.length === 0 ? (
-        account.categories.length === 0 ? (
-          <Text>{t("category.empty")}</Text>
-        ) : (
-          <Text>{t("transaction.empty")}</Text>
-        )
+        <View style={styles.empty}>
+          {account.categories.length === 0 ? (
+            <Text>{t("category.empty")}</Text>
+          ) : (
+            <Text>{t("transaction.empty")}</Text>
+          )}
+        </View>
       ) : (
         <TransactionList
           categories={listCategory(account, true)}
@@ -68,6 +70,13 @@ export function TransactionIndex(): JSX.Element {
 }
 
 const styles = StyleSheet.create({
+  empty: {
+    alignItems: "center",
+    flex: 1,
+    height: "100%",
+    justifyContent: "center",
+    width: "100%",
+  },
   fab: {
     bottom: 0,
     margin: 16,
