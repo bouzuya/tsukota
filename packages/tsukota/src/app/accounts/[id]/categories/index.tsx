@@ -28,17 +28,13 @@ export function CategoryIndex(): JSX.Element {
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
   return (
     <Screen>
-      {categories.length === 0 ? (
-        <Text>{t("category.empty")}</Text>
-      ) : (
-        <CategoryList
-          data={categories}
-          onLongPressCategory={handleCategoryListLongPress}
-          onPressCategory={handleCategoryListPress}
-          onRefresh={handleCategoryListRefresh}
-          refreshing={refreshing}
-        />
-      )}
+      <CategoryList
+        data={categories}
+        onLongPressCategory={handleCategoryListLongPress}
+        onPressCategory={handleCategoryListPress}
+        onRefresh={handleCategoryListRefresh}
+        refreshing={refreshing}
+      />
       <FAB
         accessibilityLabel={t("category.new")}
         icon="plus"
