@@ -5,7 +5,6 @@ type Props = {
   amount: string;
   comment: string;
   date: string;
-  id: string | null;
   onClickCancel: () => void;
   onClickOk: () => void;
   visible: boolean;
@@ -15,13 +14,12 @@ export function DeleteTransactionDialog({
   amount,
   comment,
   date,
-  id,
   onClickCancel,
   onClickOk,
   visible,
 }: Props): JSX.Element | null {
   const { t } = useTranslation();
-  return id === null ? null : (
+  return (
     <Dialog visible={visible}>
       <Dialog.Title>{t("title.transaction.delete")}</Dialog.Title>
       <Dialog.Content>

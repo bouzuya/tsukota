@@ -104,7 +104,7 @@ export function useTransactionIndex(): {
   return {
     account,
     deleteTransactionDialogData,
-    deleteTransactionDialogVisible: deleteTransactionDialogVisible,
+    deleteTransactionDialogVisible,
     handleDeleteTransactionDialogClickCancel,
     handleDeleteTransactionDialogClickOk,
     handleFABPress,

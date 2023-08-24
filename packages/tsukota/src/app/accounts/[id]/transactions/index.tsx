@@ -53,15 +53,16 @@ export function TransactionIndex(): JSX.Element {
           onPress={handleFABPress}
         />
       )}
-      <DeleteTransactionDialog
-        amount={deleteTransactionDialogData?.amount ?? ""}
-        comment={deleteTransactionDialogData?.comment ?? ""}
-        date={deleteTransactionDialogData?.date ?? ""}
-        id={deleteTransactionDialogData?.id ?? null}
-        onClickCancel={handleDeleteTransactionDialogClickCancel}
-        onClickOk={handleDeleteTransactionDialogClickOk}
-        visible={deleteTransactionDialogVisible}
-      />
+      {deleteTransactionDialogData === null ? null : (
+        <DeleteTransactionDialog
+          amount={deleteTransactionDialogData.amount}
+          comment={deleteTransactionDialogData.comment}
+          date={deleteTransactionDialogData.date}
+          onClickCancel={handleDeleteTransactionDialogClickCancel}
+          onClickOk={handleDeleteTransactionDialogClickOk}
+          visible={deleteTransactionDialogVisible}
+        />
+      )}
     </Screen>
   );
 }
