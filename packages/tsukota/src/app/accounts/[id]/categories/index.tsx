@@ -5,7 +5,6 @@ import {
   DeleteCategoryDialog,
   FAB,
   Screen,
-  Text,
 } from "@/components";
 import { useCategoryIndex } from "@/components/pages/CategoryIndex/hooks";
 
