@@ -2,7 +2,6 @@ import { useTranslation } from "react-i18next";
 import { Button, Dialog, Text } from "react-native-paper";
 
 type Props = {
-  id: string | null;
   name: string;
   onClickCancel: () => void;
   onClickOk: () => void;
@@ -10,14 +9,13 @@ type Props = {
 };
 
 export function DeleteCategoryDialog({
-  id,
   name,
   onClickCancel,
   onClickOk,
   visible,
-}: Props): JSX.Element | null {
+}: Props): JSX.Element {
   const { t } = useTranslation();
-  return id === null ? null : (
+  return (
     <Dialog visible={visible}>
       <Dialog.Title>{t("title.category.delete")}</Dialog.Title>
       <Dialog.Content>

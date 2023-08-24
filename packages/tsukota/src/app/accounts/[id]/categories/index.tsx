@@ -1,6 +1,3 @@
-import { err } from "neverthrow";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native";
 import {
   ActivityIndicator,
@@ -10,27 +7,25 @@ import {
   Screen,
   Text,
 } from "@/components";
-import { useAccount } from "@/hooks/use-account";
-import { deleteCategory, deps, listCategory } from "@/lib/account";
-import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
-import { showErrorMessage } from "@/lib/show-error-message";
+import { useCategoryIndex } from "@/components/pages/CategoryIndex/hooks";
 
 export function CategoryIndex(): JSX.Element {
-  const navigation = useTypedNavigation();
-  const route = useTypedRoute<"CategoryIndex">();
-  const { accountId } = route.params;
-  const [name, setName] = useState<string>("");
-  const [categoryId, setCategoryId] = useState<string | null>(null);
-  const [deleteDialogVisible, setDeleteDialogVisible] =
-    useState<boolean>(false);
-  const { t } = useTranslation();
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-  const { account, fetchAccounts, handleAccountCommand } =
-    useAccount(accountId);
+  const {
+    categories,
+    deleteCategoryDialogData,
+    deleteCategoryDialogVisible,
+    handleCategoryListLongPress,
+    handleCategoryListPress,
+    handleCategoryListRefresh,
+    handleDeleteCategoryDialogClickCancel,
+    handleDeleteCategoryDialogClickOk,
+    handleFABPress,
+    refreshing,
+    t,
+  } = useCategoryIndex();
 
-  if (account === null)
+  if (categories === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
-  const categories = listCategory(account, false);
   return (
     <Screen>
       {categories.length === 0 ? (
@@ -38,29 +33,9 @@ export function CategoryIndex(): JSX.Element {
       ) : (
         <CategoryList
           data={categories}
-          onLongPressCategory={(category) => {
-            setName(category.name);
-            setCategoryId(category.id);
-            setDeleteDialogVisible(true);
-          }}
-          onPressCategory={(category) => {
-            navigation.push("CategoryEdit", {
-              accountId,
-              categoryId: category.id,
-              name: encodeURIComponent(category.name),
-            });
-          }}
-          onRefresh={() => {
-            // no wait
-            void (async () => {
-              setRefreshing(true);
-              try {
-                await fetchAccounts(accountId);
-              } finally {
-                setRefreshing(false);
-              }
-            })();
-          }}
+          onLongPressCategory={handleCategoryListLongPress}
+          onPressCategory={handleCategoryListPress}
+          onRefresh={handleCategoryListRefresh}
           refreshing={refreshing}
         />
       )}
@@ -68,36 +43,16 @@ export function CategoryIndex(): JSX.Element {
         accessibilityLabel={t("category.new")}
         icon="plus"
         style={styles.fab}
-        onPress={() => {
-          navigation.push("CategoryNew", {
-            accountId,
-          });
-        }}
+        onPress={handleFABPress}
       />
-      <DeleteCategoryDialog
-        id={categoryId}
-        name={name}
-        onClickCancel={() => {
-          setName("");
-          setCategoryId(null);
-          setDeleteDialogVisible(false);
-        }}
-        onClickOk={() => {
-          if (categoryId === null) return;
-          // no wait
-          void handleAccountCommand(account.id, (oldAccount) =>
-            oldAccount === null
-              ? err("account not found")
-              : deleteCategory(deps, oldAccount, categoryId),
-          ).match(() => {
-            // do nothing
-          }, showErrorMessage);
-          setName("");
-          setCategoryId(null);
-          setDeleteDialogVisible(false);
-        }}
-        visible={deleteDialogVisible}
-      />
+      {deleteCategoryDialogData === null ? null : (
+        <DeleteCategoryDialog
+          name={deleteCategoryDialogData.name}
+          onClickCancel={handleDeleteCategoryDialogClickCancel}
+          onClickOk={handleDeleteCategoryDialogClickOk}
+          visible={deleteCategoryDialogVisible}
+        />
+      )}
     </Screen>
   );
 }
