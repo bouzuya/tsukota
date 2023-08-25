@@ -1,19 +1,14 @@
 // 分類の選択画面
 // 画面というよりは選択用ダイアログの代用
-import {
-  ActivityIndicator,
-  CategoryList,
-  Screen,
-  useCategorySelect,
-} from "@/components";
-import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
+import { ActivityIndicator, CategoryList, Screen } from "@/components";
+import { useCategorySelect } from "@/components/pages/CategorySelect/hooks";
 
 export function CategorySelect(): JSX.Element {
-  const navigation = useTypedNavigation();
-  const route = useTypedRoute<"CategorySelect">();
-  const { accountId } = route.params;
-  const { categoriesWithDeleted, setSelectedCategory } =
-    useCategorySelect(accountId);
+  const {
+    categoriesWithDeleted,
+    handleCategoryListLongPress,
+    handleCategoryListPress,
+  } = useCategorySelect();
 
   return categoriesWithDeleted === null ? (
     <ActivityIndicator size="large" style={{ flex: 1 }} />
@@ -21,13 +16,8 @@ export function CategorySelect(): JSX.Element {
     <Screen>
       <CategoryList
         data={categoriesWithDeleted}
-        onLongPressCategory={(_category) => {
-          // do nothing
-        }}
-        onPressCategory={(category) => {
-          setSelectedCategory(category);
-          navigation.goBack();
-        }}
+        onLongPressCategory={handleCategoryListLongPress}
+        onPressCategory={handleCategoryListPress}
       />
     </Screen>
   );
