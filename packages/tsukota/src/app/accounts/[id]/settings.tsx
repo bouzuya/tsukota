@@ -1,5 +1,3 @@
-import { err } from "neverthrow";
-import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   DeleteAccountDialog,
@@ -8,26 +6,20 @@ import {
   Screen,
   View,
 } from "@/components";
-import { useAccounts } from "@/components/AccountContext";
-import { deleteAccount, deps, getLastEvent, listCategory } from "@/lib/account";
-import { useTranslation } from "@/lib/i18n";
-import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
-import { showErrorMessage } from "@/lib/show-error-message";
+import { getLastEvent, listCategory } from "@/lib/account";
+import { useSettings } from "@/components/pages/Settings/hooks";
 
 export function Settings(): JSX.Element {
-  const navigation = useTypedNavigation();
-  const route = useTypedRoute<"Settings">();
-  const { accounts, fetchAccounts, handleAccountCommand } = useAccounts();
-  const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
-  const { t } = useTranslation();
-
-  const { accountId } = route.params;
-  const account = accounts[accountId] ?? null;
-
-  useEffect(() => {
-    if (account !== null) return;
-    fetchAccounts(accountId).catch(showErrorMessage);
-  }, [account, accountId, fetchAccounts]);
+  const {
+    account,
+    deleteModalVisible,
+    handleAccountNamePress,
+    handleAccountOwnersPress,
+    handleDeleteAccountDialogClickCancel,
+    handleDeleteAccountDialogClickOk,
+    handleDeleteAccountPress,
+    t,
+  } = useSettings();
 
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
@@ -49,23 +41,14 @@ export function Settings(): JSX.Element {
         <List.Item
           title={t("account.name")}
           description={account.name}
-          onPress={() => {
-            navigation.push("AccountEdit", {
-              accountId,
-              name: encodeURIComponent(account.name),
-            });
-          }}
+          onPress={handleAccountNamePress}
           style={{ width: "100%" }}
         />
         <Divider style={{ width: "100%" }} />
         <List.Item
           title={t("account.owners")}
           description={account.owners.join("\n")}
-          onPress={() => {
-            navigation.push("OwnerIndex", {
-              accountId,
-            });
-          }}
+          onPress={handleAccountOwnersPress}
           style={{ width: "100%" }}
         />
         <Divider style={{ width: "100%" }} />
@@ -95,22 +78,13 @@ export function Settings(): JSX.Element {
         <Divider style={{ width: "100%" }} />
         <List.Item
           title={t("settings.delete_account")}
-          onPress={() => {
-            setDeleteModalVisible(true);
-          }}
+          onPress={handleDeleteAccountPress}
           style={{ width: "100%" }}
         />
         <DeleteAccountDialog
           name={account.name}
-          onClickCancel={() => setDeleteModalVisible(false)}
-          onClickOk={() => {
-            // no wait
-            void handleAccountCommand(accountId, (oldAccount) =>
-              oldAccount === null
-                ? err("account not found")
-                : deleteAccount(deps, oldAccount),
-            ).match(() => navigation.goBack(), showErrorMessage);
-          }}
+          onClickCancel={handleDeleteAccountDialogClickCancel}
+          onClickOk={handleDeleteAccountDialogClickOk}
           visible={deleteModalVisible}
         />
       </View>
