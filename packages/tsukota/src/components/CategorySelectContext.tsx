@@ -40,7 +40,7 @@ export function useCategorySelect(accountId: string): {
     CategorySelectContext,
   );
   const { account } = useAccount(accountId);
-  const categoriesWithDeleted = useMemo(
+  const categoriesWithDeleted = useMemo<Category[] | null>(
     () => (account === null ? null : listCategory(account, true)),
     [account],
   );

@@ -16,7 +16,7 @@ export function StatisticsListItem({ data }: Props): JSX.Element {
   const { balance, income, outgo, yearMonth } = data;
   const titleColor = theme.colors.onSurface;
   const descriptionColor = theme.colors.onSurfaceVariant;
-  return useMemo(
+  return useMemo<JSX.Element>(
     () => (
       <List.Item
         title={() => (

@@ -16,7 +16,7 @@ export function TransactionListItem({
   onPressTransaction,
   transaction,
 }: Props): JSX.Element {
-  return useMemo(
+  return useMemo<JSX.Element>(
     () => (
       <List.Item
         description={
