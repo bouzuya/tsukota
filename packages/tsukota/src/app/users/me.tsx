@@ -1,14 +1,11 @@
-import * as Clipboard from "expo-clipboard";
 import { View } from "react-native";
 import { IconButton, List, Divider } from "react-native-paper";
-import Toast from "react-native-root-toast";
 import { Screen } from "@/components";
-import { useCurrentUserId } from "@/hooks/use-credential";
-import { useTranslation } from "@/lib/i18n";
+import { useUserMe } from "@/components/pages/UserMe/hooks";
 
 export function UserMe(): JSX.Element {
-  const { t } = useTranslation();
-  const currentUserId = useCurrentUserId();
+  const { currentUserId, handleIconButtonPress, t } = useUserMe();
+
   return (
     <Screen>
       <View style={{ flex: 1, width: "100%", height: "100%" }}>
@@ -17,16 +14,7 @@ export function UserMe(): JSX.Element {
           style={{ width: "100%" }}
           title={t("user.id")}
           right={() => (
-            <IconButton
-              icon="clipboard-text"
-              onPress={() => {
-                if (currentUserId === null) return;
-                // no wait
-                void Clipboard.setStringAsync(currentUserId).then(() => {
-                  Toast.show(t("message.copied_to_clipboard"));
-                });
-              }}
-            />
+            <IconButton icon="clipboard-text" onPress={handleIconButtonPress} />
           )}
         />
         <Divider style={{ width: "100%" }} />
