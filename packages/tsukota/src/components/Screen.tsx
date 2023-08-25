@@ -1,21 +1,21 @@
 import React, { ReactNode } from "react";
 import { StyleSheet, View } from "react-native";
-import { useTheme } from "react-native-paper";
-import { NativeStackNavigationOptions } from "@/lib/navigation";
+import { FAB, FABProps, useTheme } from "react-native-paper";
 
-export function Screen({ children }: Props): JSX.Element {
+type Props = {
+  children: ReactNode;
+  fab?: FABProps;
+};
+
+export function Screen({ children, fab }: Props): JSX.Element {
   const theme = useTheme();
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
       {children}
+      {fab === undefined ? null : <FAB style={styles.fab} {...fab} />}
     </View>
   );
 }
-
-type Props = {
-  children: ReactNode;
-  options?: NativeStackNavigationOptions;
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -28,5 +28,11 @@ const styles = StyleSheet.create({
     margin: 0,
     padding: 0,
     width: "100%",
+  },
+  fab: {
+    bottom: 0,
+    margin: 16,
+    position: "absolute",
+    right: 0,
   },
 });

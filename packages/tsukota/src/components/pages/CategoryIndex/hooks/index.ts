@@ -1,6 +1,7 @@
 import { err } from "neverthrow";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { FABProps } from "react-native-paper";
 import { useAccount } from "@/hooks/use-account";
 import { Category, deleteCategory, deps, listCategory } from "@/lib/account";
 import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
@@ -15,14 +16,13 @@ export function useCategoryIndex(): {
   categories: Category[] | null;
   deleteCategoryDialogData: DeleteCategoryDialogData | null;
   deleteCategoryDialogVisible: boolean;
+  fab: FABProps;
   handleCategoryListLongPress: (category: Category) => void;
   handleCategoryListPress: (category: Category) => void;
   handleCategoryListRefresh: () => void;
   handleDeleteCategoryDialogClickCancel: () => void;
   handleDeleteCategoryDialogClickOk: () => void;
-  handleFABPress: () => void;
   refreshing: boolean;
-  t: ReturnType<typeof useTranslation>["t"];
 } {
   const navigation = useTypedNavigation();
   const route = useTypedRoute<"CategoryIndex">();
@@ -98,17 +98,24 @@ export function useCategoryIndex(): {
     });
   }, [accountId, navigation]);
 
+  const fab = useMemo(() => {
+    return {
+      accessibilityLabel: t("category.new"),
+      icon: "plus",
+      onPress: handleFABPress,
+    };
+  }, [handleFABPress, t]);
+
   return {
     categories,
     deleteCategoryDialogData,
     deleteCategoryDialogVisible,
+    fab,
     handleCategoryListLongPress,
     handleCategoryListPress,
     handleCategoryListRefresh,
     handleDeleteCategoryDialogClickCancel,
     handleDeleteCategoryDialogClickOk,
-    handleFABPress,
     refreshing,
-    t,
   };
 }
