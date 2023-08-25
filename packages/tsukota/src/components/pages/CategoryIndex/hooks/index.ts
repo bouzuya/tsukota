@@ -98,7 +98,7 @@ export function useCategoryIndex(): {
     });
   }, [accountId, navigation]);
 
-  const fab = useMemo(() => {
+  const fab = useMemo<FABProps>(() => {
     return {
       accessibilityLabel: t("category.new"),
       icon: "plus",

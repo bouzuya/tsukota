@@ -1,5 +1,6 @@
 import { err } from "neverthrow";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { FABProps } from "react-native-paper";
 import { useAccount } from "@/hooks/use-account";
 import { Account, deps, removeOwner } from "@/lib/account";
 import { useTranslation } from "@/lib/i18n";
@@ -8,6 +9,7 @@ import { showErrorMessage } from "@/lib/show-error-message";
 
 export function useOwnerIndex(): {
   deleteModalVisible: boolean;
+  fab: FABProps;
   handleDeleteOwnerClickCancel: () => void;
   handleDeleteOwnerClickOk: () => void;
   handleFABPress: () => void;
@@ -53,6 +55,14 @@ export function useOwnerIndex(): {
     setDeleteModalVisible(true);
   }, []);
 
+  const fab = useMemo<FABProps>(() => {
+    return {
+      accessibilityLabel: t("owner.new"),
+      icon: "plus",
+      onPress: handleFABPress,
+    };
+  }, [handleFABPress, t]);
+
   useEffect(() => {
     if (account !== null) return;
     navigation.goBack();
@@ -60,6 +70,7 @@ export function useOwnerIndex(): {
 
   return {
     deleteModalVisible,
+    fab,
     handleDeleteOwnerClickCancel,
     handleDeleteOwnerClickOk,
     handleFABPress,

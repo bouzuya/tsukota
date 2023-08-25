@@ -1,5 +1,6 @@
 import { err } from "neverthrow";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { FABProps } from "react-native-paper";
 import { AccountListItem } from "@/components";
 import { useAccounts } from "@/components/AccountContext";
 import { LongPressedAccount } from "@/components/pages/AccountIndex/types";
@@ -15,13 +16,12 @@ export function useAccountIndex(): {
   accountList: AccountListItem[];
   currentUserId: string | null;
   deleteModalVisible: boolean;
+  fab: FABProps;
   fetching: boolean;
   handleAccountListLongPress: (item: AccountListItem) => void;
   handleAccountListPress: (item: AccountListItem) => void;
   handleDeleteAccountClickCancel: () => void;
   handleDeleteAccountClickOk: () => void;
-  handleFABPress: () => void;
-  t: ReturnType<typeof useTranslation>["t"];
 } {
   const { t } = useTranslation();
   const navigation = useTypedNavigation();
@@ -84,17 +84,24 @@ export function useAccountIndex(): {
       name: account.name,
     }));
 
+  const fab = useMemo<FABProps>(() => {
+    return {
+      accessibilityLabel: t("account.new"),
+      icon: "plus",
+      onPress: handleFABPress,
+    };
+  }, [handleFABPress, t]);
+
   return {
     account,
     accountList,
     currentUserId,
     deleteModalVisible,
+    fab,
     fetching,
     handleAccountListLongPress,
     handleAccountListPress,
     handleDeleteAccountClickCancel,
     handleDeleteAccountClickOk,
-    handleFABPress,
-    t,
   };
 }

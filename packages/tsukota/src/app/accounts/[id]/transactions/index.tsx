@@ -2,7 +2,6 @@ import { StyleSheet, View } from "react-native";
 import {
   ActivityIndicator,
   DeleteTransactionDialog,
-  FAB,
   Screen,
   Text,
 } from "@/components";
@@ -15,9 +14,9 @@ export function TransactionIndex(): JSX.Element {
     account,
     deleteTransactionDialogData,
     deleteTransactionDialogVisible,
+    fab,
     handleDeleteTransactionDialogClickCancel,
     handleDeleteTransactionDialogClickOk,
-    handleFABPress,
     handleTransactionListLongPress,
     handleTransactionListPress,
     handleTransactionListRefresh,
@@ -28,7 +27,7 @@ export function TransactionIndex(): JSX.Element {
   if (account === null)
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
   return (
-    <Screen>
+    <Screen fab={account.categories.length === 0 ? null : fab}>
       {account.transactions.length === 0 ? (
         <View style={styles.empty}>
           {account.categories.length === 0 ? (
@@ -45,14 +44,6 @@ export function TransactionIndex(): JSX.Element {
           onPressTransaction={handleTransactionListPress}
           onRefresh={handleTransactionListRefresh}
           refreshing={refreshing}
-        />
-      )}
-      {account.categories.length === 0 ? null : (
-        <FAB
-          accessibilityLabel={t("transaction.new")}
-          icon="plus"
-          style={styles.fab}
-          onPress={handleFABPress}
         />
       )}
       {deleteTransactionDialogData === null ? null : (
@@ -76,11 +67,5 @@ const styles = StyleSheet.create({
     height: "100%",
     justifyContent: "center",
     width: "100%",
-  },
-  fab: {
-    bottom: 0,
-    margin: 16,
-    position: "absolute",
-    right: 0,
   },
 });

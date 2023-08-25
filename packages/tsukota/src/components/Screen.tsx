@@ -4,7 +4,7 @@ import { FAB, FABProps, useTheme } from "react-native-paper";
 
 type Props = {
   children: ReactNode;
-  fab?: FABProps;
+  fab?: FABProps | null;
 };
 
 export function Screen({ children, fab }: Props): JSX.Element {
@@ -12,7 +12,9 @@ export function Screen({ children, fab }: Props): JSX.Element {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
       {children}
-      {fab === undefined ? null : <FAB style={styles.fab} {...fab} />}
+      {fab === null || fab === undefined ? null : (
+        <FAB style={styles.fab} {...fab} />
+      )}
     </View>
   );
 }

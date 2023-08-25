@@ -1,5 +1,6 @@
 import { err } from "neverthrow";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { FABProps } from "react-native-paper";
 import { useAccount } from "@/hooks/use-account";
 import { deleteTransaction, deps, Transaction } from "@/lib/account";
 import { useTranslation } from "@/lib/i18n";
@@ -17,9 +18,9 @@ export function useTransactionIndex(): {
   account: ReturnType<typeof useAccount>["account"];
   deleteTransactionDialogData: DeleteTransactionDialogData | null;
   deleteTransactionDialogVisible: boolean;
+  fab: FABProps;
   handleDeleteTransactionDialogClickCancel: () => void;
   handleDeleteTransactionDialogClickOk: () => void;
-  handleFABPress: () => void;
   handleTransactionListLongPress: (transaction: Transaction) => void;
   handleTransactionListPress: (transaction: Transaction) => void;
   handleTransactionListRefresh: () => void;
@@ -101,13 +102,21 @@ export function useTransactionIndex(): {
     })();
   }, [accountId, fetchAccounts]);
 
+  const fab = useMemo<FABProps>(() => {
+    return {
+      accessibilityLabel: t("transaction.new"),
+      icon: "plus",
+      onPress: handleFABPress,
+    };
+  }, [handleFABPress, t]);
+
   return {
     account,
     deleteTransactionDialogData,
     deleteTransactionDialogVisible,
+    fab,
     handleDeleteTransactionDialogClickCancel,
     handleDeleteTransactionDialogClickOk,
-    handleFABPress,
     handleTransactionListLongPress,
     handleTransactionListPress,
     handleTransactionListRefresh,
