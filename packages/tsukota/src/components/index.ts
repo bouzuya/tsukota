@@ -16,7 +16,6 @@ import {
   useCategorySelect,
 } from "@/components/CategorySelectContext";
 import { DeleteAccountDialog } from "@/components/DeleteAccountDialog";
-import { DeleteCategoryDialog } from "@/components/DeleteCategoryDialog";
 import { DeleteOwnerDialog } from "@/components/DeleteOwnerDialog";
 import { DeleteTransactionDialog } from "@/components/DeleteTransactionDialog";
 import { HeaderRightSaveButton } from "@/components/HeaderRightSaveButton";
@@ -35,7 +34,6 @@ export {
   CategoryList,
   CategorySelectProvider,
   DeleteAccountDialog,
-  DeleteCategoryDialog,
   DeleteOwnerDialog,
   DeleteTransactionDialog,
   Divider,
