@@ -9,7 +9,6 @@ import {
   Text,
 } from "react-native-paper";
 import { AccountContextProvider } from "@/components/AccountContext";
-import { AccountList, Item as AccountListItem } from "@/components/AccountList";
 import { AppInfo } from "@/components/AppInfo";
 import { CategoryList } from "@/components/CategoryList";
 import {
@@ -30,8 +29,6 @@ import {
 
 export {
   AccountContextProvider,
-  AccountList,
-  AccountListItem,
   ActivityIndicator,
   AppInfo,
   BottomNavigation,
