@@ -3,7 +3,7 @@ import { FlatList } from "react-native-gesture-handler";
 import { List } from "@/components";
 import { Screen } from "@/components/Screen";
 import { useOwnerIndex } from "@/components/pages/OwnerIndex/hooks";
-import { DeleteOwnerDialog } from "@/components/DeleteOwnerDialog";
+import { DeleteOwnerDialog } from "@/components/pages/OwnerIndex/components/DeleteOwnerDialog";
 
 export function OwnerIndex(): JSX.Element {
   const {
