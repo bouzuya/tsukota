@@ -8,7 +8,6 @@ import {
   List,
   Text,
 } from "react-native-paper";
-import { TextInput } from "@/components/TextInput";
 import {
   TransactionForm,
   TransactionFormValues,
@@ -22,7 +21,6 @@ export {
   IconButton,
   List,
   Text,
-  TextInput,
   TransactionForm,
   TransactionFormValues,
   View,

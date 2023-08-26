@@ -1,6 +1,7 @@
 import React from "react";
-import { ActivityIndicator, TextInput, View } from "@/components";
+import { ActivityIndicator, View } from "@/components";
 import { Screen } from "@/components/Screen";
+import { TextInput } from "@/components/TextInput";
 import { useCategoryNew } from "@/components/pages/CategoryNew/hooks";
 
 export function CategoryNew(): JSX.Element {

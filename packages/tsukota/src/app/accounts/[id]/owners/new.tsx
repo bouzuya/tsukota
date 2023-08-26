@@ -1,6 +1,7 @@
 import React from "react";
-import { ActivityIndicator, TextInput, View } from "@/components";
+import { ActivityIndicator, View } from "@/components";
 import { Screen } from "@/components/Screen";
+import { TextInput } from "@/components/TextInput";
 import { useOwnerNew } from "@/components/pages/OwnerNew/hooks";
 
 export function OwnerNew(): JSX.Element {
