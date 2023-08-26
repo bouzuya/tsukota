@@ -8,7 +8,6 @@ import {
   List,
   Text,
 } from "react-native-paper";
-import { AccountContextProvider } from "@/components/AccountContext";
 import { AppInfo } from "@/components/AppInfo";
 import { CategoryList } from "@/components/CategoryList";
 import { DeleteAccountDialog } from "@/components/DeleteAccountDialog";
@@ -23,7 +22,6 @@ import {
 } from "@/components/TransactionForm";
 
 export {
-  AccountContextProvider,
   ActivityIndicator,
   AppInfo,
   BottomNavigation,
