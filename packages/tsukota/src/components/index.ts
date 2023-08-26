@@ -8,7 +8,6 @@ import {
   List,
   Text,
 } from "react-native-paper";
-import { DeleteOwnerDialog } from "@/components/DeleteOwnerDialog";
 import { DeleteTransactionDialog } from "@/components/DeleteTransactionDialog";
 import { HeaderRightSaveButton } from "@/components/HeaderRightSaveButton";
 import { Screen } from "@/components/Screen";
@@ -21,7 +20,6 @@ import {
 export {
   ActivityIndicator,
   BottomNavigation,
-  DeleteOwnerDialog,
   DeleteTransactionDialog,
   Divider,
   FAB,

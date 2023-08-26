@@ -1,7 +1,8 @@
 import React from "react";
 import { FlatList } from "react-native-gesture-handler";
-import { DeleteOwnerDialog, Screen, List } from "@/components";
+import { Screen, List } from "@/components";
 import { useOwnerIndex } from "@/components/pages/OwnerIndex/hooks";
+import { DeleteOwnerDialog } from "@/components/DeleteOwnerDialog";
 
 export function OwnerIndex(): JSX.Element {
   const {
