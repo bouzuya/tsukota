@@ -1,7 +1,7 @@
 import { err } from "neverthrow";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FABProps } from "react-native-paper";
-import { AccountListItem } from "@/components";
+import { Item as AccountListItem } from "@/components/pages/AccountIndex/components/AccountList";
 import { useAccounts } from "@/components/AccountContext";
 import { LongPressedAccount } from "@/components/pages/AccountIndex/types";
 import { Account, deleteAccount, deps } from "@/lib/account";

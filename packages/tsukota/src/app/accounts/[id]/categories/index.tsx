@@ -1,9 +1,5 @@
-import {
-  ActivityIndicator,
-  CategoryList,
-  DeleteCategoryDialog,
-  Screen,
-} from "@/components";
+import { ActivityIndicator, CategoryList, Screen } from "@/components";
+import { DeleteCategoryDialog } from "@/components/pages/CategoryIndex/components/DeleteCategoryDialog";
 import { useCategoryIndex } from "@/components/pages/CategoryIndex/hooks";
 
 export function CategoryIndex(): JSX.Element {
