@@ -1,12 +1,12 @@
 import { err } from "neverthrow";
 import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { HeaderRightSaveButton } from "@/components";
 import { useAccount } from "@/hooks/use-account";
 import { deps, updateAccount } from "@/lib/account";
 import { useTranslation } from "@/lib/i18n";
 import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
 import { showErrorMessage } from "@/lib/show-error-message";
+import { HeaderRightSaveButton } from "@/components/HeaderRightSaveButton";
 
 type Form = {
   name: string;
