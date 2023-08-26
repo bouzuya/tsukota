@@ -11,10 +11,6 @@ import {
 import { AccountContextProvider } from "@/components/AccountContext";
 import { AppInfo } from "@/components/AppInfo";
 import { CategoryList } from "@/components/CategoryList";
-import {
-  CategorySelectProvider,
-  useCategorySelect,
-} from "@/components/CategorySelectContext";
 import { DeleteAccountDialog } from "@/components/DeleteAccountDialog";
 import { DeleteOwnerDialog } from "@/components/DeleteOwnerDialog";
 import { DeleteTransactionDialog } from "@/components/DeleteTransactionDialog";
@@ -32,7 +28,6 @@ export {
   AppInfo,
   BottomNavigation,
   CategoryList,
-  CategorySelectProvider,
   DeleteAccountDialog,
   DeleteOwnerDialog,
   DeleteTransactionDialog,
@@ -47,5 +42,4 @@ export {
   TransactionForm,
   TransactionFormValues,
   View,
-  useCategorySelect,
 };

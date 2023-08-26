@@ -21,11 +21,7 @@ import { useEffect, useState } from "react";
 import { UserMe } from "@/app/users/me";
 import { AccountLayout } from "@/app/accounts/_layout";
 import { getConfig } from "@/lib/config";
-import {
-  AccountContextProvider,
-  AppInfo,
-  CategorySelectProvider,
-} from "@/components";
+import { AccountContextProvider, AppInfo } from "@/components";
 import { CredentialProvider } from "@/hooks/use-credential";
 import { useTranslation } from "@/lib/i18n";
 import {
@@ -37,6 +33,7 @@ import {
   useTypedDrawerNavigation,
 } from "@/lib/navigation";
 import { getMinAppVersion } from "@/lib/api";
+import { CategorySelectProvider } from "@/components/CategorySelectContext";
 
 const useMinAppVersion = (): string | null => {
   const [minAppVersion, setMinAppVersion] = useState<string | null>(null);
