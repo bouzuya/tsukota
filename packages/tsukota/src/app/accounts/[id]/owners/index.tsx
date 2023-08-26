@@ -1,6 +1,7 @@
 import React from "react";
 import { FlatList } from "react-native-gesture-handler";
-import { Screen, List } from "@/components";
+import { List } from "@/components";
+import { Screen } from "@/components/Screen";
 import { useOwnerIndex } from "@/components/pages/OwnerIndex/hooks";
 import { DeleteOwnerDialog } from "@/components/DeleteOwnerDialog";
 

@@ -1,5 +1,6 @@
 import React from "react";
-import { ActivityIndicator, Screen, TransactionForm, View } from "@/components";
+import { ActivityIndicator, TransactionForm, View } from "@/components";
+import { Screen } from "@/components/Screen";
 import { useTransactionNew } from "@/components/pages/TransactionNew/hooks";
 
 export function TransactionNew(): JSX.Element {

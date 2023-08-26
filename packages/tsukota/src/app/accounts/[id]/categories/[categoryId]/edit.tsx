@@ -1,5 +1,6 @@
 import React from "react";
-import { ActivityIndicator, Screen, TextInput, View } from "@/components";
+import { ActivityIndicator, TextInput, View } from "@/components";
+import { Screen } from "@/components/Screen";
 import { useCategoryEdit } from "@/components/pages/CategoryEdit/hooks";
 
 export function CategoryEdit(): JSX.Element {

@@ -1,4 +1,5 @@
-import { ActivityIndicator, Divider, List, Screen, View } from "@/components";
+import { ActivityIndicator, Divider, List, View } from "@/components";
+import { Screen } from "@/components/Screen";
 import { getLastEvent, listCategory } from "@/lib/account";
 import { useSettings } from "@/components/pages/Settings/hooks";
 import { DeleteAccountDialog } from "@/components/DeleteAccountDialog";

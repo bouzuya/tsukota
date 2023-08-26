@@ -1,5 +1,6 @@
 import React from "react";
-import { Screen, TextInput, View, ActivityIndicator } from "@/components";
+import { TextInput, View, ActivityIndicator } from "@/components";
+import { Screen } from "@/components/Screen";
 import { useAccountEdit } from "@/components/pages/AccountEdit/hooks";
 
 export function AccountEdit(): JSX.Element {

@@ -1,6 +1,7 @@
 import React from "react";
 import { View } from "react-native";
-import { ActivityIndicator, Screen, TransactionForm } from "@/components";
+import { ActivityIndicator, TransactionForm } from "@/components";
+import { Screen } from "@/components/Screen";
 import { useTransactionEdit } from "@/components/pages/TransactionEdit/hooks";
 
 export function TransactionEdit(): JSX.Element {

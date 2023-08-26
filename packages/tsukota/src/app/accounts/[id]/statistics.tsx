@@ -1,5 +1,6 @@
 import { FlatList, StyleSheet } from "react-native";
-import { ActivityIndicator, Screen } from "@/components";
+import { ActivityIndicator } from "@/components";
+import { Screen } from "@/components/Screen";
 import { StatisticsListItem } from "@/components/pages/Statistics/components/StatisticsListItem";
 import { useStatistics } from "@/components/pages/Statistics/hooks";
 

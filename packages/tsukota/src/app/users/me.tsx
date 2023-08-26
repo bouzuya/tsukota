@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import { IconButton, List, Divider } from "react-native-paper";
-import { Screen } from "@/components";
+import { Screen } from "@/components/Screen";
 import { useUserMe } from "@/components/pages/UserMe/hooks";
 
 export function UserMe(): JSX.Element {

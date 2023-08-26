@@ -1,5 +1,6 @@
 import React from "react";
-import { Screen, TextInput, View } from "@/components";
+import { TextInput, View } from "@/components";
+import { Screen } from "@/components/Screen";
 import { useAccountNew } from "@/components/pages/AccountNew/hooks";
 
 export function AccountNew(): JSX.Element {

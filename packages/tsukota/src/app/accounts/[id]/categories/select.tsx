@@ -1,7 +1,8 @@
 // 分類の選択画面
 // 画面というよりは選択用ダイアログの代用
-import { ActivityIndicator, Screen } from "@/components";
+import { ActivityIndicator } from "@/components";
 import { CategoryList } from "@/components/CategoryList";
+import { Screen } from "@/components/Screen";
 import { useCategorySelect } from "@/components/pages/CategorySelect/hooks";
 
 export function CategorySelect(): JSX.Element {
