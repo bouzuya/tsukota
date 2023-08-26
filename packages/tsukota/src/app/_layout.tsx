@@ -21,7 +21,6 @@ import { useEffect, useState } from "react";
 import { UserMe } from "@/app/users/me";
 import { AccountLayout } from "@/app/accounts/_layout";
 import { getConfig } from "@/lib/config";
-import { AppInfo } from "@/components";
 import { CredentialProvider } from "@/hooks/use-credential";
 import { useTranslation } from "@/lib/i18n";
 import {
@@ -35,6 +34,7 @@ import {
 import { getMinAppVersion } from "@/lib/api";
 import { CategorySelectProvider } from "@/components/CategorySelectContext";
 import { AccountContextProvider } from "@/components/AccountContext";
+import { AppInfo } from "@/components/AppInfo";
 
 const useMinAppVersion = (): string | null => {
   const [minAppVersion, setMinAppVersion] = useState<string | null>(null);
