@@ -1,13 +1,9 @@
 import { StyleSheet, View } from "react-native";
-import {
-  ActivityIndicator,
-  DeleteTransactionDialog,
-  Screen,
-  Text,
-} from "@/components";
+import { ActivityIndicator, Screen, Text } from "@/components";
 import { TransactionList } from "@/components/pages/TransactionIndex/components/TransactionList";
 import { useTransactionIndex } from "@/components/pages/TransactionIndex/hooks";
 import { listCategory } from "@/lib/account";
+import { DeleteTransactionDialog } from "@/components/DeleteTransactionDialog";
 
 export function TransactionIndex(): JSX.Element {
   const {
