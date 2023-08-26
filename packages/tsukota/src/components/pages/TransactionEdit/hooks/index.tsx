@@ -1,7 +1,7 @@
 import { err } from "neverthrow";
 import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { TransactionFormValues } from "@/components";
+import { TransactionFormValues } from "@/components/TransactionForm";
 import { useAccount } from "@/hooks/use-account";
 import { deps, updateTransaction } from "@/lib/account";
 import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
