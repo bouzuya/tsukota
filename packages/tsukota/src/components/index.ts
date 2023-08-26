@@ -8,7 +8,6 @@ import {
   List,
   Text,
 } from "react-native-paper";
-import { CategoryList } from "@/components/CategoryList";
 import { DeleteAccountDialog } from "@/components/DeleteAccountDialog";
 import { DeleteOwnerDialog } from "@/components/DeleteOwnerDialog";
 import { DeleteTransactionDialog } from "@/components/DeleteTransactionDialog";
@@ -23,7 +22,6 @@ import {
 export {
   ActivityIndicator,
   BottomNavigation,
-  CategoryList,
   DeleteAccountDialog,
   DeleteOwnerDialog,
   DeleteTransactionDialog,

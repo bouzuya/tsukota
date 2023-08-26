@@ -1,4 +1,5 @@
-import { ActivityIndicator, CategoryList, Screen } from "@/components";
+import { ActivityIndicator, Screen } from "@/components";
+import { CategoryList } from "@/components/CategoryList";
 import { DeleteCategoryDialog } from "@/components/pages/CategoryIndex/components/DeleteCategoryDialog";
 import { useCategoryIndex } from "@/components/pages/CategoryIndex/hooks";
 
