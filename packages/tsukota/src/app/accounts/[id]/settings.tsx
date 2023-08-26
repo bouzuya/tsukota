@@ -1,13 +1,7 @@
-import {
-  ActivityIndicator,
-  DeleteAccountDialog,
-  Divider,
-  List,
-  Screen,
-  View,
-} from "@/components";
+import { ActivityIndicator, Divider, List, Screen, View } from "@/components";
 import { getLastEvent, listCategory } from "@/lib/account";
 import { useSettings } from "@/components/pages/Settings/hooks";
+import { DeleteAccountDialog } from "@/components/DeleteAccountDialog";
 
 export function Settings(): JSX.Element {
   const {
