@@ -8,7 +8,7 @@
     "url": "https://bouzuya.net/"
   },
   "dependencies": {
-    "@bouzuya/tsukota-models": "^0.1.1",
+    "@bouzuya/tsukota-models": "^0.3.0",
     "neverthrow": "^6.0.0"
   },
   "devDependencies": {
