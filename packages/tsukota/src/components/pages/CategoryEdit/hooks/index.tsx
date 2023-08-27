@@ -40,7 +40,9 @@ export function useCategoryEdit(): {
         oldAccount === null
           ? err("account not found")
           : updateCategory(deps, oldAccount, categoryId, name),
-      ).match(() => navigation.goBack(), showErrorMessage);
+      ).match(() => {
+        navigation.goBack();
+      }, showErrorMessage);
     },
     [account, categoryId, handleAccountCommand, navigation],
   );

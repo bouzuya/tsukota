@@ -40,7 +40,9 @@ export function useAccountEdit(): {
         oldAccount === null
           ? err("account not found")
           : updateAccount(deps, oldAccount, name),
-      ).match(() => navigation.goBack(), showErrorMessage);
+      ).match(() => {
+        navigation.goBack();
+      }, showErrorMessage);
     },
     [account, handleAccountCommand, navigation],
   );

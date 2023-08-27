@@ -30,8 +30,12 @@ export function AccountList(props: Props): JSX.Element {
         <List.Item
           description={`id: ${item.id}`}
           key={item.id}
-          onLongPress={() => onLongPressAccount(item)}
-          onPress={() => onPressAccount(item)}
+          onLongPress={() => {
+            onLongPressAccount(item);
+          }}
+          onPress={() => {
+            onPressAccount(item);
+          }}
           title={item.name}
         />
       )}

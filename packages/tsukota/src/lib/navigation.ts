@@ -51,7 +51,7 @@ export type ParamList = {
 };
 
 export function useFocusEffect(effect: EffectCallback): void {
-  return NavigationUseFocusEffect(effect);
+  NavigationUseFocusEffect(effect);
 }
 
 export function useTypedDrawerNavigation(): DrawerNavigationProp<DrawerParamList> {

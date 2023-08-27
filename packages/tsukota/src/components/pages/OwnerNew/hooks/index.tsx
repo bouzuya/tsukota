@@ -39,7 +39,9 @@ export function useOwnerNew(): {
         oldAccount === null
           ? err("account not found")
           : addOwner(deps, oldAccount, uid),
-      ).match(() => navigation.goBack(), showErrorMessage);
+      ).match(() => {
+        navigation.goBack();
+      }, showErrorMessage);
     },
     [account, handleAccountCommand, navigation],
   );

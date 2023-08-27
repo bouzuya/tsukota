@@ -40,7 +40,7 @@ export async function loadEventsFromRemote(
   return await timeSpan(`loadEventsFromRemote ${accountId}`, async () => {
     const q = query(
       getAccountEventCollectionRef(db, accountId),
-      where("at", ">", since !== null ? since : "1970-01-01T00:00:00Z"),
+      where("at", ">", since ?? "1970-01-01T00:00:00Z"),
       orderBy("at"),
     );
     const eventsSnapshot = await getDocs(q);

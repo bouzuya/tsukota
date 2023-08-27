@@ -39,7 +39,9 @@ export function useCategoryNew(): {
         oldAccount === null
           ? err("account not found")
           : createCategory(deps, oldAccount, name),
-      ).match(() => navigation.goBack(), showErrorMessage);
+      ).match(() => {
+        navigation.goBack();
+      }, showErrorMessage);
     },
     [account, handleAccountCommand, navigation],
   );

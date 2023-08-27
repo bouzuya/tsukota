@@ -47,7 +47,9 @@ export function useSettings(): {
       oldAccount === null
         ? err("account not found")
         : deleteAccount(deps, oldAccount),
-    ).match(() => navigation.goBack(), showErrorMessage);
+    ).match(() => {
+      navigation.goBack();
+    }, showErrorMessage);
   }, [accountId, handleAccountCommand, navigation]);
 
   const handleDeleteAccountPress = useCallback(() => {

@@ -51,7 +51,9 @@ export function useTransactionNew(): {
               comment,
               date,
             }),
-      ).match(() => navigation.goBack(), showErrorMessage);
+      ).match(() => {
+        navigation.goBack();
+      }, showErrorMessage);
     },
     [account, handleAccountCommand, navigation],
   );

@@ -55,8 +55,12 @@ export function TransactionListItem({
             </Text>
           </View>
         )}
-        onLongPress={() => onLongPressTransaction(transaction)}
-        onPress={() => onPressTransaction(transaction)}
+        onLongPress={() => {
+          onLongPressTransaction(transaction);
+        }}
+        onPress={() => {
+          onPressTransaction(transaction);
+        }}
         title=""
       />
     ),

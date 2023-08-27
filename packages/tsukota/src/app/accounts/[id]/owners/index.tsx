@@ -25,7 +25,9 @@ export function OwnerIndex(): JSX.Element {
         renderItem={({ item: owner }) => (
           <List.Item
             key={owner}
-            onLongPress={() => handleOwnerListLongPress(owner)}
+            onLongPress={() => {
+              handleOwnerListLongPress(owner);
+            }}
             title={owner}
           />
         )}

@@ -74,12 +74,16 @@ function DrawerContent({ backgroundColor }: DrawerContentProps): JSX.Element {
         <RNPDrawer.Item
           icon={"wallet"}
           label={t("title.account.index")}
-          onPress={() => navigation.navigate("AccountLayout")}
+          onPress={() => {
+            navigation.navigate("AccountLayout");
+          }}
         />
         <RNPDrawer.Item
           icon={"account"}
           label={t("title.user.me")}
-          onPress={() => navigation.navigate("User")}
+          onPress={() => {
+            navigation.navigate("User");
+          }}
         />
       </RNPDrawer.Section>
       <RNPDrawer.Section>

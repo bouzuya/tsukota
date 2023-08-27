@@ -37,7 +37,9 @@ export function useAccountIndex(): {
     // no await
     void loadAccountIds(currentUserId)
       .then((accountIds) => fetchAccounts(...accountIds))
-      .finally(() => setFetching(false));
+      .finally(() => {
+        setFetching(false);
+      });
   }, [currentUserId, fetchAccounts]);
 
   const handleAccountListLongPress = useCallback(

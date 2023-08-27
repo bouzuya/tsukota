@@ -22,8 +22,12 @@ export function CategoryList(props: Props): JSX.Element {
       renderItem={({ item }) => (
         <List.Item
           key={item.id}
-          onLongPress={() => onLongPressCategory(item)}
-          onPress={() => onPressCategory(item)}
+          onLongPress={() => {
+            onLongPressCategory(item);
+          }}
+          onPress={() => {
+            onPressCategory(item);
+          }}
           title={item.name}
           description={item.deletedAt !== null ? t("category.deleted") : ""}
         />

@@ -40,7 +40,9 @@ export function useAccountNew(): {
         oldAccount !== null
           ? err("account already exists")
           : createAccount(deps, currentUserId, name),
-      ).match(() => navigation.goBack(), showErrorMessage);
+      ).match(() => {
+        navigation.goBack();
+      }, showErrorMessage);
     },
     [currentUserId, handleAccountCommand, navigation],
   );
