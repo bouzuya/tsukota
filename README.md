@@ -44,12 +44,48 @@ graph LR
   end
 
   android -- "call" --> functions
-  android -- "read only" --> firestore
+  android -- "read only\n(Firebase JS SDK)" --> firestore
   android -- "use\n(sign in with custom token)" --> auth
-  firestore -- "use\n(security rules)" --> auth
   functions -- "use\n(create custom token)" --> auth
-  functions -- "read/write" --> firestore
+  functions -- "read/write\n(Firebase Admin SDK)" --> firestore
 ```
+
+## npm パッケージの依存関係
+
+```mermaid
+graph
+  account-events
+  event-store-for-firestore
+  %% firebase
+  functions
+  models
+  %% playstore-assets
+  schema
+  scripts
+  tsukota
+  usecases
+
+  event-store-for-firestore --> models
+  event-store-for-firestore --> schema
+  event-store-for-firestore --> usecases
+  functions --> account-events
+  functions --> schema
+  models --> account-events
+  schema --> account-events
+  scripts --> event-store-for-firestore
+  scripts --> models
+  scripts --> usecases
+  tsukota --> models
+  tsukota --> schema
+  usecases --> models
+```
+
+See: [006].
+
+- tsukota …… Android (React Native)
+- functions …… Cloud Functions for Firebase
+
+[006]: ./docs/note/006.md
 
 ## 永続化先
 
