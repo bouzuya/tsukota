@@ -8,7 +8,7 @@
     "url": "https://bouzuya.net/"
   },
   "dependencies": {
-    "@bouzuya/tsukota-models": "^0.1.1",
+    "@bouzuya/tsukota-models": "^0.3.0",
     "@bouzuya/tsukota-schema": "^1.0.1",
     "@bouzuya/tsukota-usecases": "^0.2.1",
     "firebase-admin": "^11.10.1",
