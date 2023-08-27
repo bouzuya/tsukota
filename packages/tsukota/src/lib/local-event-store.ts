@@ -1,4 +1,4 @@
-import { AccountEvent } from "@bouzuya/tsukota-account-events";
+import type { AccountEvent } from "@bouzuya/tsukota-account-events";
 import {
   documentDirectory,
   getInfoAsync,

@@ -1,8 +1,9 @@
 import { err } from "neverthrow";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FABProps } from "react-native-paper";
+import type { FABProps } from "react-native-paper";
 import { useAccount } from "@/hooks/use-account";
-import { Account, deps, removeOwner } from "@/lib/account";
+import type { Account } from "@/lib/account";
+import { deps, removeOwner } from "@/lib/account";
 import { useTranslation } from "@/lib/i18n";
 import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
 import { showErrorMessage } from "@/lib/show-error-message";

@@ -1,6 +1,8 @@
-import React, { ReactNode } from "react";
+import type { ReactNode } from "react";
+import React from "react";
 import { StyleSheet, View } from "react-native";
-import { FAB, FABProps, useTheme } from "react-native-paper";
+import type { FABProps } from "react-native-paper";
+import { FAB, useTheme } from "react-native-paper";
 
 type Props = {
   children: ReactNode;

@@ -1,9 +1,9 @@
 import React from "react";
 import { ActivityIndicator } from "@/components";
-import { Screen } from "@/components/Screen";
-import { useAccountIndex } from "@/components/pages/AccountIndex/hooks";
-import { AccountList } from "@/components/pages/AccountIndex/components/AccountList";
 import { DeleteAccountDialog } from "@/components/DeleteAccountDialog";
+import { Screen } from "@/components/Screen";
+import { AccountList } from "@/components/pages/AccountIndex/components/AccountList";
+import { useAccountIndex } from "@/components/pages/AccountIndex/hooks";
 
 export function AccountIndex(): JSX.Element {
   const {

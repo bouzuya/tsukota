@@ -1,6 +1,6 @@
 import * as Clipboard from "expo-clipboard";
-import Toast from "react-native-root-toast";
 import { useCallback } from "react";
+import Toast from "react-native-root-toast";
 import { useCurrentUserId } from "@/hooks/use-credential";
 import { useTranslation } from "@/lib/i18n";
 

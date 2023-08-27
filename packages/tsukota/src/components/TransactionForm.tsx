@@ -1,21 +1,20 @@
 import { ErrorMessage } from "@hookform/error-message";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { useEffect } from "react";
+import type {
+  Control,
+  UseFormGetValues,
+  UseFormSetValue,
+} from "react-hook-form";
+import { useController, useFormState } from "react-hook-form";
 import { View } from "react-native";
 import {
   HelperText,
   TextInput as ReactNativePaperTextInput,
 } from "react-native-paper";
-import {
-  Control,
-  useController,
-  UseFormGetValues,
-  UseFormSetValue,
-  useFormState,
-} from "react-hook-form";
 import { useCategorySelect } from "@/components/CategorySelectContext";
 import { TextInput } from "@/components/TextInput";
-import { Category } from "@/lib/account";
+import type { Category } from "@/lib/account";
 import { useTranslation } from "@/lib/i18n";
 import { useTypedNavigation } from "@/lib/navigation";
 

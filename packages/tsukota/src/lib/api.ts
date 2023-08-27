@@ -1,6 +1,6 @@
 import { getDoc, getDocs, orderBy, query, where } from "firebase/firestore";
 import { ResultAsync } from "neverthrow";
-import { AccountEvent } from "@/lib/account";
+import type { AccountEvent } from "@/lib/account";
 import {
   db,
   storeAccountEvent as firebaseStoreAccountEvent,

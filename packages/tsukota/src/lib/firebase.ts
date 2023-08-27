@@ -1,16 +1,15 @@
-import { FirebaseOptions, initializeApp } from "firebase/app";
+import type { FirebaseOptions } from "firebase/app";
+import { initializeApp } from "firebase/app";
+import type { Auth } from "firebase/auth";
+import { connectAuthEmulator, initializeAuth } from "firebase/auth";
+import type { Firestore } from "firebase/firestore";
+import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
+import type { Functions } from "firebase/functions";
 import {
-  Firestore,
-  connectFirestoreEmulator,
-  getFirestore,
-} from "firebase/firestore";
-import {
-  Functions,
   connectFunctionsEmulator,
   getFunctions,
   httpsCallable,
 } from "firebase/functions";
-import { connectAuthEmulator, initializeAuth, Auth } from "firebase/auth";
 import { getConfig } from "@/lib/config";
 
 function initializeFirebaseInstances(): {

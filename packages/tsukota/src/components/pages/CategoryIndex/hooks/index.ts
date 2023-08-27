@@ -1,9 +1,10 @@
 import { err } from "neverthrow";
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FABProps } from "react-native-paper";
+import type { FABProps } from "react-native-paper";
 import { useAccount } from "@/hooks/use-account";
-import { Category, deleteCategory, deps, listCategory } from "@/lib/account";
+import type { Category } from "@/lib/account";
+import { deleteCategory, deps, listCategory } from "@/lib/account";
 import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
 import { showErrorMessage } from "@/lib/show-error-message";
 

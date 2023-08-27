@@ -1,9 +1,6 @@
-import {
-  ErrorMessage,
-  FieldValuesFromFieldErrors,
-} from "@hookform/error-message";
-import {
-  Controller,
+import type { FieldValuesFromFieldErrors } from "@hookform/error-message";
+import { ErrorMessage } from "@hookform/error-message";
+import type {
   ControllerProps,
   FieldErrors,
   FieldName,
@@ -11,11 +8,12 @@ import {
   FieldValues,
   UseControllerProps,
 } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
+import type { TextInputProps } from "react-native-paper";
 import {
   HelperText,
   TextInput as ReactNativePaperTextInput,
-  TextInputProps,
 } from "react-native-paper";
 
 export function TextInput<

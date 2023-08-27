@@ -1,5 +1,5 @@
 import Toast from "react-native-root-toast";
-import { AccountError } from "@/lib/account";
+import type { AccountError } from "@/lib/account";
 import { translation } from "@/lib/i18n";
 
 function toErrorMessage(e: AccountError | "server error"): string {

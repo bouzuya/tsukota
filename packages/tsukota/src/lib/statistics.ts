@@ -1,4 +1,4 @@
-import { Transaction } from "@bouzuya/tsukota-models";
+import type { Transaction } from "@bouzuya/tsukota-models";
 
 // string: YYYY-MM-DD
 export function getYearMonths(

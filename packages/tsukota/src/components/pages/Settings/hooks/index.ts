@@ -1,10 +1,10 @@
 import { err } from "neverthrow";
 import { useCallback, useState } from "react";
+import { useAccount } from "@/hooks/use-account";
 import { deleteAccount, deps } from "@/lib/account";
 import { useTranslation } from "@/lib/i18n";
 import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
 import { showErrorMessage } from "@/lib/show-error-message";
-import { useAccount } from "@/hooks/use-account";
 
 export function useSettings(): {
   account: ReturnType<typeof useAccount>["account"];

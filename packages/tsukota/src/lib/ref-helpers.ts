@@ -1,9 +1,9 @@
-import {
+import type {
   AccountEventDocumentForQuery,
   SystemStatusDocumentForQuery,
   UserDocument,
 } from "@bouzuya/tsukota-schema";
-import {
+import type {
   CollectionReference,
   DocumentData,
   DocumentReference,
@@ -12,9 +12,8 @@ import {
   QueryDocumentSnapshot,
   SnapshotOptions,
   WithFieldValue,
-  collection,
-  doc,
 } from "firebase/firestore";
+import { collection, doc } from "firebase/firestore";
 
 type EventDocument = AccountEventDocumentForQuery;
 

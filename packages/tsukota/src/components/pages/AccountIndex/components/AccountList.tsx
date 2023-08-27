@@ -1,4 +1,5 @@
-import { FlatList, FlatListProps, StyleSheet, Text, View } from "react-native";
+import type { FlatListProps } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { List } from "react-native-paper";
 import { useTranslation } from "@/lib/i18n";
 

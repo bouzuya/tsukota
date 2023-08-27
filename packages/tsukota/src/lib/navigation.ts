@@ -1,12 +1,12 @@
-import { DrawerNavigationProp } from "@react-navigation/drawer";
+import type { DrawerNavigationProp } from "@react-navigation/drawer";
+import type { RouteProp } from "@react-navigation/native";
 import {
   useNavigation,
   useFocusEffect as NavigationUseFocusEffect,
   useRoute,
-  RouteProp,
 } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { EffectCallback } from "react";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { EffectCallback } from "react";
 
 export {
   NativeStackNavigationOptions,

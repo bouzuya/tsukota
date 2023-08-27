@@ -1,4 +1,4 @@
-import { Category } from "@bouzuya/tsukota-models";
+import type { Category } from "@bouzuya/tsukota-models";
 import { useCallback } from "react";
 import { useCategorySelect as useCategoryContextCategorySelect } from "@/components/CategorySelectContext";
 import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";

@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 import { useTheme } from "react-native-paper";
 import { List, Text, View } from "@/components";
 import { useTranslation } from "@/lib/i18n";
-import { MonthlyStatistics } from "@/lib/statistics";
+import type { MonthlyStatistics } from "@/lib/statistics";
 
 type Props = {
   data: MonthlyStatistics;

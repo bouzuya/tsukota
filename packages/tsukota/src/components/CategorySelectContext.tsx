@@ -1,6 +1,8 @@
-import { ReactNode, createContext, useContext, useMemo, useState } from "react";
+import type { ReactNode } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 import { useAccount } from "@/hooks/use-account";
-import { Category, listCategory } from "@/lib/account";
+import type { Category } from "@/lib/account";
+import { listCategory } from "@/lib/account";
 
 type ContextValue = {
   selectedCategory: Category | null;

@@ -1,6 +1,6 @@
+import * as Localization from "expo-localization";
 import { use } from "i18next";
 import { initReactI18next, useTranslation } from "react-i18next";
-import * as Localization from "expo-localization";
 
 export const resources = {
   en: {

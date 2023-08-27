@@ -1,11 +1,7 @@
-import { signInWithCustomToken, User } from "firebase/auth";
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import type { User } from "firebase/auth";
+import { signInWithCustomToken } from "firebase/auth";
+import type { ReactNode } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { auth, createCustomToken } from "@/lib/firebase";
 import { storage } from "@/lib/storage";
 import { generate as generateUuidV4 } from "@/lib/uuid";

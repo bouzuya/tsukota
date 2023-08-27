@@ -1,12 +1,7 @@
 import { StatusBar } from "expo-status-bar";
-import {
-  ColorValue,
-  Linking,
-  StyleSheet,
-  View,
-  useColorScheme,
-} from "react-native";
-import * as semver from "semver";
+import { useEffect, useState } from "react";
+import type { ColorValue } from "react-native";
+import { Linking, StyleSheet, View, useColorScheme } from "react-native";
 import {
   Drawer as RNPDrawer,
   IconButton,
@@ -17,24 +12,24 @@ import {
   Text,
 } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useEffect, useState } from "react";
-import { UserMe } from "@/app/users/me";
+import * as semver from "semver";
 import { AccountLayout } from "@/app/accounts/_layout";
-import { getConfig } from "@/lib/config";
+import { UserMe } from "@/app/users/me";
+import { AccountContextProvider } from "@/components/AccountContext";
+import { AppInfo } from "@/components/AppInfo";
+import { CategorySelectProvider } from "@/components/CategorySelectContext";
 import { CredentialProvider } from "@/hooks/use-credential";
+import { getMinAppVersion } from "@/lib/api";
+import { getConfig } from "@/lib/config";
 import { useTranslation } from "@/lib/i18n";
+import type { DrawerNavigationOptions } from "@/lib/navigation";
 import {
-  DrawerNavigationOptions,
   NavigationContainer,
   NavigationDarkTheme,
   NavigationDefaultTheme,
   createDrawerNavigator,
   useTypedDrawerNavigation,
 } from "@/lib/navigation";
-import { getMinAppVersion } from "@/lib/api";
-import { CategorySelectProvider } from "@/components/CategorySelectContext";
-import { AccountContextProvider } from "@/components/AccountContext";
-import { AppInfo } from "@/components/AppInfo";
 
 const useMinAppVersion = (): string | null => {
   const [minAppVersion, setMinAppVersion] = useState<string | null>(null);

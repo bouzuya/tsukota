@@ -1,15 +1,16 @@
 import { err } from "neverthrow";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FABProps } from "react-native-paper";
-import { Item as AccountListItem } from "@/components/pages/AccountIndex/components/AccountList";
+import type { FABProps } from "react-native-paper";
 import { useAccounts } from "@/components/AccountContext";
-import { LongPressedAccount } from "@/components/pages/AccountIndex/types";
-import { Account, deleteAccount, deps } from "@/lib/account";
+import type { Item as AccountListItem } from "@/components/pages/AccountIndex/components/AccountList";
+import type { LongPressedAccount } from "@/components/pages/AccountIndex/types";
+import { useCurrentUserId } from "@/hooks/use-credential";
+import type { Account } from "@/lib/account";
+import { deleteAccount, deps } from "@/lib/account";
 import { loadAccountIds } from "@/lib/api";
 import { useTranslation } from "@/lib/i18n";
 import { useTypedNavigation } from "@/lib/navigation";
 import { showErrorMessage } from "@/lib/show-error-message";
-import { useCurrentUserId } from "@/hooks/use-credential";
 
 export function useAccountIndex(): {
   account: LongPressedAccount | null;

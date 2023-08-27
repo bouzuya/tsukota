@@ -1,15 +1,9 @@
-import { errAsync, Result, ResultAsync } from "neverthrow";
+import type { Result, ResultAsync } from "neverthrow";
+import { errAsync } from "neverthrow";
+import type { ReactNode } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
+import type { Account, AccountError, AccountEvent } from "@/lib/account";
 import {
-  createContext,
-  ReactNode,
-  useCallback,
-  useContext,
-  useState,
-} from "react";
-import {
-  Account,
-  AccountError,
-  AccountEvent,
   getLastEvent,
   getLastEventId,
   restoreAccount,

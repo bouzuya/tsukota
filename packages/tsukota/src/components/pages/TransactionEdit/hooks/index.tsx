@@ -1,12 +1,12 @@
 import { err } from "neverthrow";
 import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { TransactionFormValues } from "@/components/TransactionForm";
+import { HeaderRightSaveButton } from "@/components/HeaderRightSaveButton";
+import type { TransactionFormValues } from "@/components/TransactionForm";
 import { useAccount } from "@/hooks/use-account";
 import { deps, updateTransaction } from "@/lib/account";
 import { useTypedNavigation, useTypedRoute } from "@/lib/navigation";
 import { showErrorMessage } from "@/lib/show-error-message";
-import { HeaderRightSaveButton } from "@/components/HeaderRightSaveButton";
 
 export function useTransactionEdit(): {
   account: ReturnType<typeof useAccount>["account"];
