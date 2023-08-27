@@ -8,7 +8,7 @@ import { getDeviceDocumentRef, getUserDocumentRef } from "../schema";
 
 export function buildCreateCustomToken(
   app: App,
-  region: string
+  region: string,
 ): functions.HttpsFunction {
   return functions
     .region(region)
@@ -21,7 +21,7 @@ export function buildCreateCustomToken(
       ) {
         throw new functions.https.HttpsError(
           "invalid-argument",
-          "The function must be called with one argument"
+          "The function must be called with one argument",
         );
       }
       const deviceId = data.device_id;
@@ -29,7 +29,7 @@ export function buildCreateCustomToken(
       if (typeof deviceId !== "string" || typeof deviceSecret !== "string") {
         throw new functions.https.HttpsError(
           "invalid-argument",
-          "The function must be called with one argument"
+          "The function must be called with one argument",
         );
       }
 

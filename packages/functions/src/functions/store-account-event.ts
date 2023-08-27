@@ -13,7 +13,7 @@ import {
 
 export function buildStoreAccountEvent(
   app: App,
-  region: string
+  region: string,
 ): functions.HttpsFunction {
   const db = getFirestore(app);
 
@@ -25,21 +25,21 @@ export function buildStoreAccountEvent(
         throw new functions.https.HttpsError(
           "unauthenticated",
           // TODO: fix message
-          "unauthenticated"
+          "unauthenticated",
         );
       const result = validateStoreAccountEventBody(data);
       if (result.isErr())
         throw new functions.https.HttpsError(
           "invalid-argument",
           // TODO: fix message
-          "invalid-argument"
+          "invalid-argument",
         );
       const { event, last_event_id: lastEventId } = result.value;
       if (lastEventId !== null && typeof lastEventId !== "string")
         throw new functions.https.HttpsError(
           "invalid-argument",
           // TODO: fix message
-          "invalid-argument"
+          "invalid-argument",
         );
       await storeAccountEvent(db, uid, lastEventId, event);
       return {};
@@ -49,7 +49,7 @@ export function buildStoreAccountEvent(
 function err(message: string): Promise<never> {
   return Promise.reject(
     // TODO: fix error code
-    new functions.https.HttpsError("invalid-argument", message)
+    new functions.https.HttpsError("invalid-argument", message),
   );
 }
 
@@ -57,26 +57,26 @@ function storeAccountEvent(
   db: Firestore,
   uid: string,
   lastEventId: string | null,
-  event: AccountEvent
+  event: AccountEvent,
 ): Promise<void> {
   return db.runTransaction(
     async (transaction: FirebaseFirestore.Transaction): Promise<void> => {
       const eventStreamDocRef = getAccountEventStreamDocumentRef(
         db,
-        event.accountId
+        event.accountId,
       );
       const eventDocRef = getAccountEventDocumentRefFromParentRef(
         eventStreamDocRef,
-        event.id
+        event.id,
       );
       const accountForQueryDocRef = getAccountDocumentForQueryRef(
         db,
-        event.accountId
+        event.accountId,
       );
       const accountEventForQueryDocRef =
         getAccountEventDocumentForQueryRefFromParentRef(
           accountForQueryDocRef,
-          event.id
+          event.id,
         );
 
       // create or update account
@@ -86,7 +86,7 @@ function storeAccountEvent(
           return err(`account already exist (accountId: ${event.accountId})`);
         if (event.type !== "accountCreated")
           return err(
-            `event type is not accountCreated (accountId: ${event.accountId})`
+            `event type is not accountCreated (accountId: ${event.accountId})`,
           );
         transaction.create(eventStreamDocRef, {
           id: event.accountId,
@@ -109,22 +109,22 @@ function storeAccountEvent(
         // forbidden
         if (!data.owners.includes(uid))
           return err(
-            `account is not owned by the user (accountId: ${event.accountId}, uid: ${uid})`
+            `account is not owned by the user (accountId: ${event.accountId}, uid: ${uid})`,
           );
         // conflict
         if (data.lastEventId !== lastEventId)
           return err(
-            `account already updated (accountId: ${event.accountId}, expected: ${lastEventId}, actual: ${data.lastEventId})`
+            `account already updated (accountId: ${event.accountId}, expected: ${lastEventId}, actual: ${data.lastEventId})`,
           );
         // bad request (invalid protocol version)
         if (event.protocolVersion < data.protocolVersion)
           return err(
-            `invalid protocol version (accountId: ${event.accountId}, expected: ${data.protocolVersion}, actual: ${event.protocolVersion})`
+            `invalid protocol version (accountId: ${event.accountId}, expected: ${data.protocolVersion}, actual: ${event.protocolVersion})`,
           );
         // bad request (invalid event timestamp)
         if (event.at <= data.updatedAt)
           return err(
-            `invalid event timestamp (accountId: ${event.accountId}, expected: ${data.updatedAt}, actual: ${event.at})`
+            `invalid event timestamp (accountId: ${event.accountId}, expected: ${data.updatedAt}, actual: ${event.at})`,
           );
         transaction.update(
           eventStreamDocRef,
@@ -139,7 +139,7 @@ function storeAccountEvent(
             protocolVersion: event.protocolVersion,
             updatedAt: event.at,
           },
-          { lastUpdateTime: esDocSnapshot.updateTime }
+          { lastUpdateTime: esDocSnapshot.updateTime },
         );
         transaction.update(accountForQueryDocRef, {
           id: event.accountId,
@@ -189,6 +189,6 @@ function storeAccountEvent(
 
       return Promise.resolve();
     },
-    { maxAttempts: 1 }
+    { maxAttempts: 1 },
   );
 }

@@ -16,13 +16,13 @@ export const createCustomToken = buildCreateCustomToken(app, region);
 
 export const deleteAllUserDataFromServer = buildDeleteAllUserDataFromServer(
   app,
-  region
+  region,
 );
 
 export const scheduledFirestoreExport = buildScheduledFirestoreExport(
   region,
   projectIdParams,
-  bucketNameParams
+  bucketNameParams,
 );
 
 export const storeAccountEvent = buildStoreAccountEvent(app, region);

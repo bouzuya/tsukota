@@ -5,7 +5,7 @@ import { StringParam } from "firebase-functions/lib/params/types";
 export function buildScheduledFirestoreExport(
   region: string,
   projectIdParams: StringParam,
-  bucketNameParams: StringParam
+  bucketNameParams: StringParam,
 ): functions.CloudFunction<void> {
   const schedule = "0 0 * * *";
 
@@ -18,7 +18,7 @@ export function buildScheduledFirestoreExport(
     .onRun(async (): Promise<void> => {
       const databaseName = client.databasePath(
         projectIdParams.value(),
-        "(default)"
+        "(default)",
       );
 
       try {

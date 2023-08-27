@@ -5,7 +5,7 @@ import { getDeletedUserDocumentRef } from "../schema";
 
 export function buildDeleteAllUserDataFromServer(
   app: App,
-  region: string
+  region: string,
 ): functions.HttpsFunction {
   const db = getFirestore(app);
 
@@ -17,7 +17,7 @@ export function buildDeleteAllUserDataFromServer(
         throw new functions.https.HttpsError(
           "unauthenticated",
           // TODO: fix message
-          "unauthenticated"
+          "unauthenticated",
         );
 
       const deletedUserDocRef = getDeletedUserDocumentRef(db, uid);

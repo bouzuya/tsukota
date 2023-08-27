@@ -19,13 +19,13 @@ import {
 const accountDocumentForQueryConverter: FirestoreDataConverter<AccountDocumentForQuery> =
   {
     fromFirestore: function fromFirestore(
-      snapshot: QueryDocumentSnapshot
+      snapshot: QueryDocumentSnapshot,
     ): AccountDocumentForQuery {
       // 怪しい
       return snapshot.data() as AccountDocumentForQuery;
     },
     toFirestore: function (
-      modelObject: WithFieldValue<AccountDocumentForQuery>
+      modelObject: WithFieldValue<AccountDocumentForQuery>,
     ): DocumentData {
       return modelObject;
     },
@@ -33,7 +33,7 @@ const accountDocumentForQueryConverter: FirestoreDataConverter<AccountDocumentFo
 
 export function getAccountDocumentForQueryRef(
   db: Firestore,
-  accountId: string
+  accountId: string,
 ): DocumentReference<AccountDocumentForQuery> {
   return db
     .collection("accounts")
@@ -44,13 +44,13 @@ export function getAccountDocumentForQueryRef(
 const accountEventDocumentForQueryConverter: FirestoreDataConverter<AccountEventDocumentForQuery> =
   {
     fromFirestore: function fromFirestore(
-      snapshot: QueryDocumentSnapshot
+      snapshot: QueryDocumentSnapshot,
     ): AccountEventDocumentForQuery {
       // 怪しい
       return snapshot.data() as AccountEventDocumentForQuery;
     },
     toFirestore: function (
-      modelObject: WithFieldValue<AccountEventDocumentForQuery>
+      modelObject: WithFieldValue<AccountEventDocumentForQuery>,
     ): DocumentData {
       return modelObject;
     },
@@ -58,7 +58,7 @@ const accountEventDocumentForQueryConverter: FirestoreDataConverter<AccountEvent
 
 export function getAccountEventDocumentForQueryRefFromParentRef(
   parent: DocumentReference<AccountDocumentForQuery>,
-  eventId: string
+  eventId: string,
 ): DocumentReference<AccountEventDocumentForQuery> {
   return parent
     .collection("events")
@@ -69,24 +69,24 @@ export function getAccountEventDocumentForQueryRefFromParentRef(
 export function getAccountEventDocumentForQueryRef(
   db: Firestore,
   accountId: string,
-  eventId: string
+  eventId: string,
 ): DocumentReference<AccountEventDocumentForQuery> {
   return getAccountEventDocumentForQueryRefFromParentRef(
     getAccountDocumentForQueryRef(db, accountId),
-    eventId
+    eventId,
   );
 }
 
 const accountEventStreamDocumentConverter: FirestoreDataConverter<AccountEventStreamDocument> =
   {
     fromFirestore: function fromFirestore(
-      snapshot: QueryDocumentSnapshot
+      snapshot: QueryDocumentSnapshot,
     ): AccountEventStreamDocument {
       // 怪しい
       return snapshot.data() as AccountEventStreamDocument;
     },
     toFirestore: function (
-      modelObject: WithFieldValue<AccountEventStreamDocument>
+      modelObject: WithFieldValue<AccountEventStreamDocument>,
     ): DocumentData {
       return modelObject;
     },
@@ -94,7 +94,7 @@ const accountEventStreamDocumentConverter: FirestoreDataConverter<AccountEventSt
 
 export function getAccountEventStreamDocumentRef(
   db: Firestore,
-  accountId: string
+  accountId: string,
 ): DocumentReference<AccountEventStreamDocument> {
   return db
     .collection("aggregates")
@@ -107,13 +107,13 @@ export function getAccountEventStreamDocumentRef(
 const accountEventDocumentConverter: FirestoreDataConverter<AccountEventDocument> =
   {
     fromFirestore: function fromFirestore(
-      snapshot: QueryDocumentSnapshot
+      snapshot: QueryDocumentSnapshot,
     ): AccountEventDocument {
       // 怪しい
       return snapshot.data() as AccountEventDocument;
     },
     toFirestore: function (
-      modelObject: WithFieldValue<AccountEventDocument>
+      modelObject: WithFieldValue<AccountEventDocument>,
     ): DocumentData {
       return modelObject;
     },
@@ -121,7 +121,7 @@ const accountEventDocumentConverter: FirestoreDataConverter<AccountEventDocument
 
 export function getAccountEventDocumentRefFromParentRef(
   parent: DocumentReference<AccountEventStreamDocument>,
-  eventId: string
+  eventId: string,
 ): DocumentReference<AccountEventDocument> {
   return parent
     .collection("events")
@@ -132,24 +132,24 @@ export function getAccountEventDocumentRefFromParentRef(
 export function getAccountEventDocumentRef(
   db: Firestore,
   accountId: string,
-  eventId: string
+  eventId: string,
 ): DocumentReference<AccountEventDocument> {
   return getAccountEventDocumentRefFromParentRef(
     getAccountEventStreamDocumentRef(db, accountId),
-    eventId
+    eventId,
   );
 }
 
 const deletedUserDocumentConverter: FirestoreDataConverter<DeletedUserDocument> =
   {
     fromFirestore: function fromFirestore(
-      snapshot: QueryDocumentSnapshot
+      snapshot: QueryDocumentSnapshot,
     ): DeletedUserDocument {
       // 怪しい
       return snapshot.data() as DeletedUserDocument;
     },
     toFirestore: function (
-      modelObject: WithFieldValue<DeletedUserDocument>
+      modelObject: WithFieldValue<DeletedUserDocument>,
     ): DocumentData {
       return modelObject;
     },
@@ -157,7 +157,7 @@ const deletedUserDocumentConverter: FirestoreDataConverter<DeletedUserDocument> 
 
 export function getDeletedUserDocumentRef(
   db: Firestore,
-  userId: string
+  userId: string,
 ): DocumentReference<DeletedUserDocument> {
   return db
     .collection("deleted_users")
@@ -176,7 +176,7 @@ const deviceDocumentConverter: FirestoreDataConverter<DeviceDocument> = {
 
 export function getDeviceDocumentRef(
   db: Firestore,
-  deviceId: string
+  deviceId: string,
 ): DocumentReference<DeviceDocument> {
   return db
     .collection("devices")
@@ -189,13 +189,13 @@ export function getDeviceDocumentRef(
 
 const userDocumentConverter: FirestoreDataConverter<UserDocument> = {
   fromFirestore: function (
-    snapshot: QueryDocumentSnapshot
+    snapshot: QueryDocumentSnapshot,
     // 怪しい
   ): UserDocument {
     return snapshot.data() as UserDocument;
   },
   toFirestore: function (
-    modelObject: WithFieldValue<UserDocument>
+    modelObject: WithFieldValue<UserDocument>,
   ): DocumentData {
     return modelObject;
   },
@@ -203,7 +203,7 @@ const userDocumentConverter: FirestoreDataConverter<UserDocument> = {
 
 export function getUserDocumentRef(
   db: Firestore,
-  userId: string
+  userId: string,
 ): DocumentReference<UserDocument> {
   return db
     .collection("users")
