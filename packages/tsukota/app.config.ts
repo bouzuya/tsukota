@@ -7,7 +7,7 @@ const expoConfig: ExpoConfig = {
       foregroundImage: "./assets/adaptive-icon-v2.png",
     },
     package: "net.bouzuya.lab.tsukota",
-    versionCode: 24,
+    versionCode: 25,
   },
   assetBundlePatterns: ["**/*"],
   extra: {
