@@ -1,12 +1,4 @@
-import {
-  DocumentData,
-  DocumentReference,
-  Firestore,
-  FirestoreDataConverter,
-  QueryDocumentSnapshot,
-  WithFieldValue,
-} from "firebase-admin/firestore";
-import {
+import type {
   AccountDocumentForQuery,
   AccountEventDocument,
   AccountEventDocumentForQuery,
@@ -15,6 +7,14 @@ import {
   DeviceDocument,
   UserDocument,
 } from "@bouzuya/tsukota-schema";
+import type {
+  DocumentData,
+  DocumentReference,
+  Firestore,
+  FirestoreDataConverter,
+  QueryDocumentSnapshot,
+  WithFieldValue,
+} from "firebase-admin/firestore";
 
 const accountDocumentForQueryConverter: FirestoreDataConverter<AccountDocumentForQuery> =
   {

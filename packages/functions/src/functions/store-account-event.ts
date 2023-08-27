@@ -1,6 +1,7 @@
 import { type AccountEvent } from "@bouzuya/tsukota-account-events";
-import { App } from "firebase-admin/app";
-import { FieldValue, Firestore, getFirestore } from "firebase-admin/firestore";
+import type { App } from "firebase-admin/app";
+import type { Firestore } from "firebase-admin/firestore";
+import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import * as functions from "firebase-functions";
 import {
   getAccountDocumentForQueryRef,

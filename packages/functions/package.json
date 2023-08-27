@@ -44,7 +44,7 @@
     "deploy": "firebase deploy --only functions",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
-    "lint": "eslint --ext .js,.ts .",
+    "lint": "eslint .",
     "logs": "firebase functions:log",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",

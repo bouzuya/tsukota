@@ -1,5 +1,4 @@
 {
-  "root": true,
   "env": {
     "es6": true,
     "node": true
@@ -10,20 +9,21 @@
     "plugin:import/warnings",
     "plugin:import/typescript",
     "google",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "plugin:@typescript-eslint/strict",
+    "plugin:@typescript-eslint/strict-type-checked",
+    "plugin:@typescript-eslint/stylistic-type-checked",
     "prettier"
   ],
+  "ignorePatterns": ["/lib/**/*"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": ["tsconfig.json", "tsconfig.dev.json"],
+    "project": true,
     "sourceType": "module"
   },
-  "ignorePatterns": ["/lib/**/*"],
   "plugins": ["@typescript-eslint", "import"],
+  "root": true,
   "rules": {
     "@typescript-eslint/consistent-type-definitions": ["error", "type"],
+    "@typescript-eslint/consistent-type-imports": "error",
     "@typescript-eslint/no-unused-vars": [
       "error",
       {
@@ -32,7 +32,15 @@
     ],
     "import/no-default-export": "error",
     "import/no-unresolved": "off",
-    "import/order": "error",
+    "import/order": [
+      "error",
+      {
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": false
+        }
+      }
+    ],
     "operator-linebreak": "off",
     "require-jsdoc": "off"
   }

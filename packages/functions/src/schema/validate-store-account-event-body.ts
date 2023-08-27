@@ -1,6 +1,8 @@
-import { AccountEvent } from "@bouzuya/tsukota-account-events";
-import Ajv, { ErrorObject, JTDSchemaType } from "ajv/dist/jtd";
-import { Result, err, ok } from "neverthrow";
+import type { AccountEvent } from "@bouzuya/tsukota-account-events";
+import type { ErrorObject, JTDSchemaType } from "ajv/dist/jtd";
+import Ajv from "ajv/dist/jtd";
+import type { Result } from "neverthrow";
+import { err, ok } from "neverthrow";
 
 const ajv = new Ajv();
 

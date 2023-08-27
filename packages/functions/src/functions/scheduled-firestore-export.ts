@@ -1,6 +1,6 @@
 import * as firestore from "@google-cloud/firestore";
 import * as functions from "firebase-functions";
-import { StringParam } from "firebase-functions/lib/params/types";
+import type { StringParam } from "firebase-functions/lib/params/types";
 
 export function buildScheduledFirestoreExport(
   region: string,
